@@ -40,7 +40,7 @@ Asynchronously changes the permissions of the underlying filepath.
 ```
 import Path from "pathlib-js"
 const ES5CompatibilityWrapper = async () => {
-  const fp = new Path("C:\\Users\\Maurice\\Example\\Folder_A\\File_A1.txt");
+  const fp = new Path("C:\\Users\\JohnDoe\\Example\\Folder_A\\File_A1.txt");
   console.log(Path.parseModeIntoOctal(await fp.stat()));
   await fp.chmod(0o111);
   console.log(Path.parseModeIntoOctal(await fp.stat()));
@@ -64,7 +64,7 @@ Synchronously changes the permissions of the underlying filepath.
 
 ```
 import Path from "pathlib-js"
-const fp = new Path("C:\\Users\\Maurice\\Example\\Folder_A\\File_A1.txt");
+const fp = new Path("C:\\Users\\JohnDoe\\Example\\Folder_A\\File_A1.txt");
 console.log(Path.parseModeIntoOctal(fp.statSync()));
 fp.chmodSync(0o111);
 console.log(Path.parseModeIntoOctal(fp.statSync()));
@@ -97,14 +97,14 @@ console.log(Path.parseModeIntoOctal(fp.statSync()));
 ```
 import Path from "pathlib-js"
 const ES5CompatibilityWrapper = async () => {
-  const fp = new Path("C:\\Users\\Maurice\\Example\\Folder_A\\File_A1.txt");
+  const fp = new Path("C:\\Users\\JohnDoe\\Example\\Folder_A\\File_A1.txt");
   const destination = await fp.move(fp.parent().parent().join("Folder_B", "File_A1_Moved.txt"), true);
   console.log(destination.path);
   console.log(await destination.exists());
 };
 ES5CompatibilityWrapper();
 
-> C:/Users/Maurice/Example/Folder_B/File_A1_Moved.txt
+> C:/Users/JohnDoe/Example/Folder_B/File_A1_Moved.txt
 > true
 ```
 
@@ -122,12 +122,12 @@ ES5CompatibilityWrapper();
 
 ```
 import Path from "pathlib-js"
-const fp = new Path("C:\\Users\\Maurice\\Example\\Folder_A\\File_A1.txt");
+const fp = new Path("C:\\Users\\JohnDoe\\Example\\Folder_A\\File_A1.txt");
 const destination = fp.moveSync(fp.parent().parent().join("Folder_B", "File_A1_Moved.txt"));
 console.log(destination.path);
 console.log(destination.existsSync());
 
-> C:/Users/Maurice/Example/Folder_B/File_A1_Moved.txt
+> C:/Users/JohnDoe/Example/Folder_B/File_A1_Moved.txt
 > true
 ```
 
@@ -150,14 +150,14 @@ console.log(destination.existsSync());
 ```
 import Path from "pathlib-js"
 const ES5CompatibilityWrapper = async () => {
-  const fp = new Path("C:\\Users\\Maurice\\Example\\Folder_A\\File_A1.txt");
+  const fp = new Path("C:\\Users\\JohnDoe\\Example\\Folder_A\\File_A1.txt");
   const destination = await fp.copy(fp.parent().parent().join("Folder_B", "File_A1_Copied.txt"));
   console.log(destination.path);
   console.log(await destination.exists());
 };
 ES5CompatibilityWrapper();
 
-> C:/Users/Maurice/Example/Folder_B/File_A1_Copied.txt
+> C:/Users/JohnDoe/Example/Folder_B/File_A1_Copied.txt
 > true
 ```
 
@@ -179,12 +179,12 @@ ES5CompatibilityWrapper();
 
 ```
 import Path from "pathlib-js"
-const fp = new Path("C:\\Users\\Maurice\\Example\\Folder_A\\File_A1.txt");
+const fp = new Path("C:\\Users\\JohnDoe\\Example\\Folder_A\\File_A1.txt");
 const destination = fp.copySync(fp.parent().parent().join("Folder_B", "File_A1_Copied.txt"));
 console.log(destination.path);
 console.log(destination.existsSync());
 
-> C:/Users/Maurice/Example/Folder_B/File_A1_Copied.txt
+> C:/Users/JohnDoe/Example/Folder_B/File_A1_Copied.txt
 > true
 ```
 
@@ -197,7 +197,7 @@ console.log(destination.existsSync());
 ```
 import Path from "pathlib-js"
 const ES5CompatibilityWrapper = async () => {
-  const fp = new Path("C:\\Users\\Maurice\\Example\\Folder_A\\File_A1.txt");
+  const fp = new Path("C:\\Users\\JohnDoe\\Example\\Folder_A\\File_A1.txt");
   console.log(await fp.exists());
   await fp.remove()
   console.log(await fp.exists());
@@ -216,7 +216,7 @@ ES5CompatibilityWrapper();
 
 ```
 import Path from "pathlib-js"
-const fp = new Path("C:\\Users\\Maurice\\Example\\Folder_A\\File_A1.txt");
+const fp = new Path("C:\\Users\\JohnDoe\\Example\\Folder_A\\File_A1.txt");
 console.log(fp.existsSync());
 fp.removeSync()
 console.log(fp.existsSync());

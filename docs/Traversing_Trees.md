@@ -32,17 +32,17 @@ Example
 ```
 import Path from "pathlib-js"
 const ES5CompatibilityWrapper = async () => {
-  const fp1 = new Path("C:\\Users\\Maurice\\Example");
+  const fp1 = new Path("C:\\Users\\JohnDoe\\Example");
   await fp1.walk((p) => console.log(p.path))
 };
 ES5CompatibilityWrapper();
 
-> C:/Users/Maurice/Example/Folder_A
-> C:/Users/Maurice/Example/Folder_A/File_A1.txt
-> C:/Users/Maurice/Example/Folder_A/File_A2.txt
-> C:/Users/Maurice/Example/Folder_B
-> C:/Users/Maurice/Example/Folder_B/File_B1.json
-> C:/Users/Maurice/Example/Folder_B/File_B2.json
+> C:/Users/JohnDoe/Example/Folder_A
+> C:/Users/JohnDoe/Example/Folder_A/File_A1.txt
+> C:/Users/JohnDoe/Example/Folder_A/File_A2.txt
+> C:/Users/JohnDoe/Example/Folder_B
+> C:/Users/JohnDoe/Example/Folder_B/File_B1.json
+> C:/Users/JohnDoe/Example/Folder_B/File_B2.json
 
 ```
 
@@ -56,15 +56,15 @@ ES5CompatibilityWrapper();
 
 ```
 import Path from "pathlib-js"
-const fp1 = new Path("C:\\Users\\Maurice\\Example");
+const fp1 = new Path("C:\\Users\\JohnDoe\\Example");
 fp1.walk(p => console.log(p.path));
 
-> C:/Users/Maurice/Example/Folder_A
-> C:/Users/Maurice/Example/Folder_A/File_A1.txt
-> C:/Users/Maurice/Example/Folder_A/File_A2.txt
-> C:/Users/Maurice/Example/Folder_B
-> C:/Users/Maurice/Example/Folder_B/File_B1.json
-> C:/Users/Maurice/Example/Folder_B/File_B2.json
+> C:/Users/JohnDoe/Example/Folder_A
+> C:/Users/JohnDoe/Example/Folder_A/File_A1.txt
+> C:/Users/JohnDoe/Example/Folder_A/File_A2.txt
+> C:/Users/JohnDoe/Example/Folder_B
+> C:/Users/JohnDoe/Example/Folder_B/File_B1.json
+> C:/Users/JohnDoe/Example/Folder_B/File_B2.json
 ```
 
 ### tree([asString, useSystemPathDelimiter]) <a name = "#tree"></a>
@@ -85,17 +85,17 @@ fp1.walk(p => console.log(p.path));
 ```
 import Path from "pathlib-js"
 const ES5CompatibilityWrapper = async () => {
-  const fp1 = new Path("C:\\Users\\Maurice\\Example");
+  const fp1 = new Path("C:\\Users\\JohnDoe\\Example");
   console.log(await fp1.tree());
 };
 ES5CompatibilityWrapper();
 
 {
   filepath: Path {
-    path: 'C:/Users/Maurice/Example',
+    path: 'C:/Users/JohnDoe/Example',
     root: 'C:/',
     basename: 'Example',
-    dirname: 'C:/Users/Maurice',
+    dirname: 'C:/Users/JohnDoe',
     stem: 'Example',
     ext: '',
     suffixes: []
@@ -125,15 +125,15 @@ ES5CompatibilityWrapper();
 
 ```
 import Path from "pathlib-js"
-const fp1 = new Path("C:\\Users\\Maurice\\Example");
+const fp1 = new Path("C:\\Users\\JohnDoe\\Example");
 console.log(fp1.treeSync());
 
 {
   filepath: Path {
-    path: 'C:/Users/Maurice/Example',
+    path: 'C:/Users/JohnDoe/Example',
     root: 'C:/',
     basename: 'Example',
-    dirname: 'C:/Users/Maurice',
+    dirname: 'C:/Users/JohnDoe',
     stem: 'Example',
     ext: '',
     suffixes: []

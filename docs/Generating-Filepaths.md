@@ -30,7 +30,7 @@ Asynchronously forces the underlying filepath to be made as a directory, making 
 ```
 import Path from "pathlib-js"
 const ES5CompatibilityWrapper = async () => {
-  const fp = new Path("C:\\Users\\Maurice\\Example\\Folder_C");
+  const fp = new Path("C:\\Users\\JohnDoe\\Example\\Folder_C");
   console.log(await fp.exists());
   await fp.makeDir();
   console.log(await fp.exists());
@@ -52,7 +52,7 @@ Synchronously forces the underlying filepath to be made as a directory, making p
 
 ```
 import Path from "pathlib-js"
-const fp = new Path("C:\\Users\\Maurice\\Example\\Folder_C");
+const fp = new Path("C:\\Users\\JohnDoe\\Example\\Folder_C");
 console.log(fp.existsSync());
 fp.makeDirSync();
 console.log(fp.existsSync());
@@ -73,7 +73,7 @@ Asynchronously forces the underlying filepath to be made as a file, making paren
 ```
 import Path from "pathlib-js"
 const ES5CompatibilityWrapper = async () => {
-  const fp = new Path("C:\\Users\\Maurice\\Example\\Folder_C\\File_C1.txt");
+  const fp = new Path("C:\\Users\\JohnDoe\\Example\\Folder_C\\File_C1.txt");
   console.log(await fp.exists());
   await fp.makeFile();
   console.log(await fp.exists());
@@ -95,7 +95,7 @@ Synchronously forces the underlying filepath to be made as a file, making parent
 
 ```
 import Path from "pathlib-js"
-const fp = new Path("C:\\Users\\Maurice\\Example\\Folder_C");
+const fp = new Path("C:\\Users\\JohnDoe\\Example\\Folder_C");
 console.log(fp.existsSync());
 fp.makeFileSync();
 console.log(fp.existsSync());

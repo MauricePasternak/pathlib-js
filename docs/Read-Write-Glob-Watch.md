@@ -150,26 +150,26 @@ Example
 ```
 import Path from "pathlib-js"
 const ES5CompatibilityWrapper = async () => {
-  const fp = new Path("C:\\Users\\Maurice\\Example");
+  const fp = new Path("C:\\Users\\JohnDoe\\Example");
   console.log(await fp.glob("**/*.json", { extglob: true }));
 };
 ES5CompatibilityWrapper();
 
 > [
   Path {
-    path: 'C:/Users/Maurice/Example/Folder_B/File_B1.json',
+    path: 'C:/Users/JohnDoe/Example/Folder_B/File_B1.json',
     root: 'C:/',
     basename: 'File_B1.json',
-    dirname: 'C:/Users/Maurice/Example/Folder_B',
+    dirname: 'C:/Users/JohnDoe/Example/Folder_B',
     stem: 'File_B1',
     ext: '.json',
     suffixes: [ 'json' ]
   },
   Path {
-    path: 'C:/Users/Maurice/Example/Folder_B/File_B2.json',
+    path: 'C:/Users/JohnDoe/Example/Folder_B/File_B2.json',
     root: 'C:/',
     basename: 'File_B2.json',
-    dirname: 'C:/Users/Maurice/Example/Folder_B',
+    dirname: 'C:/Users/JohnDoe/Example/Folder_B',
     stem: 'File_B2',
     ext: '.json',
     suffixes: [ 'json' ]
@@ -191,24 +191,24 @@ ES5CompatibilityWrapper();
 
 ```
 import Path from "pathlib-js"
-const fp = new Path("C:\\Users\\Maurice\\Example");
+const fp = new Path("C:\\Users\\JohnDoe\\Example");
 console.log(fp.globSync("**/*.json", { extglob: true }));
 
 > [
   Path {
-    path: 'C:/Users/Maurice/Example/Folder_B/File_B1.json',
+    path: 'C:/Users/JohnDoe/Example/Folder_B/File_B1.json',
     root: 'C:/',
     basename: 'File_B1.json',
-    dirname: 'C:/Users/Maurice/Example/Folder_B',
+    dirname: 'C:/Users/JohnDoe/Example/Folder_B',
     stem: 'File_B1',
     ext: '.json',
     suffixes: [ 'json' ]
   },
   Path {
-    path: 'C:/Users/Maurice/Example/Folder_B/File_B2.json',
+    path: 'C:/Users/JohnDoe/Example/Folder_B/File_B2.json',
     root: 'C:/',
     basename: 'File_B2.json',
-    dirname: 'C:/Users/Maurice/Example/Folder_B',
+    dirname: 'C:/Users/JohnDoe/Example/Folder_B',
     stem: 'File_B2',
     ext: '.json',
     suffixes: [ 'json' ]
@@ -232,7 +232,7 @@ console.log(fp.globSync("**/*.json", { extglob: true }));
 import Path from "pathlib-js"
 
 const ES5CompatibilityWrapper = async () => {
-  const fp = new Path("C:\\Users\\Maurice\\Example");
+  const fp = new Path("C:\\Users\\JohnDoe\\Example");
   const watcher = fp.watch({ ignoreInitial: true });
   watcher.on("add", p => console.log(`Added filepath ${p}`));
   watcher.on("ready", async () => {
@@ -244,6 +244,6 @@ const ES5CompatibilityWrapper = async () => {
 };
 ES5CompatibilityWrapper();
 
-> Added filepath C:\Users\Maurice\Example\Child.json
-> Added filepath C:\Users\Maurice\Example\SecondChild.json
+> Added filepath C:\Users\JohnDoe\Example\Child.json
+> Added filepath C:\Users\JohnDoe\Example\SecondChild.json
 ```

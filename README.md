@@ -57,21 +57,21 @@ yarn add pathlib-js
 
 ## 🛠️ Usage & API Links <a name="usage"></a>
 
-###Understanding parts of a Path
+### Understanding parts of a Path
 `Path` instances carry properties that tie in with the typically-used components of a filepath.
 
 For example, if a particular Path instance was located in a variable `example` and you wished to retrieve the basename of the underlying filepath, you can simply access it by `example.basename`.
 
 <p align="center">
   <a href="" rel="noopener">
- <img width=60% height=450px src="https://i.imgur.com/6hcgFk9.png" alt="File Components of a Unix system"></a>
+ <img width=90% src="https://i.imgur.com/6hcgFk9.png" alt="File Components of a Unix system"></a>
 </p>
 <p align="center">
   <a href="" rel="noopener">
- <img width=60% height=450px src="https://i.imgur.com/jqkqq8L.png" alt="File Components of a Windows system"></a>
+ <img width=90% src="https://i.imgur.com/jqkqq8L.png" alt="File Components of a Windows system"></a>
 </p>
 
-###Defining a path
+### Defining a path
 
 Paths can be defined from a single string or multiple strings which are resolved into a single path.
 
@@ -84,15 +84,15 @@ console.log(fp1.path === fp2.path);
 > true
 ```
 
-###More concrete usages & API
+### More concrete usages & API
 
-- [Manipulating filepath strings]("https://github.com/MauricePasternak/pathlib-js/docs/Filepath_String_Manipulation.md")
-- [Determinine filepath type, stats, existence.]("https://github.com/MauricePasternak/pathlib-js/docs/Filepath_Integrity-Stats-Type.md")
-- [File Structure Traversal - Individual Directories](https://github.com/MauricePasternak/pathlib-js/docs/Traversing_Directories.md")
-- [File Structure Traversal - Tree Structures](https://github.com/MauricePasternak/pathlib-js/docs/Traversing_Trees.md")
-- [Copying, moving, deleting, and changing permissions](https://github.com/MauricePasternak/pathlib-js/docs/Copy-Move-Delete-Chmod.md")
-- [Filepath Creation - Directories, Files, and Symlinks](https://github.com/MauricePasternak/pathlib-js/docs/Generating-Filepaths.md")
-- [Reading, Writing, Globbing, and Watching](https://github.com/MauricePasternak/pathlib-js/docs/Read-Write-Glob-Watch.md")
+- [Manipulating filepath strings](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Filepath_String_Manipulation.md)
+- [Determinine filepath type, stats, existence.](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Filepath_Integrity-Stats-Type.md)
+- [File Structure Traversal - Individual Directories](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Traversing_Directories.md)
+- [File Structure Traversal - Tree Structures](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Traversing_Trees.md)
+- [Copying, moving, deleting, and changing permissions](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Copy-Move-Delete-Chmod.md)
+- [Filepath Creation - Directories, Files, and Symlinks](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Generating-Filepaths.md)
+- [Reading, Writing, Globbing, and Watching](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Read-Write-Glob-Watch.md)
 
 ## 🥇 The Wonderful Libraries that this wraps around <a name = "wrappers"></a>
 

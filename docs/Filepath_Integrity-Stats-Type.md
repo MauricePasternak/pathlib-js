@@ -27,7 +27,7 @@ Example
 ├── Folder_A
 │   ├── File_A1.txt
 │   ├── File_A2.txt
-│   └── File_B1_Symlink -> c:/Users/Maurice/Example/Folder_B/File_B1.json
+│   └── File_B1_Symlink -> c:/Users/JohnDoe/Example/Folder_B/File_B1.json
 └── Folder_B
     ├── File_B1.json
     └── File_B2.json
@@ -43,8 +43,8 @@ Example
 ```
 import Path from "pathlib-js"
 const ES5CompatibilityWrapper = async () => {
-  const fp1 = new Path("C:\\Users\\Maurice\\Example\\FolderA\\File_A1.txt");
-  const fp2 = new Path("C:\\Users\\Maurice\\Example\\FolderA\\File9001.txt");
+  const fp1 = new Path("C:\\Users\\JohnDoe\\Example\\FolderA\\File_A1.txt");
+  const fp2 = new Path("C:\\Users\\JohnDoe\\Example\\FolderA\\File9001.txt");
   console.log(await fp1.exists());
   console.log(await fp2.exists());
 };
@@ -64,8 +64,8 @@ ES5CompatibilityWrapper();
 
 ```
 import Path from "pathlib-js"
-const fp1 = new Path("C:\\Users\\Maurice\\Example\\FolderA\\File_A1.txt");
-const fp2 = new Path("C:\\Users\\Maurice\\Example\\FolderA\\File9001.txt");
+const fp1 = new Path("C:\\Users\\JohnDoe\\Example\\FolderA\\File_A1.txt");
+const fp2 = new Path("C:\\Users\\JohnDoe\\Example\\FolderA\\File9001.txt");
 console.log(fp1.existsSync());
 console.log(fp2.existsSync());
 
@@ -83,8 +83,8 @@ console.log(fp2.existsSync());
 ```
 import Path from "pathlib-js"
 const ES5CompatibilityWrapper = async () => {
-  const fp1 = new Path("C:\\Users\\Maurice\\Example\\FolderA");
-  const fp2 = new Path("C:\\Users\\Maurice\\Example\\FolderA\\File_A1.txt");
+  const fp1 = new Path("C:\\Users\\JohnDoe\\Example\\FolderA");
+  const fp2 = new Path("C:\\Users\\JohnDoe\\Example\\FolderA\\File_A1.txt");
   console.log(await fp1.isDirectory());
   console.log(await fp2.isDirectory());
 };
@@ -104,8 +104,8 @@ ES5CompatibilityWrapper();
 
 ```
 import Path from "pathlib-js"
-const fp1 = new Path("C:\\Users\\Maurice\\Example\\FolderA");
-const fp2 = new Path("C:\\Users\\Maurice\\Example\\FolderA\\File_A1.txt");
+const fp1 = new Path("C:\\Users\\JohnDoe\\Example\\FolderA");
+const fp2 = new Path("C:\\Users\\JohnDoe\\Example\\FolderA\\File_A1.txt");
 console.log(fp1.isDirectorySync());
 console.log(fp2.isDirectorySync());
 
@@ -123,8 +123,8 @@ console.log(fp2.isDirectorySync());
 ```
 import Path from "pathlib-js"
 const ES5CompatibilityWrapper = async () => {
-  const fp1 = new Path("C:\\Users\\Maurice\\Example\\FolderA\\File_A1.txt");
-  const fp2 = new Path("C:\\Users\\Maurice\\Example\\FolderA");
+  const fp1 = new Path("C:\\Users\\JohnDoe\\Example\\FolderA\\File_A1.txt");
+  const fp2 = new Path("C:\\Users\\JohnDoe\\Example\\FolderA");
   console.log(await fp1.isFile());
   console.log(await fp2.isFile());
 };
@@ -144,8 +144,8 @@ ES5CompatibilityWrapper();
 
 ```
 import Path from "pathlib-js"
-const fp1 = new Path("C:\\Users\\Maurice\\Example\\FolderA\\File_A1.txt");
-const fp2 = new Path("C:\\Users\\Maurice\\Example\\FolderA");
+const fp1 = new Path("C:\\Users\\JohnDoe\\Example\\FolderA\\File_A1.txt");
+const fp2 = new Path("C:\\Users\\JohnDoe\\Example\\FolderA");
 console.log(fp1.isFileSync());
 console.log(fp2.isFileSync());
 
@@ -169,8 +169,8 @@ console.log(fp2.isFileSync());
 ```
 import Path from "pathlib-js"
 const ES5CompatibilityWrapper = async () => {
-  const fp1 = new Path("C:\\Users\\Maurice\\Example\\FolderB\\File_B1.json");
-  const fp2 = new Path("C:\\Users\\Maurice\\Example\\FolderA\\File_B1_Symlink.symlink");
+  const fp1 = new Path("C:\\Users\\JohnDoe\\Example\\FolderB\\File_B1.json");
+  const fp2 = new Path("C:\\Users\\JohnDoe\\Example\\FolderA\\File_B1_Symlink.symlink");
   console.log(await fp1.isSymbolicLink());
   console.log(await fp2.isSymbolicLink());
 };
@@ -196,8 +196,8 @@ ES5CompatibilityWrapper();
 
 ```
 import Path from "pathlib-js"
-const fp1 = new Path("C:\\Users\\Maurice\\Example\\FolderB\\File_B1.json");
-const fp2 = new Path("C:\\Users\\Maurice\\Example\\FolderA\\File_B1_Symlink.symlink");
+const fp1 = new Path("C:\\Users\\JohnDoe\\Example\\FolderB\\File_B1.json");
+const fp2 = new Path("C:\\Users\\JohnDoe\\Example\\FolderA\\File_B1_Symlink.symlink");
 console.log(fp1.isSymbolicLinkSync());
 console.log(fp2.isSymbolicLinkSync());
 
@@ -242,10 +242,10 @@ Retrieves the parent directory.
 
 ```
 import Path from "pathlib-js"
-const fp1 = new Path("C:\\Users\\Maurice\\Example\\FolderA\\File_A1.txt");
+const fp1 = new Path("C:\\Users\\JohnDoe\\Example\\FolderA\\File_A1.txt");
 console.log(fp1.parent().path);
 
-> "C:/Users/Maurice/Example/FolderA"
+> "C:/Users/JohnDoe/Example/FolderA"
 ```
 
 ### containsImmediateChild(child) <a name = "#containsImmediateChild"></a>
@@ -262,7 +262,7 @@ console.log(fp1.parent().path);
 ```
 import Path from "pathlib-js"
 const ES5CompatibilityWrapper = async () => {
-  const fp1 = new Path("C:\\Users\\Maurice\\Example\\Folder_A");
+  const fp1 = new Path("C:\\Users\\JohnDoe\\Example\\Folder_A");
   console.log(await fp1.containsImmediateChild("File_90012321.txt"));
   console.log(await fp1.containsImmediateChild("File_A1.txt"));
 };
@@ -270,10 +270,10 @@ ES5CompatibilityWrapper();
 
 > false
 > Path {
-  path: 'C:/Users/Maurice/Example/Folder_A/File_A1.txt',
+  path: 'C:/Users/JohnDoe/Example/Folder_A/File_A1.txt',
   root: 'C:/',
   basename: 'File_A1.txt',
-  dirname: 'C:/Users/Maurice/Example/Folder_A',
+  dirname: 'C:/Users/JohnDoe/Example/Folder_A',
   stem: 'File_A1',
   ext: '.txt',
   suffixes: [ 'txt' ]
@@ -293,16 +293,16 @@ ES5CompatibilityWrapper();
 
 ```
 import Path from "pathlib-js"
-const fp1 = new Path("C:\\Users\\Maurice\\Example\\Folder_A");
+const fp1 = new Path("C:\\Users\\JohnDoe\\Example\\Folder_A");
 console.log(fp1.containsImmediateChildSync("File_90012321.txt"));
 console.log(fp1.containsImmediateChildSync("File_A1.txt"));
 
 > false
 > Path {
-  path: 'C:/Users/Maurice/Example/Folder_A/File_A1.txt',
+  path: 'C:/Users/JohnDoe/Example/Folder_A/File_A1.txt',
   root: 'C:/',
   basename: 'File_A1.txt',
-  dirname: 'C:/Users/Maurice/Example/Folder_A',
+  dirname: 'C:/Users/JohnDoe/Example/Folder_A',
   stem: 'File_A1',
   ext: '.txt',
   suffixes: [ 'txt' ]

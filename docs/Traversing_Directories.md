@@ -31,7 +31,7 @@ Example
 ```
 import Path from "pathlib-js"
 const ES5CompatibilityWrapper = async () => {
-  const fp1 = new Path("C:\\Users\\Maurice\\Example");
+  const fp1 = new Path("C:\\Users\\JohnDoe\\Example");
   console.log(await fp1.readDir());
 };
 
@@ -39,19 +39,19 @@ ES5CompatibilityWrapper();
 
 > [
   Path {
-    path: 'C:/Users/Maurice/Example/Folder_A',
+    path: 'C:/Users/JohnDoe/Example/Folder_A',
     root: 'C:/',
     basename: 'Folder_A',
-    dirname: 'C:/Users/Maurice/Example',
+    dirname: 'C:/Users/JohnDoe/Example',
     stem: 'Folder_A',
     ext: '',
     suffixes: []
   },
   Path {
-    path: 'C:/Users/Maurice/Example/Folder_B',
+    path: 'C:/Users/JohnDoe/Example/Folder_B',
     root: 'C:/',
     basename: 'Folder_B',
-    dirname: 'C:/Users/Maurice/Example',
+    dirname: 'C:/Users/JohnDoe/Example',
     stem: 'Folder_B',
     ext: '',
     suffixes: []
@@ -69,24 +69,24 @@ ES5CompatibilityWrapper();
 
 ```
 import Path from "pathlib-js"
-const fp1 = new Path("C:\\Users\\Maurice\\Example");
+const fp1 = new Path("C:\\Users\\JohnDoe\\Example");
 console.log(await fp1.readDir());
 
 > [
   Path {
-    path: 'C:/Users/Maurice/Example/Folder_A',
+    path: 'C:/Users/JohnDoe/Example/Folder_A',
     root: 'C:/',
     basename: 'Folder_A',
-    dirname: 'C:/Users/Maurice/Example',
+    dirname: 'C:/Users/JohnDoe/Example',
     stem: 'Folder_A',
     ext: '',
     suffixes: []
   },
   Path {
-    path: 'C:/Users/Maurice/Example/Folder_B',
+    path: 'C:/Users/JohnDoe/Example/Folder_B',
     root: 'C:/',
     basename: 'Folder_B',
-    dirname: 'C:/Users/Maurice/Example',
+    dirname: 'C:/Users/JohnDoe/Example',
     stem: 'Folder_B',
     ext: '',
     suffixes: []
@@ -104,7 +104,7 @@ console.log(await fp1.readDir());
 ```
 import Path from "pathlib-js"
 const ES5CompatibilityWrapper = async () => {
-  const fp1 = new Path("C:\\Users\\Maurice\\Example");
+  const fp1 = new Path("C:\\Users\\JohnDoe\\Example");
   for await (const child of fp1.readDirIter()) {
     console.log(child);
   }
@@ -113,20 +113,20 @@ const ES5CompatibilityWrapper = async () => {
 ES5CompatibilityWrapper();
 
 > Path {
-  path: 'C:/Users/Maurice/Example/Folder_A',
+  path: 'C:/Users/JohnDoe/Example/Folder_A',
   root: 'C:/',
   basename: 'Folder_A',
-  dirname: 'C:/Users/Maurice/Example',
+  dirname: 'C:/Users/JohnDoe/Example',
   stem: 'Folder_A',
   ext: '',
   suffixes: []
 }
 
 > Path {
-  path: 'C:/Users/Maurice/Example/Folder_B',
+  path: 'C:/Users/JohnDoe/Example/Folder_B',
   root: 'C:/',
   basename: 'Folder_B',
-  dirname: 'C:/Users/Maurice/Example',
+  dirname: 'C:/Users/JohnDoe/Example',
   stem: 'Folder_B',
   ext: '',
   suffixes: []
@@ -141,26 +141,26 @@ ES5CompatibilityWrapper();
   - `Path` - child filepaths from the current file as Path instances
 
 ```
-const fp1 = new Path("C:\\Users\\Maurice\\Example");
+const fp1 = new Path("C:\\Users\\JohnDoe\\Example");
 for (const child of fp1.readDirIterSync()) {
   console.log(child)
 }
 
 > Path {
-  path: 'C:/Users/Maurice/Example/Folder_A',
+  path: 'C:/Users/JohnDoe/Example/Folder_A',
   root: 'C:/',
   basename: 'Folder_A',
-  dirname: 'C:/Users/Maurice/Example',
+  dirname: 'C:/Users/JohnDoe/Example',
   stem: 'Folder_A',
   ext: '',
   suffixes: []
 }
 
 > Path {
-  path: 'C:/Users/Maurice/Example/Folder_B',
+  path: 'C:/Users/JohnDoe/Example/Folder_B',
   root: 'C:/',
   basename: 'Folder_B',
-  dirname: 'C:/Users/Maurice/Example',
+  dirname: 'C:/Users/JohnDoe/Example',
   stem: 'Folder_B',
   ext: '',
   suffixes: []
