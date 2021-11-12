@@ -1,0 +1,58 @@
+{
+  "name": "pathlib-js",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=12"
+  },
+  "keywords": [
+    "object-oriented",
+    "OOP",
+    "oop",
+    "resolve",
+    "pathlib",
+    "path library",
+    "filepath library",
+    "walk",
+    "tree",
+    "fs",
+    "file",
+    "filepath",
+    "file path",
+    "filesystem",
+    "file system",
+    "copy",
+    "directory",
+    "extra",
+    "mkdirp",
+    "mkdir",
+    "mkdirs",
+    "recursive",
+    "json",
+    "read",
+    "write",
+    "extra",
+    "delete",
+    "remove",
+    "touch",
+    "create",
+    "text",
+    "output",
+    "move",
+    "promise"
+  ],
+  "author": "Maurice Pasternak <maurice.pasternak@utoronto.ca>",
+  "license": "MIT",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "chokidar": "^3.5.2",
+    "fast-glob": "^3.2.7",
+    "fs-extra": "^10.0.0",
+    "normalize-path": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^9.0.13",
+    "@types/node": "^16.11.7",
+    "@types/normalize-path": "^3.0.0"
+  }
+}
