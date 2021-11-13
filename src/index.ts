@@ -740,6 +740,34 @@ class Path {
   }
 
   /**
+   * Asynchronously tests a user's permissions for the underling filepath.
+   * @param mode the permissions to check for.
+   * @returns A boolean of whether the indicated permissions apply to the process invoking this method.
+   */
+  async access(mode?: number) {
+    try {
+      await fse.access(this.path, mode);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * Synchronously tests a user's permissions for the underling filepath.
+   * @param mode the permissions to check for.
+   * @returns A boolean of whether the indicated permissions apply to the process invoking this method.
+   */
+  accessSync(mode?: number) {
+    try {
+      fse.accessSync(this.path, mode);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
    * Asynchronously changes the permissions of the underlying filepath.
    * Caveats: on Windows only the write permission can be changed, and the distinction
    * among the permissions of group, owner or others is not implemented.
