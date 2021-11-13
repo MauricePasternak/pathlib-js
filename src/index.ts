@@ -3,7 +3,6 @@ import fg, { Options as GlobOptions } from "fast-glob";
 import * as fse from "fs-extra";
 import path from "path";
 import chokidar from "chokidar";
-import { platform } from "os";
 
 export interface SystemError {
   address: string;
@@ -24,6 +23,10 @@ export interface PathJSON {
   ext: string;
   suffixes: string[];
 }
+export interface OpenFileOptions {
+  flags: string | number;
+  mode?: number;
+}
 export type JSONObject = { [key: string]: JsonValue };
 export type JsonValue = null | boolean | number | string | JsonValue[] | JSONObject;
 export interface treeBranch {
@@ -31,6 +34,13 @@ export interface treeBranch {
   depth: number;
   children: treeBranch[] | null;
 }
+
+type NonFirstParameters<T extends (first: First, ...args: any) => any, First extends any = any> = T extends (
+  first: First,
+  ...args: infer P
+) => any
+  ? P
+  : never;
 
 class Path {
   root: string;
@@ -886,6 +896,31 @@ class Path {
   }
 
   /**
+   *
+   * @param openOptions
+   * @returns
+   */
+  async open(openOptions: OpenFileOptions) {
+    return await fse.open(this.path, openOptions.flags, openOptions.mode);
+  }
+
+  async read(
+    buffer: fse.ArrayBufferView,
+    offset: number,
+    length: number,
+    position: number | null,
+    openOptions?: OpenFileOptions
+  ) {
+    const fd = await this.open(openOptions ? openOptions : { flags: "r" });
+    return await fse.read(fd, buffer, offset, length, position);
+  }
+
+  async write(data: any, offset?: number | undefined, encoding?: string | undefined, openOptions?: OpenFileOptions) {
+    const fd = await this.open(openOptions ? openOptions : { flags: "w" });
+    return await fse.write(fd, data, offset, encoding);
+  }
+
+  /**
    * Asynchronously parses data coming from a
    * @param options.encoding. The encoding to use in the write operation. Defaults to "utf8".
    * @param options.flag. The string denoting the mode in which the file is opened. Defaults to "r".
@@ -1031,3 +1066,10 @@ class Path {
 }
 
 export default Path;
+
+async function test() {
+  const p = new Path("C:\\Users\\Maurice\\Documents\\MATLAB\\ExploreASL\\ExploreASL.m");
+  const { bytesRead, buffer } = await p.read(Buffer.alloc(100), 0, 100, null);
+}
+
+test();
