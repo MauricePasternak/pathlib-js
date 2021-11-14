@@ -6,6 +6,7 @@
 - [readDirSync()](#readDirSync)
 - [readDirIter()](#readDirIter)
 - [readDirIterSync()](#readDirIterSync)
+- [getPathsNLevelsAway()](#getPathsNLevelsAway)
 
 ## File Structure Example for this API
 

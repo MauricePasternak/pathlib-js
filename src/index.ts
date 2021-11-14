@@ -1101,11 +1101,3 @@ class Path {
 }
 
 export default Path;
-
-const ES5CompatibilityWrapper = async () => {
-  const fp = new Path("C:\\Users\\Maurice\\Example\\Folder_A");
-  for await (const childPath of await fp.getPathsNLevelsAway(0, true, { onlyFiles: false })) {
-    console.log(childPath);
-  }
-};
-ES5CompatibilityWrapper();
