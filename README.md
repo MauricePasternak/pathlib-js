@@ -1,23 +1,24 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width=200px height=200px src="https://i.imgur.com/ye7jjsX.jpg" alt="Project logo"></a>
+ <img width=50% src="https://i.imgur.com/h3FRe7k.png" alt="Project logo"></a>
 </p>
 
-<h3 align="center">pathlib-js</h3>
 
-<div align="center">
+
+
+
+---
+
+<h3 align="center"> Object-oriented Filepath Operations in Javascript & Typescript
+</h3>
+
+<div align="left">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
 [![GitHub Issues](https://img.shields.io/github/issues/MauricePasternak/pathlib-js.svg)](https://github.com/MauricePasternak/pathlib-js/issues)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 
 </div>
-
----
-
-<p align="center"> Object-oriented Filepath Operations in Javascript & Typescript
-    <br> 
-</p>
 
 ## 📝 Table of Contents
 
@@ -64,11 +65,11 @@ For example, if a particular Path instance was located in a variable `example` a
 
 <p align="center">
   <a href="" rel="noopener">
- <img width=90% src="https://i.imgur.com/6hcgFk9.png" alt="File Components of a Unix system"></a>
+ <img width=80% src="https://i.imgur.com/WTyTdJV.png" alt="File Components of a Unix system"></a>
 </p>
 <p align="center">
   <a href="" rel="noopener">
- <img width=90% src="https://i.imgur.com/jqkqq8L.png" alt="File Components of a Windows system"></a>
+ <img width=80% src="https://i.imgur.com/4gu8u25.png" alt="File Components of a Windows system"></a>
 </p>
 
 ### Defining a path

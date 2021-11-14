@@ -27,7 +27,7 @@ Example
 
 - Parameters:
 
-  - `callback` -- `(p: Path, ...args: unknown[]) => void` -- A callback to invoke for each encountered descentdant filepath. The callback must accept its first argument to be a `Path` instance.
+  - `callback` -- `(p: Path, ...args: unknown[]) => void` -- A callback to invoke for each encountered descendant filepath. The callback must accept its first argument to be a `Path` instance.
 
 ```
 import Path from "pathlib-js"
@@ -52,7 +52,7 @@ ES5CompatibilityWrapper();
 
 - Parameters:
 
-  - `callback` -- `(p: Path, ...args: unknown[]) => void` -- A callback to invoke for each encountered descentdant filepath. The callback must accept its first argument to be a `Path` instance.
+  - `callback` -- `(p: Path, ...args: unknown[]) => void` -- A callback to invoke for each encountered descendant filepath. The callback must accept its first argument to be a `Path` instance.
 
 ```
 import Path from "pathlib-js"
@@ -69,7 +69,7 @@ fp1.walk(p => console.log(p.path));
 
 ### tree([asString, useSystemPathDelimiter]) <a name = "#tree"></a>
 
-**Asynchronously** traverses the tree structure of the directory system, starting from the current instances as the root and returns a nested Object representation of the tree structure. Each branching of the tree is comprised of an object with two properties: "filepath", which is the Path instance of the filepath at that location, and "children" which is either null in the case of a non-directory or an array of more branch objects.
+**Asynchronously** traverses the tree structure of the directory system, starting from the current instances as the root and returns a nested Object representation of the tree structure. Each branching of the tree is comprised of an object with two properties: `filepath`, which is the Path instance of the filepath at that location, and `children` which is either `null` in the case of a non-directory or an array of more branch objects.
 
 - Parameters:
 
