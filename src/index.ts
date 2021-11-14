@@ -482,13 +482,8 @@ class Path {
     }
   }
 
-  /**
-   * Asynchronously globs for filepaths stemming from the Path instance.
-   * @param patterns A string or collection of strings representing glob patterns to search.
-   * @param options FastGlob options, including whether to restrict the globbing to files, directories, etc.
-   * @returns An array of globbed Path instances.
-   */
-  async glob(patterns: string | string[], options?: GlobOptions) {
+  // Private utility function for appending glob patterns to the underlying filepath.
+  private _prepGlobPatterns(patterns: string | string[]) {
     const asArr = [];
     if (Array.isArray(patterns)) {
       for (const pat of patterns) {
@@ -497,8 +492,31 @@ class Path {
     } else {
       asArr.push([this.path, patterns].join("/"));
     }
-    const globs = await fg(asArr, options);
+    return asArr;
+  }
+
+  /**
+   * Asynchronously globs for filepaths stemming from the Path instance.
+   * @param patterns A string or collection of strings representing glob patterns to search.
+   * @param options FastGlob options, including whether to restrict the globbing to files, directories, etc.
+   * @returns An array of globbed Path instances.
+   */
+  async glob(patterns: string | string[], options?: GlobOptions) {
+    const globs = await fg(this._prepGlobPatterns(patterns), options);
     return globs.map(p => new Path(p));
+  }
+
+  /**
+   * Asynchronously glob for filepaths stemming from the Path instance while yielding them instead of returning
+   * an immediate array.
+   * @param patterns A string or collection of strings representing glob patterns to search.
+   * @param options FastGlob options, including whether to restrict the globbing to files, directories, etc.
+   * @yields Path instances.
+   */
+  async *globIter(patterns: string | string[], options?: GlobOptions) {
+    for await (const fp of fg.stream(this._prepGlobPatterns(patterns), options)) {
+      yield typeof fp === "string" ? new Path(fp) : new Path(fp.toString());
+    }
   }
 
   /**
@@ -508,15 +526,7 @@ class Path {
    * @returns An array of globbed Path instances.
    */
   globSync(patterns: string | string[], options?: GlobOptions) {
-    const asArr = [];
-    if (Array.isArray(patterns)) {
-      for (const pat of patterns) {
-        asArr.push([this.path, pat].join("/"));
-      }
-    } else {
-      asArr.push([this.path, patterns].join("/"));
-    }
-    return fg.sync(asArr, options).map(p => new Path(p));
+    return fg.sync(this._prepGlobPatterns(patterns), options).map(p => new Path(p));
   }
 
   /**
@@ -559,6 +569,36 @@ class Path {
         yield this.join(fileDirent.name);
       } else filesLeft = false;
     }
+  }
+
+  /**
+   * Retrieves filepaths located exactly N levels away from the underlying filepath.
+   * Utilizes globbing under the hood, thereby requiring glob options.
+   * @param depth The depth to retrieve filepaths from.
+   * If positive, will produce descendant filepaths; if negative will produce ancestor/parent filepaths.
+   * For example, with a structure like /home/JohnDoe/Documents, a value of -1 will retrieve all filepaths
+   * at the level of Documents, including Documents itself if the right glob options was specified.
+   * @param asIterator Whether the result should be an AsyncIterator of Path instances instead of an array of them.
+   * Defaults to false.
+   * @param options Options governing
+   * @returns Either an Array of Path instances if asIterator was false, otherwise returns an AsyncIterator of
+   * Path instances.
+   */
+  async getPathsNLevelsAway(depth: number, asIterator = false, options?: GlobOptions) {
+    if (depth === 0) throw new Error("Depth cannot be zero");
+    // Child globbing
+    if (depth > 0) {
+      const globStar = [...Array(depth).keys()].reduce(acc => acc + "*", "");
+      return asIterator ? this.globIter(globStar, options) : await this.glob(globStar, options);
+    }
+    // Parent globbing
+    let targetParent = this.parent();
+    depth += 1;
+    while (depth < 0) {
+      targetParent = targetParent.parent();
+      depth += 1;
+    }
+    return asIterator ? targetParent.globIter("*", options) : await targetParent.glob("*", options);
   }
 
   /**
