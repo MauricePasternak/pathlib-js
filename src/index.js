@@ -140,13 +140,12 @@ var Path = /** @class */ (function () {
             throw new Error("Cannot instantiate a new Path instance on an empty string");
         }
         this.path = (0, normalize_path_1.default)(path_1.default.resolve.apply(path_1.default, __spreadArray([], __read(paths), false)));
-        var _b = path_1.default.parse(this.path), dir = _b.dir, root = _b.root, base = _b.base, name = _b.name, ext = _b.ext;
+        var _b = path_1.default.parse(this.path), dir = _b.dir, root = _b.root, base = _b.base, ext = _b.ext;
         this.root = root;
         this.basename = base;
         this.dirname = dir;
-        this.stem = name;
         this.ext = ext;
-        _a = __read(this.basename.split(".")), this.suffixes = _a.slice(1);
+        _a = __read(this.basename.split(".")), this.stem = _a[0], this.suffixes = _a.slice(1);
     }
     /**
      * Get a Path representation of the current working directory.

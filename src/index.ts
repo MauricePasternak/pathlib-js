@@ -109,13 +109,12 @@ class Path {
     }
 
     this.path = normalize(path.resolve(...paths));
-    const { dir, root, base, name, ext } = path.parse(this.path);
+    const { dir, root, base, ext } = path.parse(this.path);
     this.root = root;
     this.basename = base;
     this.dirname = dir;
-    this.stem = name;
     this.ext = ext;
-    [, ...this.suffixes] = this.basename.split(".");
+    [this.stem, ...this.suffixes] = this.basename.split(".");
   }
 
   /**
