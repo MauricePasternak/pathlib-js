@@ -36,21 +36,6 @@ export interface treeBranch {
   children: treeBranch[] | null;
 }
 
-type NonFirstParameters<T extends (first: First, ...args: any) => any, First extends any = any> = T extends (
-  first: First,
-  ...args: infer P
-) => any
-  ? P
-  : never;
-
-type AllButLast<T extends any[]> = T extends [...infer All, infer Last] ? All : never;
-type NonLastParameters<T extends (...args: any) => any, Last extends any = any> = T extends (...args: infer P) => any
-  ? AllButLast<P>
-  : never;
-
-const Foo = (a: number, b: string, c: boolean) => {};
-type Foo = NonLastParameters<typeof Foo>;
-
 class Path {
   root: string;
   path: string;
@@ -983,7 +968,6 @@ class Path {
 
   /**
    * Asynchronously writes buffer-like data into the underlying file.
-   * @param data The string data to write to the file instead of a buffer.
    * @param buffer the Buffer which should be written into the underlying file.
    * @param offset The position in the buffer from which to begin writing
    * @param length The number of bytes to write.
@@ -1175,11 +1159,3 @@ class Path {
 }
 
 export default Path;
-
-async function test() {
-  const p = new Path("C:\\Users\\Maurice\\Documents\\Foo.txt");
-  const r = await p.write(Buffer.from("foo", "ascii"), 0, undefined);
-  console.log(r);
-}
-
-test();
