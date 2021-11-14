@@ -1,7 +1,13 @@
-# Reading, Writing,  Globbing, and Watching
+# Reading, Writing, Globbing, and Watching
 
 ## Associated Path Methods
 
+- [open()](#open)
+- [openSync()](#openSync)
+- [read()](#read)
+- [readSync()](#readSync)
+- [write()](#write)
+- [writeSync()](#writeSync)
 - [readFile()](#readFile)
 - [readFileSync()](#readFileSync)
 - [writeFile()](#writeFile)
@@ -11,6 +17,8 @@
 - [writeJSON()](#writeJSON)
 - [writeJSONSync()](#writeJSONSync)
 - [glob()](#glob)
+- [globIter()](#globIter)
+- [globSync()](#globSync)
 - [watch()](#watch)
 
 ## File Structure Example for this API
@@ -26,6 +34,118 @@ Example
     ├── File_B1.json
     └── File_B2.json
 ```
+
+### open(openOptions) <a name = "#open"></a>
+
+**Asynchronously** opens the underlying filepath with the indicated flags and permissions.
+
+- Parameters:
+
+  - `openOptions` -- `Object` -- An object with the following properties:
+    - `ensureExists` -- Whether to force the file to exist, creating parent directories as needed.
+    - `flags` -- The open mode in which the file should be opened (i.e. "r" for read, "r+" for read & write)
+    - `mode` -- The permissions which should be set to the file during the operation.
+
+- Returns:
+  - `Promise<number>` - A number representing the file descriptor of the opened file.
+
+### openSync(openOptions) <a name = "#openSync"></a>
+
+**Asynchronously** opens the underlying filepath with the indicated flags and permissions.
+
+- Parameters:
+
+  - `openOptions` -- `Object` -- An object with the following properties:
+    - `ensureExists` -- Whether to force the file to exist, creating parent directories as needed.
+    - `flags` -- The open mode in which the file should be opened (i.e. "r" for read, "r+" for read & write)
+    - `mode` -- The permissions which should be set to the file during the operation.
+
+- Returns:
+  - `number` - A number representing the file descriptor of the opened file.
+
+### read(buffer, offset, length, position [, openOptions]) <a name = "#read"></a>
+
+**Asynchronously** reads the contents of the underlying filepath into a given Buffer.
+
+- Parameters:
+
+  - `buffer` -- `NodeJS.TypedArray | DataView` -- A buffer or buffer-like container for bytes to be written into using the read content from the file.
+  - `offset` -- `number` -- The position in `buffer` to write the data to.
+  - `length` -- `number` -- The number of bytes to write into `buffer`.
+  - `position` -- `number | null` -- Where to begin reading from in the file.
+    - If position is null or -1 , data will be read from the current file position, and the file position will be updated.
+    - If position is a positive integer, the file position will be unchanged.
+  - `openOptions` -- `Object` -- An object with the following properties:
+    - `ensureExists` -- Whether to force the file to exist, creating parent directories as needed.
+    - `flags` -- The open mode in which the file should be opened (i.e. "r" for read, "r+" for read & write)
+    - `mode` -- The permissions which should be set to the file during the operation.
+
+- Returns:
+  - `Promise<Object>` - An Object with two properties:
+    - `bytesRead` -- `number` -- The number of bytes which were read from the file.
+    - `buffer` -- `NodeJS.TypedArray | DataView` -- The updated `Buffer` with the contents of the file.
+
+### readSync(buffer, offset, length, position [, openOptions]) <a name = "#readSync"></a>
+
+**Synchronously** reads the contents of the underlying filepath into a given Buffer.
+
+- Parameters:
+
+  - `buffer` -- `NodeJS.TypedArray | DataView` -- A buffer or buffer-like container for bytes to be written into using the read content from the file.
+  - `offset` -- `number` -- The position in `buffer` to write the data to.
+  - `length` -- `number` -- The number of bytes to write into `buffer`.
+  - `position` -- `number | null` -- Where to begin reading from in the file.
+    - If position is null or -1 , data will be read from the current file position, and the file position will be updated.
+    - If position is a positive integer, the file position will be unchanged.
+  - `openOptions` -- `Object` -- An object with the following properties:
+    - `ensureExists` -- Whether to force the file to exist, creating parent directories as needed.
+    - `flags` -- The open mode in which the file should be opened (i.e. "r" for read, "r+" for read & write)
+    - `mode` -- The permissions which should be set to the file during the operation.
+
+- Returns:
+  - `Object` - An Object with two properties:
+    - `bytesRead` -- `number` -- The number of bytes which were read from the file.
+    - `buffer` -- `NodeJS.TypedArray | DataView` -- The updated `Buffer` with the contents of the file.
+
+### write(buffer [, offset, length, position, openOptions]) <a name = "#write"></a>
+
+**Asynchronously** writes from a buffer or buffer-like container into the underlying file.
+
+- Parameters:
+
+  - `buffer` -- `NodeJS.TypedArray | DataView` -- A buffer or buffer-like container for bytes to be written into using the read content from the file.
+  - `offset` -- `number` -- The position in `buffer` to write the data to.
+  - `length` -- `number` -- The number of bytes to write into `buffer`.
+  - `position` -- `number` -- Where to begin writing into the file.
+  - `openOptions` -- `Object` -- An object with two properties:
+    - `ensureExists` -- Whether to force the file to exist, creating parent directories as needed.
+    - `flags` -- The open mode in which the file should be opened (i.e. "w" for write)
+    - `mode` -- The permissions which should be set to the file during the operation.
+
+- Returns:
+  - `Promise<Object>` - An Object with two properties:
+    - `bytesWritten` -- `number` -- The number of bytes which were read from the file.
+    - `buffer` -- `NodeJS.TypedArray | DataView` -- The buffer or buffer-like that was written into the file.
+
+### writeSync(buffer [, offset, length, position, openOptions]) <a name = "#writeSync"></a>
+
+**Synchronously** writes from a buffer or buffer-like container into the underlying file.
+
+- Parameters:
+
+  - `buffer` -- `NodeJS.TypedArray | DataView` -- A buffer or buffer-like container for bytes to be written into using the read content from the file.
+  - `offset` -- `number` -- The position in `buffer` to write the data to.
+  - `length` -- `number` -- The number of bytes to write into `buffer`.
+  - `position` -- `number` -- Where to begin writing into the file.
+  - `openOptions` -- `Object` -- An object with two properties:
+    - `ensureExists` -- Whether to force the file to exist, creating parent directories as needed.
+    - `flags` -- The open mode in which the file should be opened (i.e. "w" for write)
+    - `mode` -- The permissions which should be set to the file during the operation.
+
+- Returns:
+  - `Object` - An Object with two properties:
+    - `bytesWritten` -- `number` -- The number of bytes which were read from the file.
+    - `buffer` -- `NodeJS.TypedArray | DataView` -- The buffer or buffer-like that was written into the file.
 
 ### readFile([options]) <a name = "#readFile"></a>
 
@@ -135,7 +255,7 @@ Example
     - `encoding` -- `string` -- The encoding to use when parsing file content. Defaults to "utf8".
     - `flag` -- `string` -- the mode that the file should be opened in. Defaults to "w".
 
-### glob(data [, options]) <a name = "#glob"></a>
+### glob(patterns [, options]) <a name = "#glob"></a>
 
 **Asynchronously** globs for filepaths stemming from the underlying path.
 
@@ -145,7 +265,7 @@ Example
   - `options` -- `fast-glob.Options` -- The globbing options. For properties and their explanations, [please refer to the documentation in the `fast-glob` repository.](https://github.com/mrmlnc/fast-glob/blob/master/README.md)
 
 - Returns:
-  - `Path[]` - An array of retrieved `Path` instances which matched the glob pattern(s).
+  - `Promise<Path[]>` - An array of retrieved `Path` instances which matched the glob pattern(s).
 
 ```
 import Path from "pathlib-js"
@@ -177,7 +297,50 @@ ES5CompatibilityWrapper();
 ]
 ```
 
-### globSync(data [, options]) <a name = "#globSync"></a>
+### globIter(patterns [, options]) <a name = "#globIter"></a>
+
+Allows for asynchronous iteration over a glob query, yielding Path instances of matched directories.
+
+- Parameters:
+
+  - `patterns` -- `string | string[]` -- Glob patterns to match against in locating filepaths that are automatically appended to the underlying filepath.
+  - `options` -- `fast-glob.Options` -- The globbing options. For properties and their explanations, [please refer to the documentation in the `fast-glob` repository.](https://github.com/mrmlnc/fast-glob/blob/master/README.md)
+
+- Yields:
+  - `Promise<Path>` - Yields Path instances which matched the indicated patterns.
+
+```
+import Path from "pathlib-js"
+const ES5CompatibilityWrapper = async () => {
+  const fp = new Path("C:\\Users\\JohnDoe\\Example");
+  for await (const childPath of fp.globIter("*", { onlyDirectories: true })) {
+    console.log(childPath);
+  }
+};
+ES5CompatibilityWrapper();
+
+> Path {
+  path: 'C:/Users/JohnDoe/Example/Folder_A',
+  root: 'C:/',
+  basename: 'Folder_A',
+  dirname: 'C:/Users/JohnDoe/Example',
+  stem: 'Folder_A',
+  ext: '',
+  suffixes: []
+}
+> Path {
+  path: 'C:/Users/JohnDoe/Example/Folder_B',
+  root: 'C:/',
+  basename: 'Folder_B',
+  dirname: 'C:/Users/JohnDoe/Example',
+  stem: 'Folder_B',
+  ext: '',
+  suffixes: []
+}
+```
+
+
+### globSync(patterns [, options]) <a name = "#globSync"></a>
 
 **Synchronously** globs for filepaths stemming from the underlying path.
 

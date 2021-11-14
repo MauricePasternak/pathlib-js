@@ -34,7 +34,7 @@ If you're coming from Python, think of it this way: this library is to NodeJS's 
 
 Avoids the hassle of string preprocessing, filepath normalization, and passing filepaths between the multitude of functions found in nodeJS `filesystem` and `path` modules.
 
-A single class `Path` wraps around an filepath and presents an API for accessing its components, globbing, watching, reading, writing, traversing a tree structure, etc.
+A single class `Path` wraps around a filepath and exposes an API for accessing its components, globbing, watching, reading, writing, traversing a tree structure, etc.
 
 This is not the first package to take an OOP approach to filepaths in Javascript, but hopes to be more feature-rich than others from 5-6 years ago.
 
@@ -59,6 +59,7 @@ yarn add pathlib-js
 ## 🛠️ Usage & API Links <a name="usage"></a>
 
 ### Understanding parts of a Path
+
 `Path` instances carry properties that tie in with the typically-used components of a filepath.
 
 For example, if a particular Path instance was located in a variable `example` and you wished to retrieve the basename of the underlying filepath, you can simply access it by `example.basename`.

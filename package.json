@@ -1,8 +1,13 @@
 {
   "name": "pathlib-js",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "engines": {
     "node": ">=12"
+  },
+  "homepage": "https://github.com/MauricePasternak/pathlib-js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MauricePasternak/pathlib-js"
   },
   "keywords": [
     "object-oriented",

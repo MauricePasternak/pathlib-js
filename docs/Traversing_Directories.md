@@ -6,6 +6,7 @@
 - [readDirSync()](#readDirSync)
 - [readDirIter()](#readDirIter)
 - [readDirIterSync()](#readDirIterSync)
+- [getPathsNLevelsAway()](#getPathsNLevelsAway)
 
 ## File Structure Example for this API
 
@@ -145,6 +146,55 @@ const fp1 = new Path("C:\\Users\\JohnDoe\\Example");
 for (const child of fp1.readDirIterSync()) {
   console.log(child)
 }
+
+> Path {
+  path: 'C:/Users/JohnDoe/Example/Folder_A',
+  root: 'C:/',
+  basename: 'Folder_A',
+  dirname: 'C:/Users/JohnDoe/Example',
+  stem: 'Folder_A',
+  ext: '',
+  suffixes: []
+}
+
+> Path {
+  path: 'C:/Users/JohnDoe/Example/Folder_B',
+  root: 'C:/',
+  basename: 'Folder_B',
+  dirname: 'C:/Users/JohnDoe/Example',
+  stem: 'Folder_B',
+  ext: '',
+  suffixes: []
+}
+```
+
+### getPathsNLevelsAway(depth [, asIterator, options]) <a name = "#getPathsNLevelsAway"></a>
+
+Allows for asynchronous retrieval of filepaths N directory levels away from the underlying filepath.
+
+- Parameters:
+  - `depth` -- `number` -- The number of directory levels from the current filepath that should be looked at. More particularly:
+    - If the depth is greater than or equal to 1, then child/grandchild/etc. filepaths will be retrieved.
+    - If the depth is equal to 0, then sibling filepaths will be retrieved.
+    - If the depth is less than 0, then parent/grandparent/etc. filepaths will be retrieved.
+  - `asIterator` -- `boolean` -- If false, then the function returns a Promise that resolves into an Array of `Path` instances. If true, then the function returns a Promise that resolves to an AsyncIterator of Path instances. For this latter case, it is recommended to use the ES5 syntax: `await (const childPath of await instance.getPathsNLevelsAway())` 
+  - `options` -- `fast-glob.Options` -- The globbing options. For properties and their explanations, [please refer to the documentation in the `fast-glob` repository.](https://github.com/mrmlnc/fast-glob/blob/master/README.md)
+
+- Returns:
+  - `Promise<Path[]>` - If `asIterator` is `false`, this function's Promise resolves into an array of `Path` instances.
+
+- Yields:
+  - `Promise<Path>` - If `asIterator` is `true`, this function can yield `Path` instances at the indicated `depth`
+
+```
+const ES5CompatibilityWrapper = async () => {
+  const fp = new Path("C:\\Users\\JohnDoe\\Example\\Folder_A");
+  for await (const childPath of await fp.getPathsNLevelsAway(0, true, { onlyFiles: false })) {
+    console.log(childPath);
+  }
+};
+
+ES5CompatibilityWrapper()
 
 > Path {
   path: 'C:/Users/JohnDoe/Example/Folder_A',
