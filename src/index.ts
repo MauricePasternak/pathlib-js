@@ -575,9 +575,9 @@ class Path {
    * Retrieves filepaths located exactly N levels away from the underlying filepath.
    * Utilizes globbing under the hood, thereby requiring glob options.
    * @param depth The depth to retrieve filepaths from.
-   * If positive, will produce descendant filepaths; if negative will produce ancestor/parent filepaths.
-   * For example, with a structure like /home/JohnDoe/Documents, a value of -1 will retrieve all filepaths
-   * at the level of Documents, including Documents itself if the right glob options was specified.
+   * If greater than or equal to 1, will retrieve child/grandchild/etc. paths.
+   * If equal to 0, will retrieve the current filepath and its siblings.
+   * If less than 0, will retrieve parent/grandparent/etc paths.
    * @param asIterator Whether the result should be an AsyncIterator of Path instances instead of an array of them.
    * Defaults to false.
    * @param options Options governing
@@ -585,7 +585,9 @@ class Path {
    * Path instances.
    */
   async getPathsNLevelsAway(depth: number, asIterator = false, options?: GlobOptions) {
-    if (depth === 0) throw new Error("Depth cannot be zero");
+    // Sanity check; child globbing only makes sense if the underlying filepath is a directory
+    if (depth > 1 && !(await this.isDirectory()))
+      throw new Error(`Cannot retrieve downstream filepaths for non-directory filepaths`);
     // Child globbing
     if (depth > 0) {
       const globStar = [...Array(depth).keys()].reduce(acc => acc + "*", "");
@@ -594,7 +596,7 @@ class Path {
     // Parent globbing
     let targetParent = this.parent();
     depth += 1;
-    while (depth < 0) {
+    while (depth < 1) {
       targetParent = targetParent.parent();
       depth += 1;
     }
@@ -1099,3 +1101,11 @@ class Path {
 }
 
 export default Path;
+
+const ES5CompatibilityWrapper = async () => {
+  const fp = new Path("C:\\Users\\Maurice\\Example\\Folder_A");
+  for await (const childPath of await fp.getPathsNLevelsAway(0, true, { onlyFiles: false })) {
+    console.log(childPath);
+  }
+};
+ES5CompatibilityWrapper();

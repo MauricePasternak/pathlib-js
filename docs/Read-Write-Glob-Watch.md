@@ -11,6 +11,8 @@
 - [writeJSON()](#writeJSON)
 - [writeJSONSync()](#writeJSONSync)
 - [glob()](#glob)
+- [globIter()](#globIter)
+- [globSync()](#globSync)
 - [watch()](#watch)
 
 ## File Structure Example for this API
@@ -135,7 +137,7 @@ Example
     - `encoding` -- `string` -- The encoding to use when parsing file content. Defaults to "utf8".
     - `flag` -- `string` -- the mode that the file should be opened in. Defaults to "w".
 
-### glob(data [, options]) <a name = "#glob"></a>
+### glob(patterns [, options]) <a name = "#glob"></a>
 
 **Asynchronously** globs for filepaths stemming from the underlying path.
 
@@ -145,7 +147,7 @@ Example
   - `options` -- `fast-glob.Options` -- The globbing options. For properties and their explanations, [please refer to the documentation in the `fast-glob` repository.](https://github.com/mrmlnc/fast-glob/blob/master/README.md)
 
 - Returns:
-  - `Path[]` - An array of retrieved `Path` instances which matched the glob pattern(s).
+  - `Promise<Path[]>` - An array of retrieved `Path` instances which matched the glob pattern(s).
 
 ```
 import Path from "pathlib-js"
@@ -177,7 +179,50 @@ ES5CompatibilityWrapper();
 ]
 ```
 
-### globSync(data [, options]) <a name = "#globSync"></a>
+### globIter(patterns [, options]) <a name = "#globIter"></a>
+
+Allows for asynchronous iteration over a glob query, yielding Path instances of matched directories.
+
+- Parameters:
+
+  - `patterns` -- `string | string[]` -- Glob patterns to match against in locating filepaths that are automatically appended to the underlying filepath.
+  - `options` -- `fast-glob.Options` -- The globbing options. For properties and their explanations, [please refer to the documentation in the `fast-glob` repository.](https://github.com/mrmlnc/fast-glob/blob/master/README.md)
+
+- Yields:
+  - `Promise<Path>` - Yields Path instances which matched the indicated patterns.
+
+```
+import Path from "pathlib-js"
+const ES5CompatibilityWrapper = async () => {
+  const fp = new Path("C:\\Users\\JohnDoe\\Example");
+  for await (const childPath of fp.globIter("*", { onlyDirectories: true })) {
+    console.log(childPath);
+  }
+};
+ES5CompatibilityWrapper();
+
+> Path {
+  path: 'C:/Users/JohnDoe/Example/Folder_A',
+  root: 'C:/',
+  basename: 'Folder_A',
+  dirname: 'C:/Users/JohnDoe/Example',
+  stem: 'Folder_A',
+  ext: '',
+  suffixes: []
+}
+> Path {
+  path: 'C:/Users/JohnDoe/Example/Folder_B',
+  root: 'C:/',
+  basename: 'Folder_B',
+  dirname: 'C:/Users/JohnDoe/Example',
+  stem: 'Folder_B',
+  ext: '',
+  suffixes: []
+}
+```
+
+
+### globSync(patterns [, options]) <a name = "#globSync"></a>
 
 **Synchronously** globs for filepaths stemming from the underlying path.
 
