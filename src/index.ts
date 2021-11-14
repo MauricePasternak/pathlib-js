@@ -24,6 +24,7 @@ export interface PathJSON {
   suffixes: string[];
 }
 export interface OpenFileOptions {
+  ensureExists?: boolean;
   flags: string | number;
   mode?: number;
 }
@@ -41,6 +42,14 @@ type NonFirstParameters<T extends (first: First, ...args: any) => any, First ext
 ) => any
   ? P
   : never;
+
+type AllButLast<T extends any[]> = T extends [...infer All, infer Last] ? All : never;
+type NonLastParameters<T extends (...args: any) => any, Last extends any = any> = T extends (...args: infer P) => any
+  ? AllButLast<P>
+  : never;
+
+const Foo = (a: number, b: string, c: boolean) => {};
+type Foo = NonLastParameters<typeof Foo>;
 
 class Path {
   root: string;
@@ -896,14 +905,48 @@ class Path {
   }
 
   /**
-   *
-   * @param openOptions
-   * @returns
+   * Asynchronously opens a file and returns its file descriptor.
+   * @param openOptions.ensureExists Whether to force the file to be touched first, including forcing parent directories to
+   * exist. Note that this will not work for files that lack an extension.
+   * @param openOptions.flags A string denoting the mode in which this file should be opened.
+   * Typically "r" for read, "w" for write, and "a" for append.
+   * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
+   * @returns The numeric file descriptor.
    */
   async open(openOptions: OpenFileOptions) {
+    // Ensure that the file exists
+    if (openOptions.ensureExists && this.suffixes.length && !(await this.isFile())) {
+      await this.makeFile();
+    }
     return await fse.open(this.path, openOptions.flags, openOptions.mode);
   }
 
+  /**
+   * Synchronously opens a file and returns its file descriptor.
+   * @param openOptions.ensureExists Whether to force the file to be touched first, including forcing parent directories to
+   * exist. Note that this will not work for files that lack an extension.
+   * @param openOptions.flags A string denoting the mode in which this file should be opened.
+   * Typically "r" for read, "w" for write, and "a" for append.
+   * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
+   * @returns The numeric file descriptor.
+   */
+  openSync(openOptions: OpenFileOptions) {
+    return fse.openSync(this.path, openOptions.flags, openOptions.mode);
+  }
+
+  /**
+   * Asynchronously reads a portion of the data from the underlying file.
+   * @param buffer The Buffer that the data will be written to.
+   * @param offset The position in buffer to write the data to.
+   * @param length The number of bytes to read.
+   * @param position Specifies where to begin reading from in the file.
+   * If position is null or -1 , data will be read from the current file position, and the file position will be updated.
+   * If position is an integer, the file position will be unchanged.
+   * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
+   * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
+   * @returns An object with the properties of buffer, which is the updated buffer, and bytesRead, which is the number of
+   * bytes that were read from the file.
+   */
   async read(
     buffer: fse.ArrayBufferView,
     offset: number,
@@ -915,16 +958,76 @@ class Path {
     return await fse.read(fd, buffer, offset, length, position);
   }
 
-  async write(data: any, offset?: number | undefined, encoding?: string | undefined, openOptions?: OpenFileOptions) {
-    const fd = await this.open(openOptions ? openOptions : { flags: "w" });
-    return await fse.write(fd, data, offset, encoding);
+  /**
+   * Synchronously reads a portion of the data from the underlying file.
+   * @param buffer The Buffer that the data will be written to.
+   * @param offset The position in buffer to write the data to.
+   * @param length The number of bytes to read.
+   * @param position Specifies where to begin reading from in the file.
+   * If position is null or -1 , data will be read from the current file position, and the file position will be updated.
+   * If position is an integer, the file position will be unchanged.
+   * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
+   * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
+   * @returns The number of bytes read.
+   */
+  readSync(
+    buffer: fse.ArrayBufferView,
+    offset: number,
+    length: number,
+    position: number | null,
+    openOptions?: OpenFileOptions
+  ) {
+    const fd = this.openSync(openOptions ? openOptions : { flags: "r" });
+    return fse.readSync(fd, buffer, offset, length, position);
   }
 
   /**
-   * Asynchronously parses data coming from a
+   * Asynchronously writes buffer-like data into the underlying file.
+   * @param data The string data to write to the file instead of a buffer.
+   * @param buffer the Buffer which should be written into the underlying file.
+   * @param offset The position in the buffer from which to begin writing
+   * @param length The number of bytes to write.
+   * @param position Specifies where to begin writing into the file.
+   * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
+   * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
+   */
+  async write<TBuffer extends NodeJS.TypedArray | DataView>(
+    buffer: TBuffer,
+    offset?: number,
+    length?: number,
+    position?: number | null,
+    openOptions?: OpenFileOptions
+  ) {
+    const fd = await this.open(openOptions ?? { flags: "w" });
+    return await fse.write(fd, buffer, offset, length, position);
+  }
+
+  /**
+   * Synchronously writes buffer-like data into the underlying file.
+   * @param data The string data to write to the file instead of a buffer.
+   * @param buffer the Buffer which should be written into the underlying file.
+   * @param offset The position in the buffer from which to begin writing
+   * @param length The number of bytes to write.
+   * @param position Specifies where to begin writing into the file.
+   * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
+   * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
+   */
+  writeSync<TBuffer extends NodeJS.TypedArray | DataView>(
+    buffer: TBuffer,
+    offset?: number,
+    length?: number,
+    position?: number | null,
+    openOptions?: OpenFileOptions
+  ) {
+    const fd = this.openSync(openOptions ?? { flags: "w" });
+    return fse.writeSync(fd, buffer, offset, length, position);
+  }
+
+  /**
+   * Asynchronously parses data coming from a file.
    * @param options.encoding. The encoding to use in the write operation. Defaults to "utf8".
    * @param options.flag. The string denoting the mode in which the file is opened. Defaults to "r".
-   * @returns
+   * @returns The contents of the file either as a decoded string or as a Buffer if no encoding was provided.
    */
   async readFile(options: { encoding: BufferEncoding; flag?: string }): Promise<string>;
   async readFile(encoding: BufferEncoding): Promise<string>;
@@ -947,6 +1050,12 @@ class Path {
     }
   }
 
+  /**
+   * Synchronously parses data coming from a file.
+   * @param options.encoding. The encoding to use in the write operation. Defaults to "utf8".
+   * @param options.flag. The string denoting the mode in which the file is opened. Defaults to "r".
+   * @returns The contents of the file either as a decoded string or as a Buffer if no encoding was provided.
+   */
   readFileSync(options: { encoding: BufferEncoding; flag?: string }): string;
   readFileSync(encoding: BufferEncoding): string;
   readFileSync(): Buffer;
@@ -1068,8 +1177,9 @@ class Path {
 export default Path;
 
 async function test() {
-  const p = new Path("C:\\Users\\Maurice\\Documents\\MATLAB\\ExploreASL\\ExploreASL.m");
-  const { bytesRead, buffer } = await p.read(Buffer.alloc(100), 0, 100, null);
+  const p = new Path("C:\\Users\\Maurice\\Documents\\Foo.txt");
+  const r = await p.write(Buffer.from("foo", "ascii"), 0, undefined);
+  console.log(r);
 }
 
 test();
