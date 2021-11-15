@@ -587,6 +587,12 @@ class Path {
    * @returns Either an Array of Path instances if asIterator was false, otherwise returns an AsyncIterator of
    * Path instances.
    */
+  async getPathsNLevelsAway(
+    depth: number,
+    asIterator: true,
+    options?: GlobOptions
+  ): Promise<AsyncGenerator<Path, void, unknown>>;
+  async getPathsNLevelsAway(depth: number, asIterator: false, options?: GlobOptions): Promise<Path[]>;
   async getPathsNLevelsAway(depth: number, asIterator = false, options?: GlobOptions) {
     // Sanity check; child globbing only makes sense if the underlying filepath is a directory
     if (depth > 1 && !(await this.isDirectory()))
@@ -1228,3 +1234,9 @@ class Path {
 }
 
 export default Path;
+
+// async function test() {
+//   const fp = await new Path(__dirname).parent().join("tests/FolderA");
+//   console.log(await fp.getPathsNLevelsAway(0, false, { onlyDirectories: true }));
+// }
+// test();
