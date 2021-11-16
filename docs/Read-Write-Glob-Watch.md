@@ -262,7 +262,8 @@ Example
 - Parameters:
 
   - `patterns` -- `string | string[]` -- Glob patterns to match against in locating filepaths that are automatically appended to the underlying filepath.
-  - `options` -- `fast-glob.Options` -- The globbing options. For properties and their explanations, [please refer to the documentation in the `fast-glob` repository.](https://github.com/mrmlnc/fast-glob/blob/master/README.md)
+  - `options` -- `fast-glob.Options` -- The globbing options. For properties and their explanations, [please refer to the documentation in the `fast-glob` repository.](https://github.com/mrmlnc/fast-glob/blob/master/README.md) 
+  ⚠️ **NB**: By default, the underlying globbing options has `onlyFiles` set to `true`.
 
 - Returns:
   - `Promise<Path[]>` - An array of retrieved `Path` instances which matched the glob pattern(s).
@@ -305,6 +306,7 @@ Allows for asynchronous iteration over a glob query, yielding Path instances of 
 
   - `patterns` -- `string | string[]` -- Glob patterns to match against in locating filepaths that are automatically appended to the underlying filepath.
   - `options` -- `fast-glob.Options` -- The globbing options. For properties and their explanations, [please refer to the documentation in the `fast-glob` repository.](https://github.com/mrmlnc/fast-glob/blob/master/README.md)
+    ⚠️ **NB**: By default, the underlying globbing options has `onlyFiles` set to `true`.
 
 - Yields:
   - `Promise<Path>` - Yields Path instances which matched the indicated patterns.
@@ -348,6 +350,7 @@ ES5CompatibilityWrapper();
 
   - `patterns` -- `string | string[]` -- Glob patterns to match against in locating filepaths that are automatically appended to the underlying filepath.
   - `options` -- `fast-glob.Options` -- The globbing options. For properties and their explanations, [please refer to the documentation in the `fast-glob` repository.](https://github.com/mrmlnc/fast-glob/blob/master/README.md)
+    ⚠️ **NB**: By default, the underlying globbing options has `onlyFiles` set to `true`.
 
 - Returns:
   - `Path[]` - An array of retrieved `Path` instances which matched the glob pattern(s).
@@ -386,7 +389,7 @@ console.log(fp.globSync("**/*.json", { extglob: true }));
 - Parameters:
 
   - `patterns` -- `string | string[]` -- Glob patterns to match against in locating filepaths that are automatically appended to the underlying filepath.
-  - `options` -- `fast-glob.Options` -- The globbing options. For properties and their explanations, [please refer to the documentation in the `fast-glob` repository.](https://github.com/mrmlnc/fast-glob/blob/master/README.md)
+  - `options` -- `chokidar.WatchOptions` -- The globbing options. For properties and their explanations, [please refer to the documentation in the `chokidar` repository.](https://github.com/paulmillr/chokidar/blob/master/README.md)
 
 - Returns:
   - `Path[]` - An array of retrieved `Path` instances which matched the glob pattern(s).

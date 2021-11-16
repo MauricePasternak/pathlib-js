@@ -24,6 +24,32 @@ describe("Path properties", () => {
   });
 });
 
+describe("New Path creation from previous", () => {
+  const fp = new Path(__dirname);
+  const testfile = new Path(__filename + "/Test.tar.gz");
+  it("Should generate an appropriate Path using withBasename", () => {
+    assert("TEST" === fp.withBasename("TEST").basename);
+  });
+  it("Should generate an appropriate Path using withStem", () => {
+    assert("TEST" === fp.withStem("TEST").basename);
+  });
+  it("Should generate an appropriate Path using withSuffix argument as a String, even if user adds '.' to the start of a string and/or elements of an array argument", () => {
+    const newFileByArray = testfile.withSuffix(["json", ".gz"]);
+    const newFileByString = testfile.withSuffix(".json.gz");
+    assert(newFileByArray.basename === newFileByString.basename);
+  });
+  it("Should resolve '..' correctly into a new filepath using the resolve() method", () => {
+    assert(fp.parent().path === fp.resolve("..").path);
+  });
+  it("Should disregard '.' correctly when using the resolve() method", () => {
+    assert(fp.resolve("./index.test.ts").path === new Path(__filename).path);
+  });
+  it("Should treat '..' and '.' literally when using the join() method", () => {
+    assert(fp.join("../Test").basename === "Test");
+    assert(fp.join("./Test").basename === "Test");
+  });
+});
+
 describe("Retrieving a parent", () => {
   const fp = new Path(__filename);
   const pp = fp.parent();
@@ -43,10 +69,13 @@ describe("Retrieving a parent", () => {
 describe("Existence checking", () => {
   const fp = new Path(__dirname);
   const child = fp.join("index.test.ts");
-  it("Folder containing test file should be detected as a directory", async () => {
+  it("Should detect that the test folder exists", async () => {
+    assert(await fp.exists());
+  });
+  it("Should detect the test folder as a directory", async () => {
     assert(await fp.isDirectory());
   });
-  it("Test file itself should be detected as a file", async () => {
+  it("Should detect the test file itself as a file", async () => {
     assert(await child.isFile());
   });
   it("Should be able to check the existence of an immediate child", async () => {

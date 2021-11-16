@@ -81,6 +81,23 @@ describe("Path properties", function () {
         (0, assert_1.default)(fp.parent().path === new src_1.default(__dirname).path);
     });
 });
+describe("New Path creation from previous", function () {
+    var fp = new src_1.default(__dirname);
+    var testfile = new src_1.default(__filename + "/Test.tar.gz");
+    it("Should generate an appropriate Path using withBasename", function () {
+        (0, assert_1.default)("TEST" === fp.withBasename("TEST").basename);
+    });
+    it("Should generate an appropriate Path using withStem", function () {
+        (0, assert_1.default)("TEST" === fp.withStem("TEST").basename);
+    });
+    it("Should generate an appropriate Path using withSuffix argument as a String, even if user adds '.' to the start", function () {
+        var newFileByArray = testfile.withSuffix(["json", ".gz"]);
+        var newFileByString = testfile.withSuffix(".json.gz");
+        console.log(newFileByArray.basename);
+        console.log(newFileByString.basename);
+        (0, assert_1.default)(newFileByArray.basename === newFileByString.basename);
+    });
+});
 describe("Retrieving a parent", function () {
     var fp = new src_1.default(__filename);
     var pp = fp.parent();
@@ -99,7 +116,20 @@ describe("Retrieving a parent", function () {
 describe("Existence checking", function () {
     var fp = new src_1.default(__dirname);
     var child = fp.join("index.test.ts");
-    it("Folder containing test file should be detected as a directory", function () { return __awaiter(void 0, void 0, void 0, function () {
+    it("Should detect that the test folder exists", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _a = assert_1.default;
+                    return [4 /*yield*/, fp.exists()];
+                case 1:
+                    _a.apply(void 0, [_b.sent()]);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it("Should detect the test folder as a directory", function () { return __awaiter(void 0, void 0, void 0, function () {
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
@@ -112,7 +142,7 @@ describe("Existence checking", function () {
             }
         });
     }); });
-    it("Test file itself should be detected as a file", function () { return __awaiter(void 0, void 0, void 0, function () {
+    it("Should detect the test file itself as a file", function () { return __awaiter(void 0, void 0, void 0, function () {
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {

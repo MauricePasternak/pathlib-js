@@ -3,6 +3,7 @@ import fg, { Options as GlobOptions } from "fast-glob";
 import * as fse from "fs-extra";
 import path from "path";
 import chokidar from "chokidar";
+import { trimChars } from "./utils";
 
 export interface SystemError {
   address: string;
@@ -117,8 +118,8 @@ class Path {
     this.root = root;
     this.basename = base;
     this.dirname = dir;
-    this.ext = ext;
     [this.stem, ...this.suffixes] = this.basename.split(".");
+    this.ext = ext;
   }
 
   /**
@@ -196,12 +197,14 @@ class Path {
   /**
    * Creates a new Path instance with a replaced final extension.
    * @param suffix The new suffix to replace the existing one.
-   * If the current path contains multiple extensions (i.e. .tar.gz), then only the lattermost will be replaced.
+   * If provided an array of strings, it will concatenate with with a "." character before appending to the existing stem.
+   * If provided a non-blank string, it will overwite anything after the first "." in the current basename.
    * If a blank string is provided, then all extensions will be removed.
    * @returns A new Path instance featuring the replacement extension.
    */
-  withSuffix(suffix: string) {
-    const newSuffixes = suffix === "" ? [] : [suffix];
+  withSuffix(suffix: string | string[]) {
+    const newSuffixes =
+      suffix === "" ? [] : Array.isArray(suffix) ? suffix.map(s => trimChars(s, ["."])) : [trimChars(suffix, ["."])];
     const newBasename = [this.stem, ...newSuffixes].join(".");
     return this.withBasename(newBasename);
   }
@@ -505,7 +508,10 @@ class Path {
    * @returns An array of globbed Path instances.
    */
   async glob(patterns: string | string[], options?: GlobOptions) {
-    const globs = await fg(this._prepGlobPatterns(patterns), options);
+    const globs = await fg(
+      this._prepGlobPatterns(patterns),
+      options && Object.assign(options, { stats: false, objectMode: false })
+    );
     return globs.map(p => new Path(p));
   }
 
@@ -517,7 +523,10 @@ class Path {
    * @yields Path instances.
    */
   async *globIter(patterns: string | string[], options?: GlobOptions) {
-    for await (const fp of fg.stream(this._prepGlobPatterns(patterns), options)) {
+    for await (const fp of fg.stream(
+      this._prepGlobPatterns(patterns),
+      options && Object.assign(options, { stats: false, objectMode: false })
+    )) {
       yield typeof fp === "string" ? new Path(fp) : new Path(fp.toString());
     }
   }
@@ -529,7 +538,9 @@ class Path {
    * @returns An array of globbed Path instances.
    */
   globSync(patterns: string | string[], options?: GlobOptions) {
-    return fg.sync(this._prepGlobPatterns(patterns), options).map(p => new Path(p));
+    return fg
+      .sync(this._prepGlobPatterns(patterns), options && Object.assign(options, { stats: false, objectMode: false }))
+      .map(p => new Path(p));
   }
 
   /**
@@ -1235,8 +1246,8 @@ class Path {
 
 export default Path;
 
-// async function test() {
-//   const fp = await new Path(__dirname).parent().join("tests/FolderA");
-//   console.log(await fp.getPathsNLevelsAway(0, false, { onlyDirectories: true }));
-// }
-// test();
+async function test() {
+  const fp = await new Path(__dirname).parent().join("tests/FolderA");
+  console.log(JSON.parse(JSON.stringify(fp)));
+}
+test();

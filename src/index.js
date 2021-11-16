@@ -118,6 +118,7 @@ var fast_glob_1 = __importDefault(require("fast-glob"));
 var fse = __importStar(require("fs-extra"));
 var path_1 = __importDefault(require("path"));
 var chokidar_1 = __importDefault(require("chokidar"));
+var utils_1 = require("./utils");
 var Path = /** @class */ (function () {
     /**
      * @param paths A collection of strings which will be resolved and normalized into a filepath.
@@ -289,12 +290,13 @@ var Path = /** @class */ (function () {
     /**
      * Creates a new Path instance with a replaced final extension.
      * @param suffix The new suffix to replace the existing one.
-     * If the current path contains multiple extensions (i.e. .tar.gz), then only the lattermost will be replaced.
+     * If provided an array of strings, it will concatenate with with a "." character before appending to the existing stem.
+     * If provided a non-blank string, it will overwite anything after the first "." in the current basename.
      * If a blank string is provided, then all extensions will be removed.
      * @returns A new Path instance featuring the replacement extension.
      */
     Path.prototype.withSuffix = function (suffix) {
-        var newSuffixes = suffix === "" ? [] : [suffix];
+        var newSuffixes = suffix === "" ? [] : Array.isArray(suffix) ? suffix.map(function (s) { return (0, utils_1.trimChars)(s, ["."]); }) : [(0, utils_1.trimChars)(suffix, ["."])];
         var newBasename = __spreadArray([this.stem], __read(newSuffixes), false).join(".");
         return this.withBasename(newBasename);
     };

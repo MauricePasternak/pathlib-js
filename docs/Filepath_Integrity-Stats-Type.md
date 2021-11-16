@@ -38,7 +38,7 @@ Example
 **Asynchronously** returns a boolean of whether the underlying filepath exists.
 
 - Returns:
-  - `Promise<Boolean>` - true or false outcome of whether the filepath exists in the system.
+  - `Promise<boolean>` - true or false outcome of whether the filepath exists in the system.
 
 ```
 import Path from "pathlib-js"
@@ -60,7 +60,7 @@ ES5CompatibilityWrapper();
 **Synchronously** returns a boolean of whether the underlying filepath exists.
 
 - Returns:
-  - `Boolean` - true or false outcome of whether the filepath exists in the system.
+  - `boolean` - true or false outcome of whether the filepath exists in the system.
 
 ```
 import Path from "pathlib-js"
@@ -78,7 +78,7 @@ console.log(fp2.existsSync());
 **Asynchronously** returns a boolean of whether the underlying filepath is a directory()
 
 - Returns:
-  - `Promise<Boolean>` - true or false outcome of whether the filepath is an existing directory.
+  - `Promise<boolean>` - true or false outcome of whether the filepath is an existing directory.
 
 ```
 import Path from "pathlib-js"
@@ -100,7 +100,7 @@ ES5CompatibilityWrapper();
 **Synchronously** returns a boolean of whether the underlying filepath exists.
 
 - Returns:
-  - `Boolean` - true or false outcome of whether the filepath is an existing directory.
+  - `boolean` - true or false outcome of whether the filepath is an existing directory.
 
 ```
 import Path from "pathlib-js"
@@ -118,7 +118,7 @@ console.log(fp2.isDirectorySync());
 **Asynchronously** returns a boolean of whether the underlying filepath isFile.
 
 - Returns:
-  - `Promise<Boolean>` - true or false outcome of whether the filepath is an existing file.
+  - `Promise<boolean>` - true or false outcome of whether the filepath is an existing file.
 
 ```
 import Path from "pathlib-js"
@@ -140,7 +140,7 @@ ES5CompatibilityWrapper();
 **Synchronously** returns a boolean of whether the underlying filepath is a file.
 
 - Returns:
-  - `Boolean` - true or false outcome of whether the filepath is an existing file.
+  - `boolean` - true or false outcome of whether the filepath is an existing file.
 
 ```
 import Path from "pathlib-js"
@@ -164,7 +164,7 @@ console.log(fp2.isFileSync());
   - `verbose` -- `boolean` -- On Windows systems, whether to verbosly warn about the potential inaccuracy of this method. Defaults to true.
 
 - Returns:
-  - `Promise<Boolean>` - true or false outcome of whether the filepath is a symbolic link.
+  - `Promise<boolean>` - true or false outcome of whether the filepath is a symbolic link.
 
 ```
 import Path from "pathlib-js"
@@ -192,7 +192,7 @@ ES5CompatibilityWrapper();
   - `verbose` -- `boolean` -- On Windows systems, whether to verbosly warn about the potential inaccuracy of this method. Defaults to true.
 
 - Returns:
-  - `Boolean` - true or false outcome of whether the filepath is a symbolic link.
+  - `boolean` - true or false outcome of whether the filepath is a symbolic link.
 
 ```
 import Path from "pathlib-js"
@@ -210,28 +210,28 @@ console.log(fp2.isSymbolicLinkSync());
 **Asynchronously** returns a boolean of whether the underlying filepath points to a socket.
 
 - Returns:
-  - `Promise<Boolean>` - true or false outcome of whether the filepath is a socket file.
+  - `Promise<boolean>` - true or false outcome of whether the filepath is a socket file.
 
 ### isSocketSync() <a name = "#isSocketSync"></a>
 
 **Synchronously** returns a boolean of whether the underlying filepath points to a socket.
 
 - Returns:
-  - `Boolean` - true or false outcome of whether the filepath is a socket file.
+  - `boolean` - true or false outcome of whether the filepath is a socket file.
 
 ### isFIFO() <a name = "#isFIFO"></a>
 
 **Asynchronously** returns a boolean of whether the underlying filepath points to a first-in-first-out queue.
 
 - Returns:
-  - `Promise<Boolean>` - true or false outcome of whether the filepath is a FIFO queue.
+  - `Promise<boolean>` - true or false outcome of whether the filepath is a FIFO queue.
 
 ### isFIFOSync() <a name = "#isFIFOSync"></a>
 
 **Synchronously** returns a boolean of whether the underlying filepath points to a first-in-first-out queue.
 
 - Returns:
-  - `Boolean` - true or false outcome of whether the filepath is a FIFO queue.
+  - `boolean` - true or false outcome of whether the filepath is a FIFO queue.
 
 ### parent() <a name = "#parent"></a>
 

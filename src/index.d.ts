@@ -134,11 +134,12 @@ declare class Path {
     /**
      * Creates a new Path instance with a replaced final extension.
      * @param suffix The new suffix to replace the existing one.
-     * If the current path contains multiple extensions (i.e. .tar.gz), then only the lattermost will be replaced.
+     * If provided an array of strings, it will concatenate with with a "." character before appending to the existing stem.
+     * If provided a non-blank string, it will overwite anything after the first "." in the current basename.
      * If a blank string is provided, then all extensions will be removed.
      * @returns A new Path instance featuring the replacement extension.
      */
-    withSuffix(suffix: string): Path;
+    withSuffix(suffix: string | string[]): Path;
     /**
      * Depicts a string version of the Path instance.
      * @param useSystemPathDelimiter Whether to respect the system-specific filepath delimiter.
@@ -510,7 +511,10 @@ declare class Path {
      */
     read(buffer: fse.ArrayBufferView, offset: number, length: number, position: number | null, openOptions?: OpenFileOptions): Promise<{
         bytesRead: number;
-        buffer: fse.ArrayBufferView;
+        buffer: fse.ArrayBufferView; /**
+         * Synchronously checks whether the Path instance is a first-in-first-out queue.
+         * @returns A boolean of whether this is a first-in-first-out queue or not.
+         */
     }>;
     /**
      * Synchronously reads a portion of the data from the underlying file.
