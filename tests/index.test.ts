@@ -1,6 +1,10 @@
-import Path from "../src";
+import Path, { treeBranch } from "../src";
 import assert from "assert";
 import { platform } from "os";
+
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 describe("Path properties", () => {
   const fp = new Path(__filename);
@@ -22,6 +26,25 @@ describe("Path properties", () => {
   it("Should have a correct parent filepath", () => {
     assert(fp.parent().path === new Path(__dirname).path);
   });
+});
+
+describe("Path parts", () => {
+  const fp = new Path(__dirname);
+  it("Should correctly split a path into its components under typical conditions", () => {
+    const parts = fp.parts();
+    assert(parts.length);
+    assert(parts[0] === fp.root);
+    assert(parts.slice(parts.length - 1)[0] === fp.basename);
+  });
+  if (platform() !== "win32") {
+    it("On Unix, should correctly split into parts even if the path is the root", () => {
+      const rootPath = new Path("/");
+      assert(rootPath.root === rootPath.path);
+      const parts = rootPath.parts();
+      assert(parts.length);
+      assert(parts[0] === rootPath.path);
+    });
+  }
 });
 
 describe("New Path creation from previous", () => {
@@ -94,6 +117,7 @@ describe("Globbing", () => {
 
 describe("Walking", () => {
   const fp = new Path(__dirname);
+  const nestedPath = new Path(__dirname, "Foo", "Bar", "Baz.qui");
   it("Should be able to traverse a nested directory structure in the expected order", async () => {
     const orderOfNames = ["FolderA", "File_A1.txt", "File_A2.txt", "FolderB", "File_B1.json", "File_B2.json"];
     let indexer = -1;
@@ -103,6 +127,17 @@ describe("Walking", () => {
         assert(p.basename === orderOfNames[indexer]);
       }
     });
+  });
+  it("Should be able to create an appropriate tree structure", async () => {
+    await nestedPath.makeFile();
+    const treeStruct = await nestedPath.parent().parent().tree(false);
+    assert(treeStruct.children != null);
+    const firstBranch: treeBranch = treeStruct.children[0];
+    if (typeof firstBranch.filepath === "string" || firstBranch.children == null) assert(false);
+    assert(firstBranch.filepath.basename === "Bar");
+    const secondBranch: treeBranch = firstBranch.children[0];
+    assert(secondBranch.children == null);
+    await new Path(__dirname, "Foo").delete();
   });
 });
 
@@ -156,6 +191,7 @@ describe("Detection of filepaths at Nth level away", () => {
 describe("Making and removing filepaths", () => {
   const candidateFile = new Path(__dirname).join("FolderC/File_C1.csv");
   const candidateDir = new Path(__dirname).join("FolderC/SubfolderD");
+  const candidateSymlink = new Path(__dirname).join("FolderC/SubfolderE/File_Symlink.symlink");
   it("Should be a clear test without the filepath existing initially", async () => {
     assert(!(await candidateFile.exists()));
     assert(!(await candidateDir.exists()));
@@ -176,23 +212,83 @@ describe("Making and removing filepaths", () => {
     try {
       await candidateFile.makeFile();
     } catch (error) {}
-    setTimeout(async () => {
-      assert(await candidateFile.exists());
-    }, 100);
+    await sleep(20);
+    assert(await candidateFile.exists());
   });
   it("Should successfully make a directory with makeDir, creating parent directories as needed", async () => {
     try {
       await candidateDir.makeDir();
     } catch (error) {}
-    setTimeout(async () => {
-      assert(await candidateDir.exists());
-    }, 100);
+    await sleep(20);
+    assert(await candidateDir.exists());
   });
-  it("Should successfully delete a folder and all its children", async () => {
+  it("Should successfully make a symlink with makeSymlink, creating parent directories as needed", async () => {
+    try {
+      await new Path(__dirname, "FolderB", "File_B1.json").makeSymlink(candidateSymlink);
+    } catch (error) {}
+    await sleep(20); // Hack
+    assert(await candidateSymlink.exists());
+  });
+  it("Should successfully delete a folder and all its children", async function () {
     await candidateFile.parent().remove();
-    setTimeout(async () => {
-      assert(!(await candidateDir.exists()));
-      assert(await candidateFile.exists());
-    }, 200);
+    await sleep(20); // Hack
+    assert(!(await candidateFile.exists()));
+  });
+});
+
+describe("Reading and Writing JSON files", () => {
+  const jsonReadFile = new Path(__dirname, "FolderB", "File_B1.json");
+  const jsonWriteFile = new Path(__dirname, "FolderB", "File_B2.json");
+  const notAJSONFile = new Path(__dirname, "FolderC");
+  it("Should correctly read in a JSON Object", async () => {
+    const jsonContents = await jsonReadFile.readJSON();
+    assert.deepStrictEqual(jsonContents, {
+      foo: "a string",
+      bar: 42,
+      baz: true,
+    });
+  });
+  it("Should correctly write a JSON object into a valid JSON filepath", async () => {
+    try {
+      await jsonWriteFile.writeJSON({ key1: "value1", key2: "value2" });
+    } catch (error) {
+      assert(false);
+    }
+  });
+  it("Should throw an error if the user attempts to write a JSON object into an invalid filepath", async () => {
+    try {
+      await notAJSONFile.writeJSON({ bad: "filepath" });
+      assert(false);
+    } catch (error) {
+      assert(true);
+    }
+  });
+});
+
+describe("Moving and copying filepaths", () => {
+  const copySrcPath = new Path(__dirname, "FolderX", "X1", "X1_1.foo");
+  const copyDstPath = new Path(__dirname, "FolderX", "X2", "X1_1.foo");
+  const moveSrcPath = new Path(__dirname, "FolderY", "Y1", "Y1_1.bar");
+  const moveDstPath = new Path(__dirname, "FolderY", "Y2", "Y1_1.bar");
+  copySrcPath.makeFileSync();
+  moveSrcPath.makeFileSync();
+  it("Should be able to copy a filepath into another location, making parent directories as necessary. Following this, it should also be able to remove them.", async () => {
+    assert(!(await copyDstPath.exists()));
+    await copySrcPath.copy(copyDstPath);
+    assert(await copyDstPath.exists());
+    await new Path(__dirname, "FolderX").remove();
+    await sleep(20); // Hack
+    assert(!(await copyDstPath.exists()));
+    assert(!(await copySrcPath.exists()));
+  });
+  it("Should be able to move a filepath into another location, making parent directories as necessary. Following this, it should also be able to remove them.", async () => {
+    assert(!(await moveDstPath.exists()));
+    await moveSrcPath.move(moveDstPath);
+    assert(await moveDstPath.exists());
+    assert(!(await moveSrcPath.exists()));
+    await new Path(__dirname, "FolderY").remove();
+    await sleep(20); // Hack
+    assert(!(await moveDstPath.exists()));
+    assert(!(await moveSrcPath.exists()));
   });
 });

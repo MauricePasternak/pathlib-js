@@ -511,10 +511,7 @@ declare class Path {
      */
     read(buffer: fse.ArrayBufferView, offset: number, length: number, position: number | null, openOptions?: OpenFileOptions): Promise<{
         bytesRead: number;
-        buffer: fse.ArrayBufferView; /**
-         * Synchronously checks whether the Path instance is a first-in-first-out queue.
-         * @returns A boolean of whether this is a first-in-first-out queue or not.
-         */
+        buffer: fse.ArrayBufferView;
     }>;
     /**
      * Synchronously reads a portion of the data from the underlying file.

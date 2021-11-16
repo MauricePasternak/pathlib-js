@@ -119,6 +119,7 @@ var fse = __importStar(require("fs-extra"));
 var path_1 = __importDefault(require("path"));
 var chokidar_1 = __importDefault(require("chokidar"));
 var utils_1 = require("./utils");
+var os_1 = require("os");
 var Path = /** @class */ (function () {
     /**
      * @param paths A collection of strings which will be resolved and normalized into a filepath.
@@ -145,8 +146,8 @@ var Path = /** @class */ (function () {
         this.root = root;
         this.basename = base;
         this.dirname = dir;
-        this.ext = ext;
         _a = __read(this.basename.split(".")), this.stem = _a[0], this.suffixes = _a.slice(1);
+        this.ext = ext;
     }
     /**
      * Get a Path representation of the current working directory.
@@ -217,7 +218,10 @@ var Path = /** @class */ (function () {
      * @returns An array of the strings comprising the Path instance.
      */
     Path.prototype.parts = function () {
-        return this.path.split("/");
+        if ((0, os_1.platform)() === "win32") {
+            return this.path.split("/");
+        }
+        return __spreadArray(["/"], __read(this.path.split("/").filter(function (c) { return c && c !== ""; })), false);
     };
     /**
      * Splits the underlying filepath into its individual components. Alias for this.parts().
@@ -766,7 +770,7 @@ var Path = /** @class */ (function () {
             var globs;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, (0, fast_glob_1.default)(this._prepGlobPatterns(patterns), options)];
+                    case 0: return [4 /*yield*/, (0, fast_glob_1.default)(this._prepGlobPatterns(patterns), options && Object.assign(options, { stats: false, objectMode: false }))];
                     case 1:
                         globs = _a.sent();
                         return [2 /*return*/, globs.map(function (p) { return new Path(p); })];
@@ -789,7 +793,7 @@ var Path = /** @class */ (function () {
                 switch (_d.label) {
                     case 0:
                         _d.trys.push([0, 7, 8, 13]);
-                        _a = __asyncValues(fast_glob_1.default.stream(this._prepGlobPatterns(patterns), options));
+                        _a = __asyncValues(fast_glob_1.default.stream(this._prepGlobPatterns(patterns), options && Object.assign(options, { stats: false, objectMode: false })));
                         _d.label = 1;
                     case 1: return [4 /*yield*/, __await(_a.next())];
                     case 2:
@@ -830,7 +834,9 @@ var Path = /** @class */ (function () {
      * @returns An array of globbed Path instances.
      */
     Path.prototype.globSync = function (patterns, options) {
-        return fast_glob_1.default.sync(this._prepGlobPatterns(patterns), options).map(function (p) { return new Path(p); });
+        return fast_glob_1.default
+            .sync(this._prepGlobPatterns(patterns), options && Object.assign(options, { stats: false, objectMode: false }))
+            .map(function (p) { return new Path(p); });
     };
     /**
      * Asynchronously collects the children of a directory path as an array of Paths.
@@ -1799,7 +1805,7 @@ var Path = /** @class */ (function () {
 }());
 exports.default = Path;
 // async function test() {
-//   const fp = await new Path(__dirname).parent().join("tests/FolderA");
-//   console.log(await fp.getPathsNLevelsAway(0, false, { onlyDirectories: true }));
+//   const fp = await new Path(__dirname);
+//   console.log(fp.parts());
 // }
 // test();

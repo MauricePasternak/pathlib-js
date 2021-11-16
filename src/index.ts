@@ -4,6 +4,7 @@ import * as fse from "fs-extra";
 import path from "path";
 import chokidar from "chokidar";
 import { trimChars } from "./utils";
+import { platform } from "os";
 
 export interface SystemError {
   address: string;
@@ -127,7 +128,10 @@ class Path {
    * @returns An array of the strings comprising the Path instance.
    */
   parts() {
-    return this.path.split("/");
+    if (platform() === "win32") {
+      return this.path.split("/");
+    }
+    return ["/", ...this.path.split("/").filter(c => c && c !== "")];
   }
 
   /**
@@ -1245,9 +1249,3 @@ class Path {
 }
 
 export default Path;
-
-async function test() {
-  const fp = await new Path(__dirname).parent().join("tests/FolderA");
-  console.log(JSON.parse(JSON.stringify(fp)));
-}
-test();

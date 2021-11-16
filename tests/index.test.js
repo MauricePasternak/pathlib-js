@@ -81,6 +81,17 @@ describe("Path properties", function () {
         (0, assert_1.default)(fp.parent().path === new src_1.default(__dirname).path);
     });
 });
+describe("Path parts", function () {
+    var fp = new src_1.default(__dirname);
+    it("Should correctly split a path into its components under typical conditions", function () {
+        var parts = fp.parts();
+        console.log(parts);
+        console.log(parts.slice(parts.length - 1)[0]);
+        (0, assert_1.default)(parts.length);
+        (0, assert_1.default)(parts[0] === fp.root);
+        (0, assert_1.default)(parts.slice(parts.length - 1)[0] === fp.basename);
+    });
+});
 describe("New Path creation from previous", function () {
     var fp = new src_1.default(__dirname);
     var testfile = new src_1.default(__filename + "/Test.tar.gz");
@@ -90,12 +101,20 @@ describe("New Path creation from previous", function () {
     it("Should generate an appropriate Path using withStem", function () {
         (0, assert_1.default)("TEST" === fp.withStem("TEST").basename);
     });
-    it("Should generate an appropriate Path using withSuffix argument as a String, even if user adds '.' to the start", function () {
+    it("Should generate an appropriate Path using withSuffix argument as a String, even if user adds '.' to the start of a string and/or elements of an array argument", function () {
         var newFileByArray = testfile.withSuffix(["json", ".gz"]);
         var newFileByString = testfile.withSuffix(".json.gz");
-        console.log(newFileByArray.basename);
-        console.log(newFileByString.basename);
         (0, assert_1.default)(newFileByArray.basename === newFileByString.basename);
+    });
+    it("Should resolve '..' correctly into a new filepath using the resolve() method", function () {
+        (0, assert_1.default)(fp.parent().path === fp.resolve("..").path);
+    });
+    it("Should disregard '.' correctly when using the resolve() method", function () {
+        (0, assert_1.default)(fp.resolve("./index.test.ts").path === new src_1.default(__filename).path);
+    });
+    it("Should treat '..' and '.' literally when using the join() method", function () {
+        (0, assert_1.default)(fp.join("../Test").basename === "Test");
+        (0, assert_1.default)(fp.join("./Test").basename === "Test");
     });
 });
 describe("Retrieving a parent", function () {
