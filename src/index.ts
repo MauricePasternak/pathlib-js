@@ -4,7 +4,6 @@ import * as fse from "fs-extra";
 import path from "path";
 import chokidar from "chokidar";
 import { trimChars } from "./utils";
-import { platform } from "os";
 
 export interface SystemError {
   address: string;
@@ -32,8 +31,8 @@ export interface OpenFileOptions {
 }
 export type JSONObject = { [key: string]: JsonValue };
 export type JsonValue = null | boolean | number | string | JsonValue[] | JSONObject;
-export interface treeBranch<T extends true | false> {
-  filepath: T extends true ? Path : string;
+export interface treeBranch<T extends Path | string> {
+  filepath: T;
   depth: number;
   children: treeBranch<T>[] | null;
 }
@@ -116,7 +115,7 @@ class Path {
 
     this.path = normalize(path.resolve(...paths));
     const { dir, root, base, ext } = path.parse(this.path);
-    this.root = root;
+    this.root = root.replace("/", "");
     this.basename = base;
     this.dirname = dir;
     [this.stem, ...this.suffixes] = this.basename.split(".");
@@ -128,10 +127,7 @@ class Path {
    * @returns An array of the strings comprising the Path instance.
    */
   parts() {
-    if (platform() === "win32") {
-      return this.path.split("/");
-    }
-    return ["/", ...this.path.split("/").filter(c => c && c !== "")];
+    return this.path.split("/");
   }
 
   /**
@@ -669,30 +665,53 @@ class Path {
    * @param asString Whether to convert the "filepath" property automatically to a string representation of the path instead.
    * @returns A representation of the filepath tree structure.
    */
-  async tree<T extends true | false>(asString?: T, useSystemPathDelimiter = false) {
-    async function traverseBranch(branchRoot: Path, prevDepth: number): Promise<treeBranch<T>> {
-      const branch: treeBranch<T> = {
-        // Type 'string | Path' is not assignable to type 'T extends true ? Path : string'.
-        filepath: asString ? branchRoot.toString(useSystemPathDelimiter) : branchRoot,
-        depth: prevDepth + 1,
-        children: [],
-      };
-      for await (const p of branchRoot.readDirIter()) {
-        if (await p.isDirectory()) {
-          branch.children && branch.children.push(await traverseBranch(p, prevDepth + 1));
-        } else {
-          branch.children &&
-            branch.children.push({
-              // Type 'string | Path' is not assignable to type 'T extends true ? Path : string'.
-              filepath: asString ? p.toString(useSystemPathDelimiter) : p,
-              depth: prevDepth + 2,
-              children: null,
-            });
+  tree(asString: true, useuseSystemPathDelimiter?: boolean): Promise<treeBranch<string>>;
+  tree(asString: false, useuseSystemPathDelimiter?: boolean): Promise<treeBranch<Path>>;
+  tree(asString = false, useSystemPathDelimiter = false) {
+    async function traverseBranch(branchRoot: Path, prevDepth: number): Promise<treeBranch<string> | treeBranch<Path>> {
+      if (asString) {
+        const branch: treeBranch<string> = {
+          filepath: branchRoot.toString(useSystemPathDelimiter),
+          depth: prevDepth + 1,
+          children: [],
+        };
+        for (const p of branchRoot.readDirIterSync()) {
+          if (p.isDirectorySync()) {
+              branch.children &&
+              branch.children.push((await traverseBranch(p, prevDepth + 1)) as treeBranch<string>);
+          } else {
+            branch.children &&
+              branch.children.push({
+                filepath: p.toString(useSystemPathDelimiter),
+                depth: prevDepth + 2,
+                children: null,
+              });
+          }
         }
+        return branch;
+      } else {
+        const branch: treeBranch<Path> = {
+          filepath: branchRoot as Path,
+          depth: prevDepth + 1,
+          children: [],
+        };
+        for (const p of branchRoot.readDirIterSync()) {
+          if (p.isDirectorySync()) {
+              branch.children &&
+              branch.children.push(await traverseBranch(p, prevDepth + 1) as unknown as treeBranch<Path>);
+          } else {
+            branch.children &&
+              branch.children.push({
+                filepath: p,
+                depth: prevDepth + 2,
+                children: null,
+              });
+          }
+        }
+        return branch;
       }
-      return branch;
     }
-    return await traverseBranch(this, -1);
+    return traverseBranch(this, -1);
   }
 
   /**
@@ -703,26 +722,51 @@ class Path {
    * @param asString Whether to convert the "filepath" property automatically to a string representation of the path instead.
    * @returns A representation of the filepath tree structure.
    */
+  treeSync(asString: true, useuseSystemPathDelimiter: boolean): treeBranch<string>;
+  treeSync(asString: false, useuseSystemPathDelimiter: boolean): treeBranch<Path>;
   treeSync(asString = false, useSystemPathDelimiter = false) {
-    function traverseBranch(branchRoot: Path, prevDepth: number): treeBranch {
-      const branch: treeBranch = {
-        filepath: asString ? branchRoot.toString(useSystemPathDelimiter) : branchRoot,
-        depth: prevDepth + 1,
-        children: [],
-      };
-      for (const p of branchRoot.readDirIterSync()) {
-        if (p.isDirectorySync()) {
-          branch.children && branch.children.push(traverseBranch(p, prevDepth + 1));
-        } else {
-          branch.children &&
-            branch.children.push({
-              filepath: asString ? p.toString(useSystemPathDelimiter) : p,
-              depth: prevDepth + 2,
-              children: null,
-            });
+    function traverseBranch(branchRoot: Path, prevDepth: number): treeBranch<string> | treeBranch<Path> {
+      if (asString) {
+        const branch: treeBranch<string> = {
+          filepath: branchRoot.toString(useSystemPathDelimiter),
+          depth: prevDepth + 1,
+          children: [],
+        };
+        for (const p of branchRoot.readDirIterSync()) {
+          if (p.isDirectorySync()) {
+            branch && branch.children && branch.children.push(traverseBranch(p, prevDepth + 1) as treeBranch<string>);
+          } else {
+            branch.children &&
+              branch.children.push({
+                filepath: p.toString(useSystemPathDelimiter),
+                depth: prevDepth + 2,
+                children: null,
+              });
+          }
         }
+        return branch;
+      } else {
+        const branch: treeBranch<Path> = {
+          filepath: branchRoot as Path,
+          depth: prevDepth + 1,
+          children: [],
+        };
+        for (const p of branchRoot.readDirIterSync()) {
+          if (p.isDirectorySync()) {
+            branch &&
+              branch.children &&
+              branch.children.push(traverseBranch(p, prevDepth + 1) as unknown as treeBranch<Path>);
+          } else {
+            branch.children &&
+              branch.children.push({
+                filepath: p,
+                depth: prevDepth + 2,
+                children: null,
+              });
+          }
+        }
+        return branch;
       }
-      return branch;
     }
     return traverseBranch(this, -1);
   }
@@ -1251,3 +1295,9 @@ class Path {
 }
 
 export default Path;
+
+async function test() {
+  const fp = path.parse(__dirname);
+  console.log(fp);
+}
+test();

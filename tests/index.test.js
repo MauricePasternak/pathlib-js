@@ -60,6 +60,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var src_1 = __importDefault(require("../src"));
 var assert_1 = __importDefault(require("assert"));
 var os_1 = require("os");
+function sleep(ms) {
+    return new Promise(function (resolve) { return setTimeout(resolve, ms); });
+}
 describe("Path properties", function () {
     var fp = new src_1.default(__filename);
     it("Should have a correct basename", function () {
@@ -75,7 +78,7 @@ describe("Path properties", function () {
         (0, assert_1.default)(fp.suffixes.length === 2 && fp.suffixes[0] === "test" && fp.suffixes[1] === "ts");
     });
     it("Should have a correct root", function () {
-        (0, os_1.platform)() === "win32" ? (0, assert_1.default)(/\w:\//gm.test(fp.root)) : (0, assert_1.default)(fp.root === "/");
+        (0, os_1.platform)() === "win32" ? (0, assert_1.default)(/\w:/gm.test(fp.root)) : (0, assert_1.default)(fp.root === "/");
     });
     it("Should have a correct parent filepath", function () {
         (0, assert_1.default)(fp.parent().path === new src_1.default(__dirname).path);
@@ -85,12 +88,19 @@ describe("Path parts", function () {
     var fp = new src_1.default(__dirname);
     it("Should correctly split a path into its components under typical conditions", function () {
         var parts = fp.parts();
-        console.log(parts);
-        console.log(parts.slice(parts.length - 1)[0]);
         (0, assert_1.default)(parts.length);
         (0, assert_1.default)(parts[0] === fp.root);
         (0, assert_1.default)(parts.slice(parts.length - 1)[0] === fp.basename);
     });
+    if ((0, os_1.platform)() !== "win32") {
+        it("On Unix, should correctly split into parts even if the path is the root", function () {
+            var rootPath = new src_1.default("/");
+            (0, assert_1.default)(rootPath.root === rootPath.path);
+            var parts = rootPath.parts();
+            (0, assert_1.default)(parts.length);
+            (0, assert_1.default)(parts[0] === rootPath.path);
+        });
+    }
 });
 describe("New Path creation from previous", function () {
     var fp = new src_1.default(__dirname);
@@ -209,6 +219,7 @@ describe("Globbing", function () {
 });
 describe("Walking", function () {
     var fp = new src_1.default(__dirname);
+    var nestedPath = new src_1.default(__dirname, "Foo", "Bar", "Baz.qui");
     it("Should be able to traverse a nested directory structure in the expected order", function () { return __awaiter(void 0, void 0, void 0, function () {
         var orderOfNames, indexer;
         return __generator(this, function (_a) {
@@ -223,6 +234,30 @@ describe("Walking", function () {
                             }
                         })];
                 case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it("Should be able to create an appropriate tree structure", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var treeStruct, firstBranch, secondBranch;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, nestedPath.makeFile()];
+                case 1:
+                    _a.sent();
+                    return [4 /*yield*/, nestedPath.parent().parent().tree(false)];
+                case 2:
+                    treeStruct = _a.sent();
+                    (0, assert_1.default)(treeStruct.children != null);
+                    firstBranch = treeStruct.children[0];
+                    if (typeof firstBranch.filepath === "string" || firstBranch.children == null)
+                        (0, assert_1.default)(false);
+                    (0, assert_1.default)(firstBranch.filepath.basename === "Bar");
+                    secondBranch = firstBranch.children[0];
+                    (0, assert_1.default)(secondBranch.children == null);
+                    return [4 /*yield*/, new src_1.default(__dirname, "Foo").delete()];
+                case 3:
                     _a.sent();
                     return [2 /*return*/];
             }
@@ -454,6 +489,7 @@ describe("Detection of filepaths at Nth level away", function () {
 describe("Making and removing filepaths", function () {
     var candidateFile = new src_1.default(__dirname).join("FolderC/File_C1.csv");
     var candidateDir = new src_1.default(__dirname).join("FolderC/SubfolderD");
+    var candidateSymlink = new src_1.default(__dirname).join("FolderC/SubfolderE/File_Symlink.symlink");
     it("Should be a clear test without the filepath existing initially", function () { return __awaiter(void 0, void 0, void 0, function () {
         var _a, _b;
         return __generator(this, function (_c) {
@@ -516,90 +552,231 @@ describe("Making and removing filepaths", function () {
         });
     }); });
     it("Should successfully make a file with makeFile, creating parent directories as needed", function () { return __awaiter(void 0, void 0, void 0, function () {
-        var error_3;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var error_3, _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    _a.trys.push([0, 2, , 3]);
+                    _b.trys.push([0, 2, , 3]);
                     return [4 /*yield*/, candidateFile.makeFile()];
                 case 1:
-                    _a.sent();
+                    _b.sent();
                     return [3 /*break*/, 3];
                 case 2:
-                    error_3 = _a.sent();
+                    error_3 = _b.sent();
                     return [3 /*break*/, 3];
-                case 3:
-                    setTimeout(function () { return __awaiter(void 0, void 0, void 0, function () {
-                        var _a;
-                        return __generator(this, function (_b) {
-                            switch (_b.label) {
-                                case 0:
-                                    _a = assert_1.default;
-                                    return [4 /*yield*/, candidateFile.exists()];
-                                case 1:
-                                    _a.apply(void 0, [_b.sent()]);
-                                    return [2 /*return*/];
-                            }
-                        });
-                    }); }, 100);
+                case 3: return [4 /*yield*/, sleep(20)];
+                case 4:
+                    _b.sent();
+                    _a = assert_1.default;
+                    return [4 /*yield*/, candidateFile.exists()];
+                case 5:
+                    _a.apply(void 0, [_b.sent()]);
                     return [2 /*return*/];
             }
         });
     }); });
     it("Should successfully make a directory with makeDir, creating parent directories as needed", function () { return __awaiter(void 0, void 0, void 0, function () {
-        var error_4;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var error_4, _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    _a.trys.push([0, 2, , 3]);
+                    _b.trys.push([0, 2, , 3]);
                     return [4 /*yield*/, candidateDir.makeDir()];
                 case 1:
-                    _a.sent();
+                    _b.sent();
                     return [3 /*break*/, 3];
                 case 2:
-                    error_4 = _a.sent();
+                    error_4 = _b.sent();
                     return [3 /*break*/, 3];
-                case 3:
-                    setTimeout(function () { return __awaiter(void 0, void 0, void 0, function () {
-                        var _a;
-                        return __generator(this, function (_b) {
-                            switch (_b.label) {
-                                case 0:
-                                    _a = assert_1.default;
-                                    return [4 /*yield*/, candidateDir.exists()];
-                                case 1:
-                                    _a.apply(void 0, [_b.sent()]);
-                                    return [2 /*return*/];
-                            }
-                        });
-                    }); }, 100);
+                case 3: return [4 /*yield*/, sleep(20)];
+                case 4:
+                    _b.sent();
+                    _a = assert_1.default;
+                    return [4 /*yield*/, candidateDir.exists()];
+                case 5:
+                    _a.apply(void 0, [_b.sent()]);
                     return [2 /*return*/];
             }
         });
     }); });
-    it("Should successfully delete a folder and all its children", function () { return __awaiter(void 0, void 0, void 0, function () {
+    it("Should successfully make a symlink with makeSymlink, creating parent directories as needed", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var error_5, _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, new src_1.default(__dirname, "FolderB", "File_B1.json").makeSymlink(candidateSymlink)];
+                case 1:
+                    _b.sent();
+                    return [3 /*break*/, 3];
+                case 2:
+                    error_5 = _b.sent();
+                    return [3 /*break*/, 3];
+                case 3: return [4 /*yield*/, sleep(50)];
+                case 4:
+                    _b.sent(); // Hack
+                    _a = assert_1.default;
+                    return [4 /*yield*/, candidateSymlink.exists()];
+                case 5:
+                    _a.apply(void 0, [_b.sent()]);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it("Should successfully delete a folder and all its children", function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, candidateFile.parent().remove()];
+                    case 1:
+                        _b.sent();
+                        return [4 /*yield*/, sleep(20)];
+                    case 2:
+                        _b.sent(); // Hack
+                        _a = assert_1.default;
+                        return [4 /*yield*/, candidateFile.exists()];
+                    case 3:
+                        _a.apply(void 0, [!(_b.sent())]);
+                        return [2 /*return*/];
+                }
+            });
+        });
+    });
+});
+describe("Reading and Writing JSON files", function () {
+    var jsonReadFile = new src_1.default(__dirname, "FolderB", "File_B1.json");
+    var jsonWriteFile = new src_1.default(__dirname, "FolderB", "File_B2.json");
+    var notAJSONFile = new src_1.default(__dirname, "FolderC");
+    it("Should correctly read in a JSON Object", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var jsonContents;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, candidateFile.parent().remove()];
+                case 0: return [4 /*yield*/, jsonReadFile.readJSON()];
+                case 1:
+                    jsonContents = _a.sent();
+                    assert_1.default.deepStrictEqual(jsonContents, {
+                        foo: "a string",
+                        bar: 42,
+                        baz: true,
+                    });
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it("Should correctly write a JSON object into a valid JSON filepath", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var error_6;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, jsonWriteFile.writeJSON({ key1: "value1", key2: "value2" })];
                 case 1:
                     _a.sent();
-                    setTimeout(function () { return __awaiter(void 0, void 0, void 0, function () {
-                        var _a, _b;
-                        return __generator(this, function (_c) {
-                            switch (_c.label) {
-                                case 0:
-                                    _a = assert_1.default;
-                                    return [4 /*yield*/, candidateDir.exists()];
-                                case 1:
-                                    _a.apply(void 0, [!(_c.sent())]);
-                                    _b = assert_1.default;
-                                    return [4 /*yield*/, candidateFile.exists()];
-                                case 2:
-                                    _b.apply(void 0, [_c.sent()]);
-                                    return [2 /*return*/];
-                            }
-                        });
-                    }); }, 200);
+                    return [3 /*break*/, 3];
+                case 2:
+                    error_6 = _a.sent();
+                    (0, assert_1.default)(false);
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
+            }
+        });
+    }); });
+    it("Should throw an error if the user attempts to write a JSON object into an invalid filepath", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var error_7;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, notAJSONFile.writeJSON({ bad: "filepath" })];
+                case 1:
+                    _a.sent();
+                    (0, assert_1.default)(false);
+                    return [3 /*break*/, 3];
+                case 2:
+                    error_7 = _a.sent();
+                    (0, assert_1.default)(true);
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
+            }
+        });
+    }); });
+});
+describe("Moving and copying filepaths", function () {
+    var copySrcPath = new src_1.default(__dirname, "FolderX", "X1", "X1_1.foo");
+    var copyDstPath = new src_1.default(__dirname, "FolderX", "X2", "X1_1.foo");
+    var moveSrcPath = new src_1.default(__dirname, "FolderY", "Y1", "Y1_1.bar");
+    var moveDstPath = new src_1.default(__dirname, "FolderY", "Y2", "Y1_1.bar");
+    copySrcPath.makeFileSync();
+    moveSrcPath.makeFileSync();
+    it("Should be able to copy a filepath into another location, making parent directories as necessary. Following this, it should also be able to remove them.", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var _a, _b, _c, _d;
+        return __generator(this, function (_e) {
+            switch (_e.label) {
+                case 0:
+                    _a = assert_1.default;
+                    return [4 /*yield*/, copyDstPath.exists()];
+                case 1:
+                    _a.apply(void 0, [!(_e.sent())]);
+                    return [4 /*yield*/, copySrcPath.copy(copyDstPath)];
+                case 2:
+                    _e.sent();
+                    _b = assert_1.default;
+                    return [4 /*yield*/, copyDstPath.exists()];
+                case 3:
+                    _b.apply(void 0, [_e.sent()]);
+                    return [4 /*yield*/, new src_1.default(__dirname, "FolderX").remove()];
+                case 4:
+                    _e.sent();
+                    return [4 /*yield*/, sleep(20)];
+                case 5:
+                    _e.sent(); // Hack
+                    _c = assert_1.default;
+                    return [4 /*yield*/, copyDstPath.exists()];
+                case 6:
+                    _c.apply(void 0, [!(_e.sent())]);
+                    _d = assert_1.default;
+                    return [4 /*yield*/, copySrcPath.exists()];
+                case 7:
+                    _d.apply(void 0, [!(_e.sent())]);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it("Should be able to move a filepath into another location, making parent directories as necessary. Following this, it should also be able to remove them.", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var _a, _b, _c, _d, _e;
+        return __generator(this, function (_f) {
+            switch (_f.label) {
+                case 0:
+                    _a = assert_1.default;
+                    return [4 /*yield*/, moveDstPath.exists()];
+                case 1:
+                    _a.apply(void 0, [!(_f.sent())]);
+                    return [4 /*yield*/, moveSrcPath.move(moveDstPath)];
+                case 2:
+                    _f.sent();
+                    _b = assert_1.default;
+                    return [4 /*yield*/, moveDstPath.exists()];
+                case 3:
+                    _b.apply(void 0, [_f.sent()]);
+                    _c = assert_1.default;
+                    return [4 /*yield*/, moveSrcPath.exists()];
+                case 4:
+                    _c.apply(void 0, [!(_f.sent())]);
+                    return [4 /*yield*/, new src_1.default(__dirname, "FolderY").remove()];
+                case 5:
+                    _f.sent();
+                    return [4 /*yield*/, sleep(20)];
+                case 6:
+                    _f.sent(); // Hack
+                    _d = assert_1.default;
+                    return [4 /*yield*/, moveDstPath.exists()];
+                case 7:
+                    _d.apply(void 0, [!(_f.sent())]);
+                    _e = assert_1.default;
+                    return [4 /*yield*/, moveSrcPath.exists()];
+                case 8:
+                    _e.apply(void 0, [!(_f.sent())]);
                     return [2 /*return*/];
             }
         });

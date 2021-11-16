@@ -30,10 +30,10 @@ export declare type JSONObject = {
     [key: string]: JsonValue;
 };
 export declare type JsonValue = null | boolean | number | string | JsonValue[] | JSONObject;
-export interface treeBranch {
-    filepath: Path | string;
+export interface treeBranch<T extends Path | string> {
+    filepath: T;
     depth: number;
-    children: treeBranch[] | null;
+    children: treeBranch<T>[] | null;
 }
 declare class Path {
     root: string;
@@ -324,7 +324,8 @@ declare class Path {
      * @param asString Whether to convert the "filepath" property automatically to a string representation of the path instead.
      * @returns A representation of the filepath tree structure.
      */
-    tree(asString?: boolean, useSystemPathDelimiter?: boolean): Promise<treeBranch>;
+    tree(asString: true, useuseSystemPathDelimiter?: boolean): Promise<treeBranch<string>>;
+    tree(asString: false, useuseSystemPathDelimiter?: boolean): Promise<treeBranch<Path>>;
     /**
      * Synchronously traverses the tree structure of the directory system, starting from the current instances as the root
      * and returns a nested Object representation of the tree structure. Each branching of the tree is comprised of an object
@@ -333,7 +334,8 @@ declare class Path {
      * @param asString Whether to convert the "filepath" property automatically to a string representation of the path instead.
      * @returns A representation of the filepath tree structure.
      */
-    treeSync(asString?: boolean, useSystemPathDelimiter?: boolean): treeBranch;
+    treeSync(asString: true, useuseSystemPathDelimiter: boolean): treeBranch<string>;
+    treeSync(asString: false, useuseSystemPathDelimiter: boolean): treeBranch<Path>;
     /**
      * Asynchronously creates a new directory, including intermediate parental components.
      * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511)

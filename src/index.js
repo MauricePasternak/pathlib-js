@@ -119,7 +119,6 @@ var fse = __importStar(require("fs-extra"));
 var path_1 = __importDefault(require("path"));
 var chokidar_1 = __importDefault(require("chokidar"));
 var utils_1 = require("./utils");
-var os_1 = require("os");
 var Path = /** @class */ (function () {
     /**
      * @param paths A collection of strings which will be resolved and normalized into a filepath.
@@ -143,7 +142,7 @@ var Path = /** @class */ (function () {
         }
         this.path = (0, normalize_path_1.default)(path_1.default.resolve.apply(path_1.default, __spreadArray([], __read(paths), false)));
         var _b = path_1.default.parse(this.path), dir = _b.dir, root = _b.root, base = _b.base, ext = _b.ext;
-        this.root = root;
+        this.root = root.replace("/", "");
         this.basename = base;
         this.dirname = dir;
         _a = __read(this.basename.split(".")), this.stem = _a[0], this.suffixes = _a.slice(1);
@@ -218,10 +217,7 @@ var Path = /** @class */ (function () {
      * @returns An array of the strings comprising the Path instance.
      */
     Path.prototype.parts = function () {
-        if ((0, os_1.platform)() === "win32") {
-            return this.path.split("/");
-        }
-        return __spreadArray(["/"], __read(this.path.split("/").filter(function (c) { return c && c !== ""; })), false);
+        return this.path.split("/");
     };
     /**
      * Splits the underlying filepath into its individual components. Alias for this.parts().
@@ -1071,133 +1067,187 @@ var Path = /** @class */ (function () {
         }
         walkStep(this, callback);
     };
-    /**
-     * Asynchronously traverses the tree structure of the directory system, starting from the current instances as the root
-     * and returns a nested Object representation of the tree structure. Each branching of the tree is comprised of an object
-     * with two properties: "filepath", which is the Path instance of the filepath at that location, and "children" which is
-     * either null in the case of a non-directory or an array of more branch objects.
-     * @param asString Whether to convert the "filepath" property automatically to a string representation of the path instead.
-     * @returns A representation of the filepath tree structure.
-     */
     Path.prototype.tree = function (asString, useSystemPathDelimiter) {
         if (asString === void 0) { asString = false; }
         if (useSystemPathDelimiter === void 0) { useSystemPathDelimiter = false; }
-        return __awaiter(this, void 0, void 0, function () {
-            function traverseBranch(branchRoot, prevDepth) {
-                var e_11, _a;
-                return __awaiter(this, void 0, void 0, function () {
-                    var branch, _b, _c, p, _d, _e, _f, e_11_1;
-                    return __generator(this, function (_g) {
-                        switch (_g.label) {
-                            case 0:
-                                branch = {
-                                    filepath: asString ? branchRoot.toString(useSystemPathDelimiter) : branchRoot,
-                                    depth: prevDepth + 1,
-                                    children: [],
-                                };
-                                _g.label = 1;
-                            case 1:
-                                _g.trys.push([1, 10, 11, 16]);
-                                _b = __asyncValues(branchRoot.readDirIter());
-                                _g.label = 2;
-                            case 2: return [4 /*yield*/, _b.next()];
-                            case 3:
-                                if (!(_c = _g.sent(), !_c.done)) return [3 /*break*/, 9];
-                                p = _c.value;
-                                return [4 /*yield*/, p.isDirectory()];
-                            case 4:
-                                if (!_g.sent()) return [3 /*break*/, 7];
-                                _d = branch.children;
-                                if (!_d) return [3 /*break*/, 6];
-                                _f = (_e = branch.children).push;
-                                return [4 /*yield*/, traverseBranch(p, prevDepth + 1)];
-                            case 5:
-                                _d = _f.apply(_e, [_g.sent()]);
-                                _g.label = 6;
-                            case 6:
-                                _d;
-                                return [3 /*break*/, 8];
-                            case 7:
-                                branch.children &&
-                                    branch.children.push({
-                                        filepath: asString ? p.toString(useSystemPathDelimiter) : p,
-                                        depth: prevDepth + 2,
-                                        children: null,
-                                    });
-                                _g.label = 8;
-                            case 8: return [3 /*break*/, 2];
-                            case 9: return [3 /*break*/, 16];
-                            case 10:
-                                e_11_1 = _g.sent();
-                                e_11 = { error: e_11_1 };
-                                return [3 /*break*/, 16];
-                            case 11:
-                                _g.trys.push([11, , 14, 15]);
-                                if (!(_c && !_c.done && (_a = _b.return))) return [3 /*break*/, 13];
-                                return [4 /*yield*/, _a.call(_b)];
-                            case 12:
-                                _g.sent();
-                                _g.label = 13;
-                            case 13: return [3 /*break*/, 15];
-                            case 14:
-                                if (e_11) throw e_11.error;
-                                return [7 /*endfinally*/];
-                            case 15: return [7 /*endfinally*/];
-                            case 16: return [2 /*return*/, branch];
-                        }
-                    });
+        function traverseBranch(branchRoot, prevDepth) {
+            return __awaiter(this, void 0, void 0, function () {
+                var branch, _a, _b, p, _c, _d, _e, e_11_1, branch, _f, _g, p, _h, _j, _k, e_12_1;
+                var e_11, _l, e_12, _m;
+                return __generator(this, function (_o) {
+                    switch (_o.label) {
+                        case 0:
+                            if (!asString) return [3 /*break*/, 11];
+                            branch = {
+                                filepath: branchRoot.toString(useSystemPathDelimiter),
+                                depth: prevDepth + 1,
+                                children: [],
+                            };
+                            _o.label = 1;
+                        case 1:
+                            _o.trys.push([1, 8, 9, 10]);
+                            _a = __values(branchRoot.readDirIterSync()), _b = _a.next();
+                            _o.label = 2;
+                        case 2:
+                            if (!!_b.done) return [3 /*break*/, 7];
+                            p = _b.value;
+                            if (!p.isDirectorySync()) return [3 /*break*/, 5];
+                            _c = branch.children;
+                            if (!_c) return [3 /*break*/, 4];
+                            _e = (_d = branch.children).push;
+                            return [4 /*yield*/, traverseBranch(p, prevDepth + 1)];
+                        case 3:
+                            _c = _e.apply(_d, [(_o.sent())]);
+                            _o.label = 4;
+                        case 4:
+                            _c;
+                            return [3 /*break*/, 6];
+                        case 5:
+                            branch.children &&
+                                branch.children.push({
+                                    filepath: p.toString(useSystemPathDelimiter),
+                                    depth: prevDepth + 2,
+                                    children: null,
+                                });
+                            _o.label = 6;
+                        case 6:
+                            _b = _a.next();
+                            return [3 /*break*/, 2];
+                        case 7: return [3 /*break*/, 10];
+                        case 8:
+                            e_11_1 = _o.sent();
+                            e_11 = { error: e_11_1 };
+                            return [3 /*break*/, 10];
+                        case 9:
+                            try {
+                                if (_b && !_b.done && (_l = _a.return)) _l.call(_a);
+                            }
+                            finally { if (e_11) throw e_11.error; }
+                            return [7 /*endfinally*/];
+                        case 10: return [2 /*return*/, branch];
+                        case 11:
+                            branch = {
+                                filepath: branchRoot,
+                                depth: prevDepth + 1,
+                                children: [],
+                            };
+                            _o.label = 12;
+                        case 12:
+                            _o.trys.push([12, 19, 20, 21]);
+                            _f = __values(branchRoot.readDirIterSync()), _g = _f.next();
+                            _o.label = 13;
+                        case 13:
+                            if (!!_g.done) return [3 /*break*/, 18];
+                            p = _g.value;
+                            if (!p.isDirectorySync()) return [3 /*break*/, 16];
+                            _h = branch.children;
+                            if (!_h) return [3 /*break*/, 15];
+                            _k = (_j = branch.children).push;
+                            return [4 /*yield*/, traverseBranch(p, prevDepth + 1)];
+                        case 14:
+                            _h = _k.apply(_j, [_o.sent()]);
+                            _o.label = 15;
+                        case 15:
+                            _h;
+                            return [3 /*break*/, 17];
+                        case 16:
+                            branch.children &&
+                                branch.children.push({
+                                    filepath: p,
+                                    depth: prevDepth + 2,
+                                    children: null,
+                                });
+                            _o.label = 17;
+                        case 17:
+                            _g = _f.next();
+                            return [3 /*break*/, 13];
+                        case 18: return [3 /*break*/, 21];
+                        case 19:
+                            e_12_1 = _o.sent();
+                            e_12 = { error: e_12_1 };
+                            return [3 /*break*/, 21];
+                        case 20:
+                            try {
+                                if (_g && !_g.done && (_m = _f.return)) _m.call(_f);
+                            }
+                            finally { if (e_12) throw e_12.error; }
+                            return [7 /*endfinally*/];
+                        case 21: return [2 /*return*/, branch];
+                    }
                 });
-            }
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, traverseBranch(this, -1)];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
             });
-        });
+        }
+        return traverseBranch(this, -1);
     };
-    /**
-     * Synchronously traverses the tree structure of the directory system, starting from the current instances as the root
-     * and returns a nested Object representation of the tree structure. Each branching of the tree is comprised of an object
-     * with two properties: "filepath", which is the Path instance of the filepath at that location, and "children" which is
-     * either null in the case of a non-directory or an array of more branch objects.
-     * @param asString Whether to convert the "filepath" property automatically to a string representation of the path instead.
-     * @returns A representation of the filepath tree structure.
-     */
     Path.prototype.treeSync = function (asString, useSystemPathDelimiter) {
         if (asString === void 0) { asString = false; }
         if (useSystemPathDelimiter === void 0) { useSystemPathDelimiter = false; }
         function traverseBranch(branchRoot, prevDepth) {
-            var e_12, _a;
-            var branch = {
-                filepath: asString ? branchRoot.toString(useSystemPathDelimiter) : branchRoot,
-                depth: prevDepth + 1,
-                children: [],
-            };
-            try {
-                for (var _b = __values(branchRoot.readDirIterSync()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                    var p = _c.value;
-                    if (p.isDirectorySync()) {
-                        branch.children && branch.children.push(traverseBranch(p, prevDepth + 1));
-                    }
-                    else {
-                        branch.children &&
-                            branch.children.push({
-                                filepath: asString ? p.toString(useSystemPathDelimiter) : p,
-                                depth: prevDepth + 2,
-                                children: null,
-                            });
-                    }
-                }
-            }
-            catch (e_12_1) { e_12 = { error: e_12_1 }; }
-            finally {
+            var e_13, _a, e_14, _b;
+            if (asString) {
+                var branch = {
+                    filepath: branchRoot.toString(useSystemPathDelimiter),
+                    depth: prevDepth + 1,
+                    children: [],
+                };
                 try {
-                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                    for (var _c = __values(branchRoot.readDirIterSync()), _d = _c.next(); !_d.done; _d = _c.next()) {
+                        var p = _d.value;
+                        if (p.isDirectorySync()) {
+                            branch && branch.children && branch.children.push(traverseBranch(p, prevDepth + 1));
+                        }
+                        else {
+                            branch.children &&
+                                branch.children.push({
+                                    filepath: p.toString(useSystemPathDelimiter),
+                                    depth: prevDepth + 2,
+                                    children: null,
+                                });
+                        }
+                    }
                 }
-                finally { if (e_12) throw e_12.error; }
+                catch (e_13_1) { e_13 = { error: e_13_1 }; }
+                finally {
+                    try {
+                        if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
+                    }
+                    finally { if (e_13) throw e_13.error; }
+                }
+                return branch;
             }
-            return branch;
+            else {
+                var branch = {
+                    filepath: branchRoot,
+                    depth: prevDepth + 1,
+                    children: [],
+                };
+                try {
+                    for (var _e = __values(branchRoot.readDirIterSync()), _f = _e.next(); !_f.done; _f = _e.next()) {
+                        var p = _f.value;
+                        if (p.isDirectorySync()) {
+                            branch &&
+                                branch.children &&
+                                branch.children.push(traverseBranch(p, prevDepth + 1));
+                        }
+                        else {
+                            branch.children &&
+                                branch.children.push({
+                                    filepath: p,
+                                    depth: prevDepth + 2,
+                                    children: null,
+                                });
+                        }
+                    }
+                }
+                catch (e_14_1) { e_14 = { error: e_14_1 }; }
+                finally {
+                    try {
+                        if (_f && !_f.done && (_b = _e.return)) _b.call(_e);
+                    }
+                    finally { if (e_14) throw e_14.error; }
+                }
+                return branch;
+            }
         }
         return traverseBranch(this, -1);
     };
@@ -1804,8 +1854,14 @@ var Path = /** @class */ (function () {
     return Path;
 }());
 exports.default = Path;
-// async function test() {
-//   const fp = await new Path(__dirname);
-//   console.log(fp.parts());
-// }
-// test();
+function test() {
+    return __awaiter(this, void 0, void 0, function () {
+        var fp;
+        return __generator(this, function (_a) {
+            fp = path_1.default.parse(__dirname);
+            console.log(fp);
+            return [2 /*return*/];
+        });
+    });
+}
+test();

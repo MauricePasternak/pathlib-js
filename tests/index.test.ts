@@ -21,7 +21,7 @@ describe("Path properties", () => {
     assert(fp.suffixes.length === 2 && fp.suffixes[0] === "test" && fp.suffixes[1] === "ts");
   });
   it("Should have a correct root", () => {
-    platform() === "win32" ? assert(/\w:\//gm.test(fp.root)) : assert(fp.root === "/");
+    platform() === "win32" ? assert(/\w:/gm.test(fp.root)) : assert(fp.root === "/");
   });
   it("Should have a correct parent filepath", () => {
     assert(fp.parent().path === new Path(__dirname).path);
@@ -130,6 +130,7 @@ describe("Walking", () => {
   });
   it("Should be able to create an appropriate tree structure", async () => {
     await nestedPath.makeFile();
+    await sleep(20); // Hack
     const treeStruct = await nestedPath.parent().parent().tree(false);
     assert(treeStruct.children != null);
     const firstBranch = treeStruct.children[0];
@@ -226,7 +227,7 @@ describe("Making and removing filepaths", () => {
     try {
       await new Path(__dirname, "FolderB", "File_B1.json").makeSymlink(candidateSymlink);
     } catch (error) {}
-    await sleep(20); // Hack
+    await sleep(50); // Hack
     assert(await candidateSymlink.exists());
   });
   it("Should successfully delete a folder and all its children", async function () {
