@@ -32,10 +32,10 @@ export interface OpenFileOptions {
 }
 export type JSONObject = { [key: string]: JsonValue };
 export type JsonValue = null | boolean | number | string | JsonValue[] | JSONObject;
-export interface treeBranch {
-  filepath: Path | string;
+export interface treeBranch<T extends true | false> {
+  filepath: T extends true ? Path : string;
   depth: number;
-  children: treeBranch[] | null;
+  children: treeBranch<T>[] | null;
 }
 
 class Path {
@@ -669,9 +669,10 @@ class Path {
    * @param asString Whether to convert the "filepath" property automatically to a string representation of the path instead.
    * @returns A representation of the filepath tree structure.
    */
-  async tree(asString = false, useSystemPathDelimiter = false) {
-    async function traverseBranch(branchRoot: Path, prevDepth: number): Promise<treeBranch> {
-      const branch: treeBranch = {
+  async tree<T extends true | false>(asString?: T, useSystemPathDelimiter = false) {
+    async function traverseBranch(branchRoot: Path, prevDepth: number): Promise<treeBranch<T>> {
+      const branch: treeBranch<T> = {
+        // Type 'string | Path' is not assignable to type 'T extends true ? Path : string'.
         filepath: asString ? branchRoot.toString(useSystemPathDelimiter) : branchRoot,
         depth: prevDepth + 1,
         children: [],
@@ -682,6 +683,7 @@ class Path {
         } else {
           branch.children &&
             branch.children.push({
+              // Type 'string | Path' is not assignable to type 'T extends true ? Path : string'.
               filepath: asString ? p.toString(useSystemPathDelimiter) : p,
               depth: prevDepth + 2,
               children: null,

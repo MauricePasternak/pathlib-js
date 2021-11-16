@@ -132,10 +132,10 @@ describe("Walking", () => {
     await nestedPath.makeFile();
     const treeStruct = await nestedPath.parent().parent().tree(false);
     assert(treeStruct.children != null);
-    const firstBranch: treeBranch = treeStruct.children[0];
+    const firstBranch = treeStruct.children[0];
     if (typeof firstBranch.filepath === "string" || firstBranch.children == null) assert(false);
     assert(firstBranch.filepath.basename === "Bar");
-    const secondBranch: treeBranch = firstBranch.children[0];
+    const secondBranch = firstBranch.children[0];
     assert(secondBranch.children == null);
     await new Path(__dirname, "Foo").delete();
   });
