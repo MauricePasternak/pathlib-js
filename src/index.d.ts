@@ -334,8 +334,8 @@ declare class Path {
      * @param asString Whether to convert the "filepath" property automatically to a string representation of the path instead.
      * @returns A representation of the filepath tree structure.
      */
-    treeSync(asString: true, useuseSystemPathDelimiter: boolean): treeBranch<string>;
-    treeSync(asString: false, useuseSystemPathDelimiter: boolean): treeBranch<Path>;
+    treeSync(asString?: true, useuseSystemPathDelimiter?: boolean): treeBranch<string>;
+    treeSync(asString?: false, useuseSystemPathDelimiter?: boolean): treeBranch<Path>;
     /**
      * Asynchronously creates a new directory, including intermediate parental components.
      * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511)

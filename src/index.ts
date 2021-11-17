@@ -722,8 +722,8 @@ class Path {
    * @param asString Whether to convert the "filepath" property automatically to a string representation of the path instead.
    * @returns A representation of the filepath tree structure.
    */
-  treeSync(asString: true, useuseSystemPathDelimiter: boolean): treeBranch<string>;
-  treeSync(asString: false, useuseSystemPathDelimiter: boolean): treeBranch<Path>;
+  treeSync(asString?: true, useuseSystemPathDelimiter?: boolean): treeBranch<string>;
+  treeSync(asString?: false, useuseSystemPathDelimiter?: boolean): treeBranch<Path>;
   treeSync(asString = false, useSystemPathDelimiter = false) {
     function traverseBranch(branchRoot: Path, prevDepth: number): treeBranch<string> | treeBranch<Path> {
       if (asString) {
