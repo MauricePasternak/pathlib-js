@@ -1295,9 +1295,3 @@ class Path {
 }
 
 export default Path;
-
-async function test() {
-  const fp = path.parse(__dirname);
-  console.log(fp);
-}
-test();

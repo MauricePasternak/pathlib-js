@@ -1854,14 +1854,3 @@ var Path = /** @class */ (function () {
     return Path;
 }());
 exports.default = Path;
-function test() {
-    return __awaiter(this, void 0, void 0, function () {
-        var fp;
-        return __generator(this, function (_a) {
-            fp = path_1.default.parse(__dirname);
-            console.log(fp);
-            return [2 /*return*/];
-        });
-    });
-}
-test();
