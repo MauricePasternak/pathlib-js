@@ -3,10 +3,6 @@
  <img width=50% src="https://i.imgur.com/h3FRe7k.png" alt="Project logo"></a>
 </p>
 
-
-
-
-
 ---
 
 <h3 align="center"> Object-oriented Filepath Operations in Javascript & Typescript
@@ -25,6 +21,7 @@
 - [Why pathlib-js](#about)
 - [Usage & API Links](#usage)
 - [The Wonderful Libraries that this wraps around](#wrappers)
+- [Testing](#testing)
 - [Authors](#authors)
 - [Acknowledgments](#acknowledgement)
 
@@ -66,11 +63,11 @@ For example, if a particular Path instance was located in a variable `example` a
 
 <p align="center">
   <a href="" rel="noopener">
- <img width=80% src="https://i.imgur.com/WTyTdJV.png" alt="File Components of a Unix system"></a>
+ <img width=80% src="https://i.imgur.com/3dGrFsV.png" alt="File Components of a Windows system"></a>
 </p>
 <p align="center">
   <a href="" rel="noopener">
- <img width=80% src="https://i.imgur.com/4gu8u25.png" alt="File Components of a Windows system"></a>
+ <img width=80% src="https://i.imgur.com/4gu8u25.png" alt="File Components of a Unix system"></a>
 </p>
 
 ### Defining a path
@@ -95,6 +92,14 @@ console.log(fp1.path === fp2.path);
 - [Copying, moving, deleting, and changing permissions](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Copy-Move-Delete-Chmod.md)
 - [Filepath Creation - Directories, Files, and Symlinks](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Generating-Filepaths.md)
 - [Reading, Writing, Globbing, and Watching](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Read-Write-Glob-Watch.md)
+
+## 🧪 Testing <a name = "testing"></a>
+
+This library is regularly updating its test suite with additional case scenarios.
+
+At the current time, please anticipate the following conditional test failures:
+
+- On Windows, `makeSymlink()` and `makeSymlinkSync()` methods will fail if the environment they are used in lacks administrator priveleges (i.e. testing in VScode without starting it up with admin priveleges). This caveat has not been seen on Unix-based systems.
 
 ## 🥇 The Wonderful Libraries that this wraps around <a name = "wrappers"></a>
 

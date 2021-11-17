@@ -134,11 +134,16 @@ describe("Walking", () => {
     const treeStruct = await nestedPath.parent().parent().tree(false);
     assert(treeStruct.children != null);
     const firstBranch = treeStruct.children[0];
-    if (typeof firstBranch.filepath === "string" || firstBranch.children == null) assert(false);
+    if (firstBranch.children == null) assert(false);
     assert(firstBranch.filepath.basename === "Bar");
     const secondBranch = firstBranch.children[0];
     assert(secondBranch.children == null);
     await new Path(__dirname, "Foo").delete();
+  });
+  it("Should have treeBranch.filepath as a string type if the asString parameter is true", async () => {
+    const treeStruct = await new Path(__dirname).tree(true);
+    assert(typeof treeStruct.filepath === "string" && treeStruct.children != null);
+    assert(typeof treeStruct.children[0].filepath === "string");
   });
 });
 
@@ -291,5 +296,21 @@ describe("Moving and copying filepaths", () => {
     await sleep(20); // Hack
     assert(!(await moveDstPath.exists()));
     assert(!(await moveSrcPath.exists()));
+  });
+});
+
+describe("Static methods work as intended", () => {
+  it("Should be able to retrieve the current working directory and validate its existence", async () => {
+    assert(await Path.cwd().exists());
+  });
+  it("Should be able to retrieve filepaths found under PATH", () => {
+    if (process.env.PATH) {
+      assert(Path.getPATHAsPaths().length);
+    }
+  });
+  it("Should be able to parse permissions into a human-readable octal", () => {
+    const mode = Path.parseModeIntoOctal(new Path(__filename).statSync().mode);
+    assert(mode && Number.isInteger(mode));
+    assert(/\d{3}/gm.test(mode.toString()));
   });
 });

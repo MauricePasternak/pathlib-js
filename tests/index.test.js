@@ -246,19 +246,35 @@ describe("Walking", function () {
                 case 0: return [4 /*yield*/, nestedPath.makeFile()];
                 case 1:
                     _a.sent();
-                    return [4 /*yield*/, nestedPath.parent().parent().tree(false)];
+                    return [4 /*yield*/, sleep(20)];
                 case 2:
+                    _a.sent(); // Hack
+                    return [4 /*yield*/, nestedPath.parent().parent().tree(false)];
+                case 3:
                     treeStruct = _a.sent();
                     (0, assert_1.default)(treeStruct.children != null);
                     firstBranch = treeStruct.children[0];
-                    if (typeof firstBranch.filepath === "string" || firstBranch.children == null)
+                    if (firstBranch.children == null)
                         (0, assert_1.default)(false);
                     (0, assert_1.default)(firstBranch.filepath.basename === "Bar");
                     secondBranch = firstBranch.children[0];
                     (0, assert_1.default)(secondBranch.children == null);
                     return [4 /*yield*/, new src_1.default(__dirname, "Foo").delete()];
-                case 3:
+                case 4:
                     _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it("Should have treeBranch.filepath as a string type if the asString parameter is true", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var treeStruct;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, new src_1.default(__dirname).tree(true)];
+                case 1:
+                    treeStruct = _a.sent();
+                    (0, assert_1.default)(typeof treeStruct.filepath === "string" && treeStruct.children != null);
+                    (0, assert_1.default)(typeof treeStruct.children[0].filepath === "string");
                     return [2 /*return*/];
             }
         });
@@ -781,4 +797,29 @@ describe("Moving and copying filepaths", function () {
             }
         });
     }); });
+});
+describe("Static methods work as intended", function () {
+    it("Should be able to retrieve the current working directory and validate its existence", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _a = assert_1.default;
+                    return [4 /*yield*/, src_1.default.cwd().exists()];
+                case 1:
+                    _a.apply(void 0, [_b.sent()]);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it("Should be able to retrieve filepaths found under PATH", function () {
+        if (process.env.PATH) {
+            (0, assert_1.default)(src_1.default.getPATHAsPaths().length);
+        }
+    });
+    it("Should be able to parse permissions into a human-readable octal", function () {
+        var mode = src_1.default.parseModeIntoOctal(new src_1.default(__filename).statSync().mode);
+        (0, assert_1.default)(mode && Number.isInteger(mode));
+        (0, assert_1.default)(/\d{3}/gm.test(mode.toString()));
+    });
 });
