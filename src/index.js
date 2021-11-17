@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
@@ -119,6 +130,7 @@ var fse = __importStar(require("fs-extra"));
 var path_1 = __importDefault(require("path"));
 var chokidar_1 = __importDefault(require("chokidar"));
 var utils_1 = require("./utils");
+var os_1 = require("os");
 var Path = /** @class */ (function () {
     /**
      * @param paths A collection of strings which will be resolved and normalized into a filepath.
@@ -142,11 +154,12 @@ var Path = /** @class */ (function () {
         }
         this.path = (0, normalize_path_1.default)(path_1.default.resolve.apply(path_1.default, __spreadArray([], __read(paths), false)));
         var _b = path_1.default.parse(this.path), dir = _b.dir, root = _b.root, base = _b.base, ext = _b.ext;
-        this.root = root.replace("/", "");
+        this.root = (0, os_1.platform)() === "win32" ? root.replace("/", "") : root;
         this.basename = base;
         this.dirname = dir;
         _a = __read(this.basename.split(".")), this.stem = _a[0], this.suffixes = _a.slice(1);
         this.ext = ext;
+        this.descriptor = null;
     }
     /**
      * Get a Path representation of the current working directory.
@@ -217,14 +230,14 @@ var Path = /** @class */ (function () {
      * @returns An array of the strings comprising the Path instance.
      */
     Path.prototype.parts = function () {
-        return this.path.split("/");
+        return (0, os_1.platform)() === "win32" ? this.path.split("/") : __spreadArray(["/"], __read(this.path.split("/").slice(1)), false);
     };
     /**
      * Splits the underlying filepath into its individual components. Alias for this.parts().
      * @returns An array of the strings comprising the Path instance.
      */
     Path.prototype.split = function () {
-        return this.path.split("/");
+        return this.parts();
     };
     /**
      * Depicts the relative path from the Path instance to another filepath.
@@ -1145,7 +1158,7 @@ var Path = /** @class */ (function () {
                             _k = (_j = branch.children).push;
                             return [4 /*yield*/, traverseBranch(p, prevDepth + 1)];
                         case 14:
-                            _h = _k.apply(_j, [_o.sent()]);
+                            _h = _k.apply(_j, [(_o.sent())]);
                             _o.label = 15;
                         case 15:
                             _h;
@@ -1355,43 +1368,107 @@ var Path = /** @class */ (function () {
         fse.ensureSymlinkSync(this.path, dest.path, linkType);
         return dest;
     };
-    /**
-     * Asynchronously tests a user's permissions for the underling filepath.
-     * @param mode the permissions to check for.
-     * @returns A boolean of whether the indicated permissions apply to the process invoking this method.
-     */
     Path.prototype.access = function (mode) {
         return __awaiter(this, void 0, void 0, function () {
-            var error_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var error_1, accessArr, resultArr, accessArr_1, accessArr_1_1, check, error_2, e_15_1;
+            var e_15, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, fse.access(this.path, mode)];
+                        if (!(typeof mode === "number")) return [3 /*break*/, 4];
+                        _b.label = 1;
                     case 1:
-                        _a.sent();
-                        return [2 /*return*/, true];
+                        _b.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, fse.access(this.path, mode)];
                     case 2:
-                        error_1 = _a.sent();
+                        _b.sent();
+                        return [2 /*return*/, true];
+                    case 3:
+                        error_1 = _b.sent();
                         return [2 /*return*/, false];
-                    case 3: return [2 /*return*/];
+                    case 4:
+                        accessArr = [fse.constants.R_OK, fse.constants.W_OK, fse.constants.X_OK];
+                        resultArr = [];
+                        _b.label = 5;
+                    case 5:
+                        _b.trys.push([5, 12, 13, 14]);
+                        accessArr_1 = __values(accessArr), accessArr_1_1 = accessArr_1.next();
+                        _b.label = 6;
+                    case 6:
+                        if (!!accessArr_1_1.done) return [3 /*break*/, 11];
+                        check = accessArr_1_1.value;
+                        _b.label = 7;
+                    case 7:
+                        _b.trys.push([7, 9, , 10]);
+                        return [4 /*yield*/, fse.access(this.path, check)];
+                    case 8:
+                        _b.sent();
+                        resultArr.push(true);
+                        return [3 /*break*/, 10];
+                    case 9:
+                        error_2 = _b.sent();
+                        resultArr.push(false);
+                        return [3 /*break*/, 10];
+                    case 10:
+                        accessArr_1_1 = accessArr_1.next();
+                        return [3 /*break*/, 6];
+                    case 11: return [3 /*break*/, 14];
+                    case 12:
+                        e_15_1 = _b.sent();
+                        e_15 = { error: e_15_1 };
+                        return [3 /*break*/, 14];
+                    case 13:
+                        try {
+                            if (accessArr_1_1 && !accessArr_1_1.done && (_a = accessArr_1.return)) _a.call(accessArr_1);
+                        }
+                        finally { if (e_15) throw e_15.error; }
+                        return [7 /*endfinally*/];
+                    case 14: return [2 /*return*/, Object.fromEntries([
+                            ["canRead", resultArr[0]],
+                            ["canWrite", resultArr[1]],
+                            ["canExecute", resultArr[2]],
+                        ])];
                 }
             });
         });
     };
-    /**
-     * Synchronously tests a user's permissions for the underling filepath.
-     * @param mode the permissions to check for.
-     * @returns A boolean of whether the indicated permissions apply to the process invoking this method.
-     */
     Path.prototype.accessSync = function (mode) {
+        var e_16, _a;
+        if (typeof mode === "number") {
+            try {
+                fse.accessSync(this.path, mode);
+                return true;
+            }
+            catch (error) {
+                return false;
+            }
+        }
+        var accessArr = [fse.constants.R_OK, fse.constants.W_OK, fse.constants.X_OK];
+        var resultArr = [];
         try {
-            fse.accessSync(this.path, mode);
-            return true;
+            for (var accessArr_2 = __values(accessArr), accessArr_2_1 = accessArr_2.next(); !accessArr_2_1.done; accessArr_2_1 = accessArr_2.next()) {
+                var check = accessArr_2_1.value;
+                try {
+                    fse.accessSync(this.path, check);
+                    resultArr.push(true);
+                }
+                catch (error) {
+                    resultArr.push(false);
+                }
+            }
         }
-        catch (error) {
-            return false;
+        catch (e_16_1) { e_16 = { error: e_16_1 }; }
+        finally {
+            try {
+                if (accessArr_2_1 && !accessArr_2_1.done && (_a = accessArr_2.return)) _a.call(accessArr_2);
+            }
+            finally { if (e_16) throw e_16.error; }
         }
+        return Object.fromEntries([
+            ["canRead", resultArr[0]],
+            ["canWrite", resultArr[1]],
+            ["canExecute", resultArr[2]],
+        ]);
     };
     /**
      * Asynchronously changes the permissions of the underlying filepath.
@@ -1587,24 +1664,31 @@ var Path = /** @class */ (function () {
      */
     Path.prototype.open = function (openOptions) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
+                        if (this.descriptor != null) {
+                            throw new Error("Detected that this filepath is already open.");
+                        }
                         _a = openOptions.ensureExists && this.suffixes.length;
                         if (!_a) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.isFile()];
                     case 1:
-                        _a = !(_b.sent());
-                        _b.label = 2;
+                        _a = !(_c.sent());
+                        _c.label = 2;
                     case 2:
                         if (!_a) return [3 /*break*/, 4];
                         return [4 /*yield*/, this.makeFile()];
                     case 3:
-                        _b.sent();
-                        _b.label = 4;
-                    case 4: return [4 /*yield*/, fse.open(this.path, openOptions.flags, openOptions.mode)];
-                    case 5: return [2 /*return*/, _b.sent()];
+                        _c.sent();
+                        _c.label = 4;
+                    case 4:
+                        _b = this;
+                        return [4 /*yield*/, fse.open(this.path, openOptions.flags, openOptions.mode)];
+                    case 5:
+                        _b.descriptor = _c.sent();
+                        return [2 /*return*/, this.descriptor];
                 }
             });
         });
@@ -1619,7 +1703,39 @@ var Path = /** @class */ (function () {
      * @returns The numeric file descriptor.
      */
     Path.prototype.openSync = function (openOptions) {
-        return fse.openSync(this.path, openOptions.flags, openOptions.mode);
+        if (this.descriptor != null) {
+            throw new Error("Detected that this filepath is already open.");
+        }
+        // Ensure that the file exists
+        if (openOptions.ensureExists && this.suffixes.length && !this.isFileSync()) {
+            this.makeFileSync();
+        }
+        this.descriptor = fse.openSync(this.path, openOptions.flags, openOptions.mode);
+        return this.descriptor;
+    };
+    Path.prototype.close = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (this.descriptor == null) {
+                            throw new Error("Cannot close a file that has not been opened.");
+                        }
+                        return [4 /*yield*/, fse.close(this.descriptor)];
+                    case 1:
+                        _a.sent();
+                        this.descriptor = null;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    Path.prototype.closeSync = function () {
+        if (this.descriptor == null) {
+            throw new Error("Cannot close a file that has not been opened.");
+        }
+        fse.closeSync(this.descriptor);
+        this.descriptor = null;
     };
     /**
      * Asynchronously reads a portion of the data from the underlying file.
@@ -1629,21 +1745,33 @@ var Path = /** @class */ (function () {
      * @param position Specifies where to begin reading from in the file.
      * If position is null or -1 , data will be read from the current file position, and the file position will be updated.
      * If position is an integer, the file position will be unchanged.
+     * @param closeAfterwards Whether to close the file after the operation completes. Defaults to true.
      * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
      * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
      * @returns An object with the properties of buffer, which is the updated buffer, and bytesRead, which is the number of
      * bytes that were read from the file.
      */
-    Path.prototype.read = function (buffer, offset, length, position, openOptions) {
+    Path.prototype.read = function (buffer, offset, length, position, closeAfterwards, openOptions) {
+        if (closeAfterwards === void 0) { closeAfterwards = true; }
         return __awaiter(this, void 0, void 0, function () {
-            var fd;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var fd, readResult, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0: return [4 /*yield*/, this.open(openOptions ? openOptions : { flags: "r" })];
                     case 1:
-                        fd = _a.sent();
+                        fd = _b.sent();
                         return [4 /*yield*/, fse.read(fd, buffer, offset, length, position)];
-                    case 2: return [2 /*return*/, _a.sent()];
+                    case 2:
+                        readResult = _b.sent();
+                        _a = closeAfterwards;
+                        if (!_a) return [3 /*break*/, 4];
+                        return [4 /*yield*/, this.close()];
+                    case 3:
+                        _a = (_b.sent());
+                        _b.label = 4;
+                    case 4:
+                        _a;
+                        return [2 /*return*/, __assign(__assign({}, readResult), { fileDescriptor: closeAfterwards ? null : fd })];
                 }
             });
         });
@@ -1654,15 +1782,19 @@ var Path = /** @class */ (function () {
      * @param offset The position in buffer to write the data to.
      * @param length The number of bytes to read.
      * @param position Specifies where to begin reading from in the file.
+     * @param closeAfterwards Whether to close the file after the operation completes. Defaults to true.
      * If position is null or -1 , data will be read from the current file position, and the file position will be updated.
      * If position is an integer, the file position will be unchanged.
      * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
      * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
      * @returns The number of bytes read.
      */
-    Path.prototype.readSync = function (buffer, offset, length, position, openOptions) {
+    Path.prototype.readSync = function (buffer, offset, length, position, closeAfterwards, openOptions) {
+        if (closeAfterwards === void 0) { closeAfterwards = true; }
         var fd = this.openSync(openOptions ? openOptions : { flags: "r" });
-        return fse.readSync(fd, buffer, offset, length, position);
+        var readResult = fse.readSync(fd, buffer, offset, length, position);
+        closeAfterwards && this.closeSync();
+        return { bytesRead: readResult, fileDescriptor: closeAfterwards ? null : fd };
     };
     /**
      * Asynchronously writes buffer-like data into the underlying file.
@@ -1670,19 +1802,31 @@ var Path = /** @class */ (function () {
      * @param offset The position in the buffer from which to begin writing
      * @param length The number of bytes to write.
      * @param position Specifies where to begin writing into the file.
+     * @param closeAfterwards Whether to close the file after the operation completes. Defaults to true.
      * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
      * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
      */
-    Path.prototype.write = function (buffer, offset, length, position, openOptions) {
+    Path.prototype.write = function (buffer, offset, length, position, closeAfterwards, openOptions) {
+        if (closeAfterwards === void 0) { closeAfterwards = true; }
         return __awaiter(this, void 0, void 0, function () {
-            var fd;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var fd, writeResult, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0: return [4 /*yield*/, this.open(openOptions !== null && openOptions !== void 0 ? openOptions : { flags: "w" })];
                     case 1:
-                        fd = _a.sent();
+                        fd = _b.sent();
                         return [4 /*yield*/, fse.write(fd, buffer, offset, length, position)];
-                    case 2: return [2 /*return*/, _a.sent()];
+                    case 2:
+                        writeResult = _b.sent();
+                        _a = closeAfterwards;
+                        if (!_a) return [3 /*break*/, 4];
+                        return [4 /*yield*/, this.close()];
+                    case 3:
+                        _a = (_b.sent());
+                        _b.label = 4;
+                    case 4:
+                        _a;
+                        return [2 /*return*/, __assign(__assign({}, writeResult), { fileDescriptor: fd })];
                 }
             });
         });
@@ -1694,12 +1838,16 @@ var Path = /** @class */ (function () {
      * @param offset The position in the buffer from which to begin writing
      * @param length The number of bytes to write.
      * @param position Specifies where to begin writing into the file.
+     * @param closeAfterwards Whether to close the file after the operation completes. Defaults to true.
      * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
      * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
      */
-    Path.prototype.writeSync = function (buffer, offset, length, position, openOptions) {
+    Path.prototype.writeSync = function (buffer, offset, length, position, closeAfterwards, openOptions) {
+        if (closeAfterwards === void 0) { closeAfterwards = true; }
         var fd = this.openSync(openOptions !== null && openOptions !== void 0 ? openOptions : { flags: "w" });
-        return fse.writeSync(fd, buffer, offset, length, position);
+        var writeResult = fse.writeSync(fd, buffer, offset, length, position);
+        closeAfterwards && this.closeSync();
+        return { bytesWritten: writeResult, fileDescriptor: fd };
     };
     Path.prototype.readFile = function (arg1, arg2) {
         return __awaiter(this, void 0, void 0, function () {
@@ -1854,14 +2002,3 @@ var Path = /** @class */ (function () {
     return Path;
 }());
 exports.default = Path;
-function test() {
-    return __awaiter(this, void 0, void 0, function () {
-        var fp;
-        return __generator(this, function (_a) {
-            fp = path_1.default.parse(__dirname);
-            console.log(fp);
-            return [2 /*return*/];
-        });
-    });
-}
-test();

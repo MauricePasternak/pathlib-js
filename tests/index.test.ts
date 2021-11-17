@@ -47,29 +47,40 @@ describe("Path parts", () => {
   }
 });
 
+describe("Relative strings", () => {
+  const fpDir = new Path(__dirname);
+  const fpFile = new Path(__filename);
+  it("Should correctly infer the strings that represent the relationship between __filename and __dirname", () => {
+    assert(fpDir.relative(fpFile).startsWith("index.test"));
+    assert(fpFile.relative(fpDir) === "..");
+  });
+});
+
 describe("New Path creation from previous", () => {
-  const fp = new Path(__dirname);
+  const fpDir = new Path(__dirname);
   const testfile = new Path(__filename + "/Test.tar.gz");
   it("Should generate an appropriate Path using withBasename", () => {
-    assert("TEST" === fp.withBasename("TEST").basename);
+    assert("TEST" === fpDir.withBasename("TEST").basename);
   });
   it("Should generate an appropriate Path using withStem", () => {
-    assert("TEST" === fp.withStem("TEST").basename);
+    assert("TEST" === fpDir.withStem("TEST").basename);
   });
   it("Should generate an appropriate Path using withSuffix argument as a String, even if user adds '.' to the start of a string and/or elements of an array argument", () => {
     const newFileByArray = testfile.withSuffix(["json", ".gz"]);
     const newFileByString = testfile.withSuffix(".json.gz");
     assert(newFileByArray.basename === newFileByString.basename);
+    assert(newFileByArray.suffixes.join(".") === "json.gz");
+    assert(newFileByArray.ext === ".gz");
   });
   it("Should resolve '..' correctly into a new filepath using the resolve() method", () => {
-    assert(fp.parent().path === fp.resolve("..").path);
+    assert(fpDir.parent().path === fpDir.resolve("..").path);
   });
   it("Should disregard '.' correctly when using the resolve() method", () => {
-    assert(fp.resolve("./index.test.ts").path === new Path(__filename).path);
+    assert(fpDir.resolve("./index.test.ts").path === new Path(__filename).path);
   });
   it("Should treat '..' and '.' literally when using the join() method", () => {
-    assert(fp.join("../Test").basename === "Test");
-    assert(fp.join("./Test").basename === "Test");
+    assert(fpDir.join("../Test").basename === "Test");
+    assert(fpDir.join("./Test").basename === "Test");
   });
 });
 
@@ -113,9 +124,15 @@ describe("Globbing", () => {
     const jsonFiles = await fp.glob("**/*.json", { dot: true });
     assert(jsonFiles.length === 2);
   });
+  it("Should be able to allow for glob iteration instead of fetching all hits at once", async () => {
+    const txtFileIterator = fp.globIter("**/*.txt", { dot: true });
+    for await (const p of txtFileIterator) {
+      assert(p.ext === ".txt");
+    }
+  });
 });
 
-describe("Walking", () => {
+describe("Walking and Traversing Trees", () => {
   const fp = new Path(__dirname);
   const nestedPath = new Path(__dirname, "Foo", "Bar", "Baz.qui");
   it("Should be able to traverse a nested directory structure in the expected order", async () => {
@@ -148,15 +165,43 @@ describe("Walking", () => {
 });
 
 describe("Directory iteration", () => {
-  const fp = new Path(__dirname).join("FolderA");
-  it("Should be able to retrieve accurate child paths by iterating over a parent folder", async () => {
-    const expectedNames = ["File_A1.txt", "File_A2.txt"];
+  const fpFolderA = new Path(__dirname).join("FolderA");
+  const expectedNames = ["File_A1.txt", "File_A2.txt"];
+
+  it("Should be able to return an array of child filepaths", async () => {
+    const children = (await fpFolderA.readDir()).map(p => p.basename);
+    assert.deepEqual(children, expectedNames);
+  });
+  it("Should be able to iterate over the child filepaths as an alternative", async () => {
     let ii = 0;
-    for await (const childPath of fp.readDirIter()) {
+    for await (const childPath of fpFolderA.readDirIter()) {
       assert(expectedNames[ii] === childPath.basename);
       ii++;
     }
   });
+});
+
+describe("Permissions", () => {
+  const fp = new Path(__dirname, "FolderA", "File_A1.txt");
+  const initialMode = fp.statSync().mode;
+  const parsedMode = Path.parseModeIntoOctal(initialMode);
+  console.log("Initial Mode", initialMode);
+  console.log("Parsed Mode", parsedMode);
+  it("Should be able to inform a user about permissions given a mode", async () => {
+    const permissions = await fp.access();
+    console.log(permissions);
+    assert(permissions.canRead && permissions.canWrite);
+  });
+
+  if (platform() !== "win32") {
+    it("Should be able to change the permissions of a file at all 3 levels on Unix-based systems", async () => {
+      await fp.chmod(0o777);
+      const newPermissions = await fp.access();
+      assert(newPermissions.canExecute);
+      await fp.chmod(initialMode);
+      assert(Path.parseModeIntoOctal((await fp.stat()).mode) === parsedMode);
+    });
+  }
 });
 
 describe("Detection of filepaths at Nth level away", () => {

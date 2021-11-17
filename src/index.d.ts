@@ -26,6 +26,11 @@ export interface OpenFileOptions {
     flags: string | number;
     mode?: number;
 }
+export interface AccessResult {
+    canRead: boolean;
+    canWrite: boolean;
+    canExecute: boolean;
+}
 export declare type JSONObject = {
     [key: string]: JsonValue;
 };
@@ -43,6 +48,7 @@ declare class Path {
     stem: string;
     ext: string;
     suffixes: string[];
+    descriptor: null | number;
     /**
      * Get a Path representation of the current working directory.
      * @returns The current working directory.
@@ -372,16 +378,22 @@ declare class Path {
     makeSymlinkSync(dst: string | Path): Path;
     /**
      * Asynchronously tests a user's permissions for the underling filepath.
-     * @param mode the permissions to check for.
-     * @returns A boolean of whether the indicated permissions apply to the process invoking this method.
+     * @param mode the permissions to check for. Use fs.constants variables as input, NOT octal numbers.
+     * @returns If mode was specified, a boolean reflecting the permissions.
+     * Otherwise, returns an object with keys "canRead", "canWrite", "canExecute" and values as a
+     * boolean of whether permissions for that operation are available.
      */
-    access(mode?: number): Promise<boolean>;
+    access(mode: number): Promise<boolean>;
+    access(mode?: undefined): Promise<AccessResult>;
     /**
      * Synchronously tests a user's permissions for the underling filepath.
-     * @param mode the permissions to check for.
-     * @returns A boolean of whether the indicated permissions apply to the process invoking this method.
+     * @param mode the permissions to check for. Use fs.constants variables as input, NOT octal numbers.
+     * @returns If mode was specified, a boolean reflecting the permissions.
+     * Otherwise, returns an object with keys "canRead", "canWrite", "canExecute" and values as a
+     * boolean of whether permissions for that operation are available.
      */
     accessSync(mode?: number): boolean;
+    accessSync(mode?: undefined): AccessResult;
     /**
      * Asynchronously changes the permissions of the underlying filepath.
      * Caveats: on Windows only the write permission can be changed, and the distinction
@@ -498,6 +510,8 @@ declare class Path {
      * @returns The numeric file descriptor.
      */
     openSync(openOptions: OpenFileOptions): number;
+    close(): Promise<void>;
+    closeSync(): void;
     /**
      * Asynchronously reads a portion of the data from the underlying file.
      * @param buffer The Buffer that the data will be written to.
@@ -506,12 +520,14 @@ declare class Path {
      * @param position Specifies where to begin reading from in the file.
      * If position is null or -1 , data will be read from the current file position, and the file position will be updated.
      * If position is an integer, the file position will be unchanged.
+     * @param closeAfterwards Whether to close the file after the operation completes. Defaults to true.
      * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
      * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
      * @returns An object with the properties of buffer, which is the updated buffer, and bytesRead, which is the number of
      * bytes that were read from the file.
      */
-    read(buffer: fse.ArrayBufferView, offset: number, length: number, position: number | null, openOptions?: OpenFileOptions): Promise<{
+    read(buffer: fse.ArrayBufferView, offset: number, length: number, position: number | null, closeAfterwards?: boolean, openOptions?: OpenFileOptions): Promise<{
+        fileDescriptor: number | null;
         bytesRead: number;
         buffer: fse.ArrayBufferView;
     }>;
@@ -521,23 +537,29 @@ declare class Path {
      * @param offset The position in buffer to write the data to.
      * @param length The number of bytes to read.
      * @param position Specifies where to begin reading from in the file.
+     * @param closeAfterwards Whether to close the file after the operation completes. Defaults to true.
      * If position is null or -1 , data will be read from the current file position, and the file position will be updated.
      * If position is an integer, the file position will be unchanged.
      * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
      * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
      * @returns The number of bytes read.
      */
-    readSync(buffer: fse.ArrayBufferView, offset: number, length: number, position: number | null, openOptions?: OpenFileOptions): number;
+    readSync(buffer: fse.ArrayBufferView, offset: number, length: number, position: number | null, closeAfterwards?: boolean, openOptions?: OpenFileOptions): {
+        bytesRead: number;
+        fileDescriptor: number | null;
+    };
     /**
      * Asynchronously writes buffer-like data into the underlying file.
      * @param buffer the Buffer which should be written into the underlying file.
      * @param offset The position in the buffer from which to begin writing
      * @param length The number of bytes to write.
      * @param position Specifies where to begin writing into the file.
+     * @param closeAfterwards Whether to close the file after the operation completes. Defaults to true.
      * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
      * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
      */
-    write<TBuffer extends NodeJS.TypedArray | DataView>(buffer: TBuffer, offset?: number, length?: number, position?: number | null, openOptions?: OpenFileOptions): Promise<{
+    write<TBuffer extends NodeJS.TypedArray | DataView>(buffer: TBuffer, offset?: number, length?: number, position?: number | null, closeAfterwards?: boolean, openOptions?: OpenFileOptions): Promise<{
+        fileDescriptor: number;
         bytesWritten: number;
         buffer: TBuffer;
     }>;
@@ -548,10 +570,14 @@ declare class Path {
      * @param offset The position in the buffer from which to begin writing
      * @param length The number of bytes to write.
      * @param position Specifies where to begin writing into the file.
+     * @param closeAfterwards Whether to close the file after the operation completes. Defaults to true.
      * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
      * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
      */
-    writeSync<TBuffer extends NodeJS.TypedArray | DataView>(buffer: TBuffer, offset?: number, length?: number, position?: number | null, openOptions?: OpenFileOptions): number;
+    writeSync<TBuffer extends NodeJS.TypedArray | DataView>(buffer: TBuffer, offset?: number, length?: number, position?: number | null, closeAfterwards?: boolean, openOptions?: OpenFileOptions): {
+        bytesWritten: number;
+        fileDescriptor: number;
+    };
     /**
      * Asynchronously parses data coming from a file.
      * @param options.encoding. The encoding to use in the write operation. Defaults to "utf8".

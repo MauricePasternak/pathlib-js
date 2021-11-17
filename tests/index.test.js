@@ -102,29 +102,39 @@ describe("Path parts", function () {
         });
     }
 });
+describe("Relative strings", function () {
+    var fpDir = new src_1.default(__dirname);
+    var fpFile = new src_1.default(__filename);
+    it("Should correctly infer the strings that represent the relationship between __filename and __dirname", function () {
+        (0, assert_1.default)(fpDir.relative(fpFile).startsWith("index.test"));
+        (0, assert_1.default)(fpFile.relative(fpDir) === "..");
+    });
+});
 describe("New Path creation from previous", function () {
-    var fp = new src_1.default(__dirname);
+    var fpDir = new src_1.default(__dirname);
     var testfile = new src_1.default(__filename + "/Test.tar.gz");
     it("Should generate an appropriate Path using withBasename", function () {
-        (0, assert_1.default)("TEST" === fp.withBasename("TEST").basename);
+        (0, assert_1.default)("TEST" === fpDir.withBasename("TEST").basename);
     });
     it("Should generate an appropriate Path using withStem", function () {
-        (0, assert_1.default)("TEST" === fp.withStem("TEST").basename);
+        (0, assert_1.default)("TEST" === fpDir.withStem("TEST").basename);
     });
     it("Should generate an appropriate Path using withSuffix argument as a String, even if user adds '.' to the start of a string and/or elements of an array argument", function () {
         var newFileByArray = testfile.withSuffix(["json", ".gz"]);
         var newFileByString = testfile.withSuffix(".json.gz");
         (0, assert_1.default)(newFileByArray.basename === newFileByString.basename);
+        (0, assert_1.default)(newFileByArray.suffixes.join(".") === "json.gz");
+        (0, assert_1.default)(newFileByArray.ext === ".gz");
     });
     it("Should resolve '..' correctly into a new filepath using the resolve() method", function () {
-        (0, assert_1.default)(fp.parent().path === fp.resolve("..").path);
+        (0, assert_1.default)(fpDir.parent().path === fpDir.resolve("..").path);
     });
     it("Should disregard '.' correctly when using the resolve() method", function () {
-        (0, assert_1.default)(fp.resolve("./index.test.ts").path === new src_1.default(__filename).path);
+        (0, assert_1.default)(fpDir.resolve("./index.test.ts").path === new src_1.default(__filename).path);
     });
     it("Should treat '..' and '.' literally when using the join() method", function () {
-        (0, assert_1.default)(fp.join("../Test").basename === "Test");
-        (0, assert_1.default)(fp.join("./Test").basename === "Test");
+        (0, assert_1.default)(fpDir.join("../Test").basename === "Test");
+        (0, assert_1.default)(fpDir.join("./Test").basename === "Test");
     });
 });
 describe("Retrieving a parent", function () {
@@ -216,8 +226,48 @@ describe("Globbing", function () {
             }
         });
     }); });
+    it("Should be able to allow for glob iteration instead of fetching all hits at once", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var txtFileIterator, txtFileIterator_1, txtFileIterator_1_1, p, e_1_1;
+        var e_1, _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    txtFileIterator = fp.globIter("**/*.txt", { dot: true });
+                    _b.label = 1;
+                case 1:
+                    _b.trys.push([1, 6, 7, 12]);
+                    txtFileIterator_1 = __asyncValues(txtFileIterator);
+                    _b.label = 2;
+                case 2: return [4 /*yield*/, txtFileIterator_1.next()];
+                case 3:
+                    if (!(txtFileIterator_1_1 = _b.sent(), !txtFileIterator_1_1.done)) return [3 /*break*/, 5];
+                    p = txtFileIterator_1_1.value;
+                    (0, assert_1.default)(p.ext === ".txt");
+                    _b.label = 4;
+                case 4: return [3 /*break*/, 2];
+                case 5: return [3 /*break*/, 12];
+                case 6:
+                    e_1_1 = _b.sent();
+                    e_1 = { error: e_1_1 };
+                    return [3 /*break*/, 12];
+                case 7:
+                    _b.trys.push([7, , 10, 11]);
+                    if (!(txtFileIterator_1_1 && !txtFileIterator_1_1.done && (_a = txtFileIterator_1.return))) return [3 /*break*/, 9];
+                    return [4 /*yield*/, _a.call(txtFileIterator_1)];
+                case 8:
+                    _b.sent();
+                    _b.label = 9;
+                case 9: return [3 /*break*/, 11];
+                case 10:
+                    if (e_1) throw e_1.error;
+                    return [7 /*endfinally*/];
+                case 11: return [7 /*endfinally*/];
+                case 12: return [2 /*return*/];
+            }
+        });
+    }); });
 });
-describe("Walking", function () {
+describe("Walking and Traversing Trees", function () {
     var fp = new src_1.default(__dirname);
     var nestedPath = new src_1.default(__dirname, "Foo", "Bar", "Baz.qui");
     it("Should be able to traverse a nested directory structure in the expected order", function () { return __awaiter(void 0, void 0, void 0, function () {
@@ -281,19 +331,31 @@ describe("Walking", function () {
     }); });
 });
 describe("Directory iteration", function () {
-    var fp = new src_1.default(__dirname).join("FolderA");
-    it("Should be able to retrieve accurate child paths by iterating over a parent folder", function () { return __awaiter(void 0, void 0, void 0, function () {
-        var expectedNames, ii, _a, _b, childPath, e_1_1;
-        var e_1, _c;
+    var fpFolderA = new src_1.default(__dirname).join("FolderA");
+    var expectedNames = ["File_A1.txt", "File_A2.txt"];
+    it("Should be able to return an array of child filepaths", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var children;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, fpFolderA.readDir()];
+                case 1:
+                    children = (_a.sent()).map(function (p) { return p.basename; });
+                    assert_1.default.deepEqual(children, expectedNames);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it("Should be able to iterate over the child filepaths as an alternative", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var ii, _a, _b, childPath, e_2_1;
+        var e_2, _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
-                    expectedNames = ["File_A1.txt", "File_A2.txt"];
                     ii = 0;
                     _d.label = 1;
                 case 1:
                     _d.trys.push([1, 6, 7, 12]);
-                    _a = __asyncValues(fp.readDirIter());
+                    _a = __asyncValues(fpFolderA.readDirIter());
                     _d.label = 2;
                 case 2: return [4 /*yield*/, _a.next()];
                 case 3:
@@ -305,8 +367,8 @@ describe("Directory iteration", function () {
                 case 4: return [3 /*break*/, 2];
                 case 5: return [3 /*break*/, 12];
                 case 6:
-                    e_1_1 = _d.sent();
-                    e_1 = { error: e_1_1 };
+                    e_2_1 = _d.sent();
+                    e_2 = { error: e_2_1 };
                     return [3 /*break*/, 12];
                 case 7:
                     _d.trys.push([7, , 10, 11]);
@@ -317,7 +379,7 @@ describe("Directory iteration", function () {
                     _d.label = 9;
                 case 9: return [3 /*break*/, 11];
                 case 10:
-                    if (e_1) throw e_1.error;
+                    if (e_2) throw e_2.error;
                     return [7 /*endfinally*/];
                 case 11: return [7 /*endfinally*/];
                 case 12: return [2 /*return*/];
@@ -325,15 +387,60 @@ describe("Directory iteration", function () {
         });
     }); });
 });
+describe("Permissions", function () {
+    var fp = new src_1.default(__dirname, "FolderA", "File_A1.txt");
+    var initialMode = fp.statSync().mode;
+    var parsedMode = src_1.default.parseModeIntoOctal(initialMode);
+    console.log("Initial Mode", initialMode);
+    console.log("Parsed Mode", parsedMode);
+    it("Should be able to inform a user about permissions given a mode", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var permissions;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, fp.access()];
+                case 1:
+                    permissions = _a.sent();
+                    console.log(permissions);
+                    (0, assert_1.default)(permissions.canRead && permissions.canWrite);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    if ((0, os_1.platform)() !== "win32") {
+        it("Should be able to change the permissions of a file at all 3 levels on Unix-based systems", function () { return __awaiter(void 0, void 0, void 0, function () {
+            var newPermissions, _a, _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0: return [4 /*yield*/, fp.chmod(511)];
+                    case 1:
+                        _d.sent();
+                        return [4 /*yield*/, fp.access()];
+                    case 2:
+                        newPermissions = _d.sent();
+                        (0, assert_1.default)(newPermissions.canExecute);
+                        return [4 /*yield*/, fp.chmod(initialMode)];
+                    case 3:
+                        _d.sent();
+                        _a = assert_1.default;
+                        _c = (_b = src_1.default).parseModeIntoOctal;
+                        return [4 /*yield*/, fp.stat()];
+                    case 4:
+                        _a.apply(void 0, [_c.apply(_b, [(_d.sent()).mode]) === parsedMode]);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+    }
+});
 describe("Detection of filepaths at Nth level away", function () {
     var fp = new src_1.default(__dirname).join("FolderA");
     var expectedSiblingBasenames = new Set(["FolderA", "FolderB"]);
     var expectedChildrenBasenames = new Set(["File_A1.txt", "File_A2.txt"]);
     var expectedParentBasenames = new Set(["src", "tests", "docs", "node_modules"]);
     it("Should be able to detect sibling filepaths", function () { return __awaiter(void 0, void 0, void 0, function () {
-        var siblingNames, _a, _b, siblingPath, e_2_1, expectedSiblingBasenames_1, expectedSiblingBasenames_1_1, name_1;
-        var e_3, _c;
-        var e_2, _d;
+        var siblingNames, _a, _b, siblingPath, e_3_1, expectedSiblingBasenames_1, expectedSiblingBasenames_1_1, name_1;
+        var e_4, _c;
+        var e_3, _d;
         return __generator(this, function (_e) {
             switch (_e.label) {
                 case 0:
@@ -354,8 +461,8 @@ describe("Detection of filepaths at Nth level away", function () {
                 case 5: return [3 /*break*/, 3];
                 case 6: return [3 /*break*/, 13];
                 case 7:
-                    e_2_1 = _e.sent();
-                    e_2 = { error: e_2_1 };
+                    e_3_1 = _e.sent();
+                    e_3 = { error: e_3_1 };
                     return [3 /*break*/, 13];
                 case 8:
                     _e.trys.push([8, , 11, 12]);
@@ -366,7 +473,7 @@ describe("Detection of filepaths at Nth level away", function () {
                     _e.label = 10;
                 case 10: return [3 /*break*/, 12];
                 case 11:
-                    if (e_2) throw e_2.error;
+                    if (e_3) throw e_3.error;
                     return [7 /*endfinally*/];
                 case 12: return [7 /*endfinally*/];
                 case 13:
@@ -376,21 +483,21 @@ describe("Detection of filepaths at Nth level away", function () {
                             (0, assert_1.default)(siblingNames.includes(name_1));
                         }
                     }
-                    catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                    catch (e_4_1) { e_4 = { error: e_4_1 }; }
                     finally {
                         try {
                             if (expectedSiblingBasenames_1_1 && !expectedSiblingBasenames_1_1.done && (_c = expectedSiblingBasenames_1.return)) _c.call(expectedSiblingBasenames_1);
                         }
-                        finally { if (e_3) throw e_3.error; }
+                        finally { if (e_4) throw e_4.error; }
                     }
                     return [2 /*return*/];
             }
         });
     }); });
     it("Should be able to detect child filepaths", function () { return __awaiter(void 0, void 0, void 0, function () {
-        var childrenNames, _a, _b, childPath, e_4_1, expectedChildrenBasenames_1, expectedChildrenBasenames_1_1, name_2;
-        var e_5, _c;
-        var e_4, _d;
+        var childrenNames, _a, _b, childPath, e_5_1, expectedChildrenBasenames_1, expectedChildrenBasenames_1_1, name_2;
+        var e_6, _c;
+        var e_5, _d;
         return __generator(this, function (_e) {
             switch (_e.label) {
                 case 0:
@@ -411,8 +518,8 @@ describe("Detection of filepaths at Nth level away", function () {
                 case 5: return [3 /*break*/, 3];
                 case 6: return [3 /*break*/, 13];
                 case 7:
-                    e_4_1 = _e.sent();
-                    e_4 = { error: e_4_1 };
+                    e_5_1 = _e.sent();
+                    e_5 = { error: e_5_1 };
                     return [3 /*break*/, 13];
                 case 8:
                     _e.trys.push([8, , 11, 12]);
@@ -423,7 +530,7 @@ describe("Detection of filepaths at Nth level away", function () {
                     _e.label = 10;
                 case 10: return [3 /*break*/, 12];
                 case 11:
-                    if (e_4) throw e_4.error;
+                    if (e_5) throw e_5.error;
                     return [7 /*endfinally*/];
                 case 12: return [7 /*endfinally*/];
                 case 13:
@@ -433,21 +540,21 @@ describe("Detection of filepaths at Nth level away", function () {
                             (0, assert_1.default)(childrenNames.includes(name_2));
                         }
                     }
-                    catch (e_5_1) { e_5 = { error: e_5_1 }; }
+                    catch (e_6_1) { e_6 = { error: e_6_1 }; }
                     finally {
                         try {
                             if (expectedChildrenBasenames_1_1 && !expectedChildrenBasenames_1_1.done && (_c = expectedChildrenBasenames_1.return)) _c.call(expectedChildrenBasenames_1);
                         }
-                        finally { if (e_5) throw e_5.error; }
+                        finally { if (e_6) throw e_6.error; }
                     }
                     return [2 /*return*/];
             }
         });
     }); });
     it("Should be able to detect parent filepaths", function () { return __awaiter(void 0, void 0, void 0, function () {
-        var parentNames, _a, _b, parentPath, e_6_1, expectedParentBasenames_1, expectedParentBasenames_1_1, name_3;
-        var e_7, _c;
-        var e_6, _d;
+        var parentNames, _a, _b, parentPath, e_7_1, expectedParentBasenames_1, expectedParentBasenames_1_1, name_3;
+        var e_8, _c;
+        var e_7, _d;
         return __generator(this, function (_e) {
             switch (_e.label) {
                 case 0:
@@ -468,8 +575,8 @@ describe("Detection of filepaths at Nth level away", function () {
                 case 5: return [3 /*break*/, 3];
                 case 6: return [3 /*break*/, 13];
                 case 7:
-                    e_6_1 = _e.sent();
-                    e_6 = { error: e_6_1 };
+                    e_7_1 = _e.sent();
+                    e_7 = { error: e_7_1 };
                     return [3 /*break*/, 13];
                 case 8:
                     _e.trys.push([8, , 11, 12]);
@@ -480,7 +587,7 @@ describe("Detection of filepaths at Nth level away", function () {
                     _e.label = 10;
                 case 10: return [3 /*break*/, 12];
                 case 11:
-                    if (e_6) throw e_6.error;
+                    if (e_7) throw e_7.error;
                     return [7 /*endfinally*/];
                 case 12: return [7 /*endfinally*/];
                 case 13:
@@ -490,12 +597,12 @@ describe("Detection of filepaths at Nth level away", function () {
                             (0, assert_1.default)(parentNames.includes(name_3));
                         }
                     }
-                    catch (e_7_1) { e_7 = { error: e_7_1 }; }
+                    catch (e_8_1) { e_8 = { error: e_8_1 }; }
                     finally {
                         try {
                             if (expectedParentBasenames_1_1 && !expectedParentBasenames_1_1.done && (_c = expectedParentBasenames_1.return)) _c.call(expectedParentBasenames_1);
                         }
-                        finally { if (e_7) throw e_7.error; }
+                        finally { if (e_8) throw e_8.error; }
                     }
                     return [2 /*return*/];
             }
