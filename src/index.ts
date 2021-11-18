@@ -4,7 +4,7 @@ import * as fse from "fs-extra";
 import path from "path";
 import chokidar from "chokidar";
 import { trimChars } from "./utils";
-import { platform } from "os";
+import { platform, homedir } from "os";
 
 export interface SystemError {
   address: string;
@@ -119,7 +119,7 @@ class Path {
       throw new Error("Cannot instantiate a new Path instance on an empty string");
     }
 
-    this.path = normalize(path.resolve(...paths));
+    this.path = normalize(path.resolve(this._expanduser(paths.join("/"))));
     const { dir, root, base, ext } = path.parse(this.path);
     this.root = platform() === "win32" ? root.replace("/", "") : root;
     this.basename = base;
@@ -127,6 +127,10 @@ class Path {
     [this.stem, ...this.suffixes] = this.basename.split(".");
     this.ext = ext;
     this.descriptor = null;
+  }
+
+  private _expanduser(inputString: string) {
+    return inputString.startsWith("~") ? inputString.replace("~", homedir()) : inputString;
   }
 
   private _parts(normalizedString: string) {

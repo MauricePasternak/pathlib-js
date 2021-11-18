@@ -91,6 +91,7 @@ declare class Path {
      * @property suffixes An array of the individualized extentions, without periods.
      */
     constructor(...paths: string[]);
+    private _expanduser;
     private _parts;
     /**
      * Splits the underlying filepath into its individual components.

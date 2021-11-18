@@ -1,6 +1,6 @@
-import Path, { treeBranch } from "../src";
+import Path from "../src";
 import assert from "assert";
-import { platform } from "os";
+import { platform, homedir } from "os";
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -25,6 +25,17 @@ describe("Path properties", () => {
   });
   it("Should have a correct parent filepath", () => {
     assert(fp.parent().path === new Path(__dirname).path);
+  });
+});
+
+describe("Path creation", () => {
+  it("Should be able to infer the home directory if a tilde was present as a path segment in the Path constructor", () => {
+    const homePath = new Path("~/Test");
+    assert(homePath.dirname === homedir().replace(/\\/gm, "/"));
+  });
+  it("Should appropriately infer the current working directory if a period was provided to the Path constructor", () => {
+    const currentPath = new Path(".");
+    assert(currentPath.path === process.cwd().replace(/\\/gm, "/"));
   });
 });
 

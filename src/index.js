@@ -100,15 +100,6 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
@@ -119,6 +110,15 @@ var __values = (this && this.__values) || function(o) {
         }
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -152,7 +152,7 @@ var Path = /** @class */ (function () {
         if (!paths || !paths.length || paths[0] === "") {
             throw new Error("Cannot instantiate a new Path instance on an empty string");
         }
-        this.path = (0, normalize_path_1.default)(path_1.default.resolve.apply(path_1.default, __spreadArray([], __read(paths), false)));
+        this.path = (0, normalize_path_1.default)(path_1.default.resolve(this._expanduser(paths.join("/"))));
         var _b = path_1.default.parse(this.path), dir = _b.dir, root = _b.root, base = _b.base, ext = _b.ext;
         this.root = (0, os_1.platform)() === "win32" ? root.replace("/", "") : root;
         this.basename = base;
@@ -224,6 +224,9 @@ var Path = /** @class */ (function () {
      */
     Path.parseModeIntoOctal = function (mode) {
         return parseInt(((typeof mode === "number" ? mode : mode.mode) & 511).toString(8), 10);
+    };
+    Path.prototype._expanduser = function (inputString) {
+        return inputString.startsWith("~") ? inputString.replace("~", (0, os_1.homedir)()) : inputString;
     };
     Path.prototype._parts = function (normalizedString) {
         return (0, os_1.platform)() === "win32" ? normalizedString.split("/") : __spreadArray(["/"], __read(normalizedString.split("/").slice(1)), false);
