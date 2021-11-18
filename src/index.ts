@@ -129,16 +129,20 @@ class Path {
     this.descriptor = null;
   }
 
+  private _parts(normalizedString: string) {
+    return platform() === "win32" ? normalizedString.split("/") : ["/", ...normalizedString.split("/").slice(1)];
+  }
+
   /**
    * Splits the underlying filepath into its individual components.
    * @returns An array of the strings comprising the Path instance.
    */
   parts() {
-    return platform() === "win32" ? this.path.split("/") : ["/", ...this.path.split("/").slice(1)];
+    return this._parts(this.path);
   }
 
   /**
-   * Splits the underlying filepath into its individual components. Alias for this.parts().
+   * Alias for this.parts(). Splits the underlying filepath into its individual components.
    * @returns An array of the strings comprising the Path instance.
    */
   split() {
@@ -177,9 +181,30 @@ class Path {
    */
   join(...segments: string[]) {
     if (!segments.length) throw new Error("Cannot join with an empty string");
-    const newPathParts = Array.isArray(segments) ? [...this.parts(), ...segments] : [...this.parts(), segments];
-    const newPath = normalize(newPathParts.join("/"));
-    return new Path(newPath);
+    const segmentsAsArr = Array.isArray(segments) ? [...this.parts(), ...segments] : [...this.parts(), segments];
+    const newPath = normalize(segmentsAsArr.join("/"));
+    const copyPath = new Path(this.path);
+
+    // Overwrite properties as necessary
+    copyPath.path = newPath;
+    const newPathParts = path.parse(newPath);
+    copyPath.dirname = newPathParts.dir;
+    copyPath.basename = newPathParts.base;
+    const [newStem, ...newSuffixes] = newPathParts.base.split(".");
+    copyPath.stem = newStem;
+    copyPath.suffixes = newSuffixes;
+    copyPath.ext = newPathParts.ext;
+    return copyPath;
+  }
+
+  /**
+   * Alias for this.(). Appends strings to the end of the underlying filepath, creating a new Path instance. Note that ".." and "." are treated
+   * literally and will not be resolved. For appending file segments with resolving behavior use the "resolve" method.
+   * @param segments Strings which should be appended to the Path instance in order to create a new one.
+   * @returns A new Path instance with the strings appended.
+   */
+  append(...segments: string[]) {
+    return this.join(...segments);
   }
 
   /**
@@ -564,7 +589,7 @@ class Path {
    * @returns An array of Path instances that are children of the current instance.
    */
   readDirSync() {
-    return fse.readdirSync(this.path).map(basename => this.join(basename));
+    return fse.readdirSync(this.path).map(basename => this.resolve(basename));
   }
 
   /**
@@ -573,7 +598,7 @@ class Path {
    */
   async *readDirIter() {
     for await (const dir of await fse.opendir(this.path)) {
-      yield this.join(dir.name);
+      yield this.resolve(dir.name);
     }
   }
 
@@ -587,7 +612,7 @@ class Path {
     while (filesLeft) {
       const fileDirent = iterator.readSync();
       if (fileDirent != null) {
-        yield this.join(fileDirent.name);
+        yield this.resolve(fileDirent.name);
       } else filesLeft = false;
     }
   }

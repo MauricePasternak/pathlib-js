@@ -91,13 +91,14 @@ declare class Path {
      * @property suffixes An array of the individualized extentions, without periods.
      */
     constructor(...paths: string[]);
+    private _parts;
     /**
      * Splits the underlying filepath into its individual components.
      * @returns An array of the strings comprising the Path instance.
      */
     parts(): string[];
     /**
-     * Splits the underlying filepath into its individual components. Alias for this.parts().
+     * Alias for this.parts(). Splits the underlying filepath into its individual components.
      * @returns An array of the strings comprising the Path instance.
      */
     split(): string[];
@@ -125,6 +126,13 @@ declare class Path {
      * @returns A new Path instance with the strings appended.
      */
     join(...segments: string[]): Path;
+    /**
+     * Alias for this.(). Appends strings to the end of the underlying filepath, creating a new Path instance. Note that ".." and "." are treated
+     * literally and will not be resolved. For appending file segments with resolving behavior use the "resolve" method.
+     * @param segments Strings which should be appended to the Path instance in order to create a new one.
+     * @returns A new Path instance with the strings appended.
+     */
+    append(...segments: string[]): Path;
     /**
      * Creates a new Path instance with a replaced basename.
      * @param name The new basename to replace the existing one.

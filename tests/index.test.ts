@@ -79,8 +79,9 @@ describe("New Path creation from previous", () => {
     assert(fpDir.resolve("./index.test.ts").path === new Path(__filename).path);
   });
   it("Should treat '..' and '.' literally when using the join() method", () => {
-    assert(fpDir.join("../Test").basename === "Test");
-    assert(fpDir.join("./Test").basename === "Test");
+    console.log(fpDir.join("../Test").path);
+    assert(fpDir.join("../Test").path.endsWith("../Test"));
+    assert(fpDir.join("./Test").path.endsWith("./Test"));
   });
 });
 
@@ -185,11 +186,8 @@ describe("Permissions", () => {
   const fp = new Path(__dirname, "FolderA", "File_A1.txt");
   const initialMode = fp.statSync().mode;
   const parsedMode = Path.parseModeIntoOctal(initialMode);
-  console.log("Initial Mode", initialMode);
-  console.log("Parsed Mode", parsedMode);
   it("Should be able to inform a user about permissions given a mode", async () => {
     const permissions = await fp.access();
-    console.log(permissions);
     assert(permissions.canRead && permissions.canWrite);
   });
 
@@ -313,6 +311,16 @@ describe("Reading and Writing JSON files", () => {
     } catch (error) {
       assert(true);
     }
+  });
+});
+
+describe("Reading and Writing other Files", () => {
+  const testFile = new Path(__dirname, "ReadWriteTestOther", "Test.txt");
+  it("Should be able to write content to a file and then read that content from the same file in a separate operation", async () => {
+    await testFile.writeFile("Hello World", { encoding: "ascii" });
+    const contents = await testFile.readFile("ascii");
+    assert(contents === "Hello World");
+    await testFile.parent().remove();
   });
 });
 

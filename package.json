@@ -52,6 +52,12 @@
   "scripts": {
     "test": "ts-mocha ./tests/index.test.ts"
   },
+  "files": [
+    "/src/index.d.ts",
+    "/src/index.js",
+    "/src/utils.d.ts",
+    "/src/utils.js"
+  ],
   "dependencies": {
     "chokidar": "^3.5.2",
     "fast-glob": "^3.2.7",

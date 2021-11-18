@@ -133,8 +133,9 @@ describe("New Path creation from previous", function () {
         (0, assert_1.default)(fpDir.resolve("./index.test.ts").path === new src_1.default(__filename).path);
     });
     it("Should treat '..' and '.' literally when using the join() method", function () {
-        (0, assert_1.default)(fpDir.join("../Test").basename === "Test");
-        (0, assert_1.default)(fpDir.join("./Test").basename === "Test");
+        console.log(fpDir.join("../Test").path);
+        (0, assert_1.default)(fpDir.join("../Test").path.endsWith("../Test"));
+        (0, assert_1.default)(fpDir.join("./Test").path.endsWith("./Test"));
     });
 });
 describe("Retrieving a parent", function () {
@@ -391,8 +392,6 @@ describe("Permissions", function () {
     var fp = new src_1.default(__dirname, "FolderA", "File_A1.txt");
     var initialMode = fp.statSync().mode;
     var parsedMode = src_1.default.parseModeIntoOctal(initialMode);
-    console.log("Initial Mode", initialMode);
-    console.log("Parsed Mode", parsedMode);
     it("Should be able to inform a user about permissions given a mode", function () { return __awaiter(void 0, void 0, void 0, function () {
         var permissions;
         return __generator(this, function (_a) {
@@ -400,7 +399,6 @@ describe("Permissions", function () {
                 case 0: return [4 /*yield*/, fp.access()];
                 case 1:
                     permissions = _a.sent();
-                    console.log(permissions);
                     (0, assert_1.default)(permissions.canRead && permissions.canWrite);
                     return [2 /*return*/];
             }
@@ -821,6 +819,27 @@ describe("Reading and Writing JSON files", function () {
                     (0, assert_1.default)(true);
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/];
+            }
+        });
+    }); });
+});
+describe("Reading and Writing other Files", function () {
+    var testFile = new src_1.default(__dirname, "ReadWriteTestOther", "Test.txt");
+    it("Should be able to write content to a file and then read that content from the same file in a separate operation", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var contents;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, testFile.writeFile("Hello World", { encoding: "ascii" })];
+                case 1:
+                    _a.sent();
+                    return [4 /*yield*/, testFile.readFile("ascii")];
+                case 2:
+                    contents = _a.sent();
+                    (0, assert_1.default)(contents === "Hello World");
+                    return [4 /*yield*/, testFile.parent().remove()];
+                case 3:
+                    _a.sent();
+                    return [2 /*return*/];
             }
         });
     }); });

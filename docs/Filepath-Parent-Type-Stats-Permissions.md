@@ -1,4 +1,4 @@
-# Filepath Status, Types, Existence, etc.
+# Filepath Status, Types, Existence, Permissions, etc.
 
 ## Associated Path Methods
 
@@ -14,6 +14,8 @@
 - [isSocketSync()](#isSocketSync)
 - [isFIFO()](#isFIFO)
 - [isFIFOSync()](#isFIFOSync)
+- [access()](#access)
+- [accessSync()](#accessSync)
 - [parent()](#parent)
 - [containsImmediateChild()](#containsImmediateChild)
 - [containsImmediateChildSync()](#containsImmediateChildSync)
@@ -232,6 +234,34 @@ console.log(fp2.isSymbolicLinkSync());
 
 - Returns:
   - `boolean` - true or false outcome of whether the filepath is a FIFO queue.
+
+### access([mode]) <a name = "#access"></a>
+
+**Asynchronously** ascertains the permissions the current process has on the underlying filepath.
+
+- Parameters:
+
+  - `mode` -- `number` -- A NodeJS `fs.constants` number to check for a particular permission or union of permissions. Defaults to `undefined`.
+
+- Returns:
+  - `Promise<boolean | AccessResult>` - If `mode` was provided, returns a boolean of whether the underlying path was the indicated permission. Otherwise, returns a `AccessResult` Object which has the following properties:
+    - `canRead` -- `boolean` - Whether the current process has read access to the underlying filepath.
+    - `canWrite` -- `boolean` - Whether the current process has write access to the underlying filepath.
+    - `canExecute` -- `boolean` - Whether the underlying filepath can be executed by the current process.
+
+### accessSync([mode]) <a name = "#accessSync"></a>
+
+**Synchronously** ascertains the permissions the current process has on the underlying filepath.
+
+- Parameters:
+
+  - `mode` -- `number` -- A NodeJS `fs.constants` number to check for a particular permission or union of permissions. Defaults to `undefined`.
+
+- Returns:
+  - `boolean | AccessResult` - If `mode` was provided, returns a boolean of whether the underlying path was the indicated permission. Otherwise, returns a `AccessResult` Object which has the following properties:
+    - `canRead` -- `boolean` - Whether the current process has read access to the underlying filepath.
+    - `canWrite` -- `boolean` - Whether the current process has write access to the underlying filepath.
+    - `canExecute` -- `boolean` - Whether the underlying filepath can be executed by the current process.
 
 ### parent() <a name = "#parent"></a>
 

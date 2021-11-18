@@ -225,15 +225,18 @@ var Path = /** @class */ (function () {
     Path.parseModeIntoOctal = function (mode) {
         return parseInt(((typeof mode === "number" ? mode : mode.mode) & 511).toString(8), 10);
     };
+    Path.prototype._parts = function (normalizedString) {
+        return (0, os_1.platform)() === "win32" ? normalizedString.split("/") : __spreadArray(["/"], __read(normalizedString.split("/").slice(1)), false);
+    };
     /**
      * Splits the underlying filepath into its individual components.
      * @returns An array of the strings comprising the Path instance.
      */
     Path.prototype.parts = function () {
-        return (0, os_1.platform)() === "win32" ? this.path.split("/") : __spreadArray(["/"], __read(this.path.split("/").slice(1)), false);
+        return this._parts(this.path);
     };
     /**
-     * Splits the underlying filepath into its individual components. Alias for this.parts().
+     * Alias for this.parts(). Splits the underlying filepath into its individual components.
      * @returns An array of the strings comprising the Path instance.
      */
     Path.prototype.split = function () {
@@ -279,9 +282,32 @@ var Path = /** @class */ (function () {
         }
         if (!segments.length)
             throw new Error("Cannot join with an empty string");
-        var newPathParts = Array.isArray(segments) ? __spreadArray(__spreadArray([], __read(this.parts()), false), __read(segments), false) : __spreadArray(__spreadArray([], __read(this.parts()), false), [segments], false);
-        var newPath = (0, normalize_path_1.default)(newPathParts.join("/"));
-        return new Path(newPath);
+        var segmentsAsArr = Array.isArray(segments) ? __spreadArray(__spreadArray([], __read(this.parts()), false), __read(segments), false) : __spreadArray(__spreadArray([], __read(this.parts()), false), [segments], false);
+        var newPath = (0, normalize_path_1.default)(segmentsAsArr.join("/"));
+        var copyPath = new Path(this.path);
+        // Overwrite properties as necessary
+        copyPath.path = newPath;
+        var newPathParts = path_1.default.parse(newPath);
+        copyPath.dirname = newPathParts.dir;
+        copyPath.basename = newPathParts.base;
+        var _a = __read(newPathParts.base.split(".")), newStem = _a[0], newSuffixes = _a.slice(1);
+        copyPath.stem = newStem;
+        copyPath.suffixes = newSuffixes;
+        copyPath.ext = newPathParts.ext;
+        return copyPath;
+    };
+    /**
+     * Alias for this.(). Appends strings to the end of the underlying filepath, creating a new Path instance. Note that ".." and "." are treated
+     * literally and will not be resolved. For appending file segments with resolving behavior use the "resolve" method.
+     * @param segments Strings which should be appended to the Path instance in order to create a new one.
+     * @returns A new Path instance with the strings appended.
+     */
+    Path.prototype.append = function () {
+        var segments = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            segments[_i] = arguments[_i];
+        }
+        return this.join.apply(this, __spreadArray([], __read(segments), false));
     };
     /**
      * Creates a new Path instance with a replaced basename.
@@ -871,7 +897,7 @@ var Path = /** @class */ (function () {
      */
     Path.prototype.readDirSync = function () {
         var _this = this;
-        return fse.readdirSync(this.path).map(function (basename) { return _this.join(basename); });
+        return fse.readdirSync(this.path).map(function (basename) { return _this.resolve(basename); });
     };
     /**
      * Asynchronously yields child Path instances of the current instance.
@@ -893,7 +919,7 @@ var Path = /** @class */ (function () {
                     case 3:
                         if (!(_b = _d.sent(), !_b.done)) return [3 /*break*/, 7];
                         dir = _b.value;
-                        return [4 /*yield*/, __await(this.join(dir.name))];
+                        return [4 /*yield*/, __await(this.resolve(dir.name))];
                     case 4: return [4 /*yield*/, _d.sent()];
                     case 5:
                         _d.sent();
@@ -937,7 +963,7 @@ var Path = /** @class */ (function () {
                     if (!filesLeft) return [3 /*break*/, 5];
                     fileDirent = iterator.readSync();
                     if (!(fileDirent != null)) return [3 /*break*/, 3];
-                    return [4 /*yield*/, this.join(fileDirent.name)];
+                    return [4 /*yield*/, this.resolve(fileDirent.name)];
                 case 2:
                     _a.sent();
                     return [3 /*break*/, 4];

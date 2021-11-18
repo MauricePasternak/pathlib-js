@@ -19,13 +19,14 @@ Retrieves the underlying filepath's components.
 - Returns:
   - `string[]` - Returns a the components of the underlying filepaths as a array of strings.
 
+**Alias methods that perform identically**: `split()`
+
 ```
 import Path from "pathlib-js"
 const fp = new Path("C:\\Users\\JohnDoe\\Example.tar.gz");
 fp.parts()
 
 > [ 'C:', 'Users', 'JohnDoe', 'Example.tar.gz' ]
-
 ```
 
 ### relative(to [, useSystemPathDelimiter])
@@ -78,6 +79,8 @@ Appends strings to the end of the underlying filepath, creating a new Path insta
 
 - Returns:
   - `Path` - Returns a new `Path` instance from the resolved strings.
+
+**Alias methods that perform identically**: `append(...segments)`
 
 ```
 import Path from "pathlib-js"
@@ -142,6 +145,10 @@ const fp = new Path("C:\\Users\\JohnDoe\\Example.tar.gz");
 fp.withSuffix("json").path
 
 > "C:/Users/JohnDoe/Example.json"
+
+fp.withSuffix(["foo", "bar"]);
+
+> "C:/Users/JohnDoe/Example.foo.bar"
 ```
 
 ### toString([useSystemPathDelimiter])
@@ -184,7 +191,6 @@ Returns a JSON-compatible object representing the Path instance and its properti
 import Path from "pathlib-js"
 const fp = new Path("C:\\Users\\JohnDoe\\Example.tar.gz");
 fp.toJSON(true)
-
 
 > {
   path: 'C:\\Users\\JohnDoe\\Example.tar.gz',
