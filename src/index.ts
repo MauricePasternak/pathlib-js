@@ -4,6 +4,7 @@ import * as fse from "fs-extra";
 import path from "path";
 import chokidar from "chokidar";
 import { trimChars } from "./utils";
+import { platform } from "os";
 
 export interface SystemError {
   address: string;
@@ -29,6 +30,11 @@ export interface OpenFileOptions {
   flags: string | number;
   mode?: number;
 }
+export interface AccessResult {
+  canRead: boolean;
+  canWrite: boolean;
+  canExecute: boolean;
+}
 export type JSONObject = { [key: string]: JsonValue };
 export type JsonValue = null | boolean | number | string | JsonValue[] | JSONObject;
 export interface treeBranch<T extends Path | string> {
@@ -45,7 +51,7 @@ class Path {
   stem: string;
   ext: string;
   suffixes: string[];
-
+  descriptor: null | number;
   /**
    * Get a Path representation of the current working directory.
    * @returns The current working directory.
@@ -115,11 +121,16 @@ class Path {
 
     this.path = normalize(path.resolve(...paths));
     const { dir, root, base, ext } = path.parse(this.path);
-    this.root = root.replace("/", "");
+    this.root = platform() === "win32" ? root.replace("/", "") : root;
     this.basename = base;
     this.dirname = dir;
     [this.stem, ...this.suffixes] = this.basename.split(".");
     this.ext = ext;
+    this.descriptor = null;
+  }
+
+  private _parts(normalizedString: string) {
+    return platform() === "win32" ? normalizedString.split("/") : ["/", ...normalizedString.split("/").slice(1)];
   }
 
   /**
@@ -127,15 +138,15 @@ class Path {
    * @returns An array of the strings comprising the Path instance.
    */
   parts() {
-    return this.path.split("/");
+    return this._parts(this.path);
   }
 
   /**
-   * Splits the underlying filepath into its individual components. Alias for this.parts().
+   * Alias for this.parts(). Splits the underlying filepath into its individual components.
    * @returns An array of the strings comprising the Path instance.
    */
   split() {
-    return this.path.split("/");
+    return this.parts();
   }
 
   /**
@@ -170,9 +181,30 @@ class Path {
    */
   join(...segments: string[]) {
     if (!segments.length) throw new Error("Cannot join with an empty string");
-    const newPathParts = Array.isArray(segments) ? [...this.parts(), ...segments] : [...this.parts(), segments];
-    const newPath = normalize(newPathParts.join("/"));
-    return new Path(newPath);
+    const segmentsAsArr = Array.isArray(segments) ? [...this.parts(), ...segments] : [...this.parts(), segments];
+    const newPath = normalize(segmentsAsArr.join("/"));
+    const copyPath = new Path(this.path);
+
+    // Overwrite properties as necessary
+    copyPath.path = newPath;
+    const newPathParts = path.parse(newPath);
+    copyPath.dirname = newPathParts.dir;
+    copyPath.basename = newPathParts.base;
+    const [newStem, ...newSuffixes] = newPathParts.base.split(".");
+    copyPath.stem = newStem;
+    copyPath.suffixes = newSuffixes;
+    copyPath.ext = newPathParts.ext;
+    return copyPath;
+  }
+
+  /**
+   * Alias for this.(). Appends strings to the end of the underlying filepath, creating a new Path instance. Note that ".." and "." are treated
+   * literally and will not be resolved. For appending file segments with resolving behavior use the "resolve" method.
+   * @param segments Strings which should be appended to the Path instance in order to create a new one.
+   * @returns A new Path instance with the strings appended.
+   */
+  append(...segments: string[]) {
+    return this.join(...segments);
   }
 
   /**
@@ -557,7 +589,7 @@ class Path {
    * @returns An array of Path instances that are children of the current instance.
    */
   readDirSync() {
-    return fse.readdirSync(this.path).map(basename => this.join(basename));
+    return fse.readdirSync(this.path).map(basename => this.resolve(basename));
   }
 
   /**
@@ -566,7 +598,7 @@ class Path {
    */
   async *readDirIter() {
     for await (const dir of await fse.opendir(this.path)) {
-      yield this.join(dir.name);
+      yield this.resolve(dir.name);
     }
   }
 
@@ -580,7 +612,7 @@ class Path {
     while (filesLeft) {
       const fileDirent = iterator.readSync();
       if (fileDirent != null) {
-        yield this.join(fileDirent.name);
+        yield this.resolve(fileDirent.name);
       } else filesLeft = false;
     }
   }
@@ -677,8 +709,7 @@ class Path {
         };
         for (const p of branchRoot.readDirIterSync()) {
           if (p.isDirectorySync()) {
-              branch.children &&
-              branch.children.push((await traverseBranch(p, prevDepth + 1)) as treeBranch<string>);
+            branch.children && branch.children.push((await traverseBranch(p, prevDepth + 1)) as treeBranch<string>);
           } else {
             branch.children &&
               branch.children.push({
@@ -697,8 +728,8 @@ class Path {
         };
         for (const p of branchRoot.readDirIterSync()) {
           if (p.isDirectorySync()) {
-              branch.children &&
-              branch.children.push(await traverseBranch(p, prevDepth + 1) as unknown as treeBranch<Path>);
+            branch.children &&
+              branch.children.push((await traverseBranch(p, prevDepth + 1)) as unknown as treeBranch<Path>);
           } else {
             branch.children &&
               branch.children.push({
@@ -853,30 +884,74 @@ class Path {
 
   /**
    * Asynchronously tests a user's permissions for the underling filepath.
-   * @param mode the permissions to check for.
-   * @returns A boolean of whether the indicated permissions apply to the process invoking this method.
+   * @param mode the permissions to check for. Use fs.constants variables as input, NOT octal numbers.
+   * @returns If mode was specified, a boolean reflecting the permissions.
+   * Otherwise, returns an object with keys "canRead", "canWrite", "canExecute" and values as a
+   * boolean of whether permissions for that operation are available.
    */
-  async access(mode?: number) {
-    try {
-      await fse.access(this.path, mode);
-      return true;
-    } catch (error) {
-      return false;
+  async access(mode: number): Promise<boolean>;
+  async access(mode?: undefined): Promise<AccessResult>;
+  async access(mode?: number): Promise<AccessResult | boolean> {
+    if (typeof mode === "number") {
+      try {
+        await fse.access(this.path, mode);
+        return true;
+      } catch (error) {
+        return false;
+      }
     }
+
+    const accessArr = [fse.constants.R_OK, fse.constants.W_OK, fse.constants.X_OK];
+    const resultArr = [];
+    for (const check of accessArr) {
+      try {
+        await fse.access(this.path, check);
+        resultArr.push(true);
+      } catch (error) {
+        resultArr.push(false);
+      }
+    }
+    return Object.fromEntries([
+      ["canRead", resultArr[0]],
+      ["canWrite", resultArr[1]],
+      ["canExecute", resultArr[2]],
+    ]) as unknown as AccessResult;
   }
 
   /**
    * Synchronously tests a user's permissions for the underling filepath.
-   * @param mode the permissions to check for.
-   * @returns A boolean of whether the indicated permissions apply to the process invoking this method.
+   * @param mode the permissions to check for. Use fs.constants variables as input, NOT octal numbers.
+   * @returns If mode was specified, a boolean reflecting the permissions.
+   * Otherwise, returns an object with keys "canRead", "canWrite", "canExecute" and values as a
+   * boolean of whether permissions for that operation are available.
    */
-  accessSync(mode?: number) {
-    try {
-      fse.accessSync(this.path, mode);
-      return true;
-    } catch (error) {
-      return false;
+  accessSync(mode?: number): boolean;
+  accessSync(mode?: undefined): AccessResult;
+  accessSync(mode?: number): AccessResult | boolean {
+    if (typeof mode === "number") {
+      try {
+        fse.accessSync(this.path, mode);
+        return true;
+      } catch (error) {
+        return false;
+      }
     }
+
+    const accessArr = [fse.constants.R_OK, fse.constants.W_OK, fse.constants.X_OK];
+    const resultArr = [];
+    for (const check of accessArr) {
+      try {
+        fse.accessSync(this.path, check);
+        resultArr.push(true);
+      } catch (error) {
+        resultArr.push(false);
+      }
+    }
+    return Object.fromEntries([
+      ["canRead", resultArr[0]],
+      ["canWrite", resultArr[1]],
+      ["canExecute", resultArr[2]],
+    ]) as unknown as AccessResult;
   }
 
   /**
@@ -1035,11 +1110,15 @@ class Path {
    * @returns The numeric file descriptor.
    */
   async open(openOptions: OpenFileOptions) {
+    if (this.descriptor != null) {
+      throw new Error("Detected that this filepath is already open.");
+    }
     // Ensure that the file exists
     if (openOptions.ensureExists && this.suffixes.length && !(await this.isFile())) {
       await this.makeFile();
     }
-    return await fse.open(this.path, openOptions.flags, openOptions.mode);
+    this.descriptor = await fse.open(this.path, openOptions.flags, openOptions.mode);
+    return this.descriptor;
   }
 
   /**
@@ -1052,7 +1131,31 @@ class Path {
    * @returns The numeric file descriptor.
    */
   openSync(openOptions: OpenFileOptions) {
-    return fse.openSync(this.path, openOptions.flags, openOptions.mode);
+    if (this.descriptor != null) {
+      throw new Error("Detected that this filepath is already open.");
+    }
+    // Ensure that the file exists
+    if (openOptions.ensureExists && this.suffixes.length && !this.isFileSync()) {
+      this.makeFileSync();
+    }
+    this.descriptor = fse.openSync(this.path, openOptions.flags, openOptions.mode);
+    return this.descriptor;
+  }
+
+  async close() {
+    if (this.descriptor == null) {
+      throw new Error("Cannot close a file that has not been opened.");
+    }
+    await fse.close(this.descriptor);
+    this.descriptor = null;
+  }
+
+  closeSync() {
+    if (this.descriptor == null) {
+      throw new Error("Cannot close a file that has not been opened.");
+    }
+    fse.closeSync(this.descriptor);
+    this.descriptor = null;
   }
 
   /**
@@ -1063,6 +1166,7 @@ class Path {
    * @param position Specifies where to begin reading from in the file.
    * If position is null or -1 , data will be read from the current file position, and the file position will be updated.
    * If position is an integer, the file position will be unchanged.
+   * @param closeAfterwards Whether to close the file after the operation completes. Defaults to true.
    * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
    * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
    * @returns An object with the properties of buffer, which is the updated buffer, and bytesRead, which is the number of
@@ -1073,10 +1177,13 @@ class Path {
     offset: number,
     length: number,
     position: number | null,
+    closeAfterwards = true,
     openOptions?: OpenFileOptions
   ) {
     const fd = await this.open(openOptions ? openOptions : { flags: "r" });
-    return await fse.read(fd, buffer, offset, length, position);
+    const readResult = await fse.read(fd, buffer, offset, length, position);
+    closeAfterwards && (await this.close());
+    return { ...readResult, fileDescriptor: closeAfterwards ? null : fd };
   }
 
   /**
@@ -1085,6 +1192,7 @@ class Path {
    * @param offset The position in buffer to write the data to.
    * @param length The number of bytes to read.
    * @param position Specifies where to begin reading from in the file.
+   * @param closeAfterwards Whether to close the file after the operation completes. Defaults to true.
    * If position is null or -1 , data will be read from the current file position, and the file position will be updated.
    * If position is an integer, the file position will be unchanged.
    * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
@@ -1096,10 +1204,13 @@ class Path {
     offset: number,
     length: number,
     position: number | null,
+    closeAfterwards = true,
     openOptions?: OpenFileOptions
   ) {
     const fd = this.openSync(openOptions ? openOptions : { flags: "r" });
-    return fse.readSync(fd, buffer, offset, length, position);
+    const readResult = fse.readSync(fd, buffer, offset, length, position);
+    closeAfterwards && this.closeSync();
+    return { bytesRead: readResult, fileDescriptor: closeAfterwards ? null : fd };
   }
 
   /**
@@ -1108,6 +1219,7 @@ class Path {
    * @param offset The position in the buffer from which to begin writing
    * @param length The number of bytes to write.
    * @param position Specifies where to begin writing into the file.
+   * @param closeAfterwards Whether to close the file after the operation completes. Defaults to true.
    * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
    * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
    */
@@ -1116,10 +1228,13 @@ class Path {
     offset?: number,
     length?: number,
     position?: number | null,
+    closeAfterwards = true,
     openOptions?: OpenFileOptions
   ) {
     const fd = await this.open(openOptions ?? { flags: "w" });
-    return await fse.write(fd, buffer, offset, length, position);
+    const writeResult = await fse.write(fd, buffer, offset, length, position);
+    closeAfterwards && (await this.close());
+    return { ...writeResult, fileDescriptor: fd };
   }
 
   /**
@@ -1129,6 +1244,7 @@ class Path {
    * @param offset The position in the buffer from which to begin writing
    * @param length The number of bytes to write.
    * @param position Specifies where to begin writing into the file.
+   * @param closeAfterwards Whether to close the file after the operation completes. Defaults to true.
    * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
    * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
    */
@@ -1137,10 +1253,13 @@ class Path {
     offset?: number,
     length?: number,
     position?: number | null,
+    closeAfterwards = true,
     openOptions?: OpenFileOptions
   ) {
     const fd = this.openSync(openOptions ?? { flags: "w" });
-    return fse.writeSync(fd, buffer, offset, length, position);
+    const writeResult = fse.writeSync(fd, buffer, offset, length, position);
+    closeAfterwards && this.closeSync();
+    return { bytesWritten: writeResult, fileDescriptor: fd };
   }
 
   /**

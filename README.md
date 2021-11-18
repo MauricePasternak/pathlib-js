@@ -89,7 +89,7 @@ console.log(fp1.path === fp2.path);
 - [Determinine filepath type, stats, existence.](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Filepath_Integrity-Stats-Type.md)
 - [File Structure Traversal - Individual Directories](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Traversing_Directories.md)
 - [File Structure Traversal - Tree Structures](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Traversing_Trees.md)
-- [Copying, moving, deleting, and changing permissions](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Copy-Move-Delete-Chmod.md)
+- [Copying, moving, deleting, and changing permissions](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Filepath-Parent-Type-Stats-Permissions.md)
 - [Filepath Creation - Directories, Files, and Symlinks](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Generating-Filepaths.md)
 - [Reading, Writing, Globbing, and Watching](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Read-Write-Glob-Watch.md)
 
