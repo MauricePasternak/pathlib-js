@@ -2,17 +2,17 @@
 
 ## Associated Path Methods
 
-- [parts()](#parts)
-- [relative()](#relative)
-- [resolve()](#resolve)
-- [join()](#join)
-- [withBasename()](#withBasename)
-- [withStem()](#withStem)
-- [withSuffix()](#withSuffix)
-- [toString()](#toString)
-- [toJSON()](#toJSON)
+- <a href = "#parts">parts()</a>
+- <a href = "#relative">relative()</a>
+- <a href = "#resolve">resolve()</a>
+- <a href = "#join">join()</a>
+- <a href = "#withBasename">withBasename()</a>
+- <a href = "#withStem">withStem()</a>
+- <a href = "#withSuffix">withSuffix()</a>
+- <a href = "#toString">toString()</a>
+- <a href = "#toJSON">toJSON()</a>
 
-### parts() <a name = "#parts"></a>
+### parts() <a id = "parts"></a>
 
 Retrieves the underlying filepath's components.
 
@@ -29,7 +29,7 @@ fp.parts()
 > [ 'C:', 'Users', 'JohnDoe', 'Example.tar.gz' ]
 ```
 
-### relative(to [, useSystemPathDelimiter])
+### relative(to [, useSystemPathDelimiter]) <a id = "relative"></a>
 
 Depicts the relative path from the Path instance to another filepath.
 
@@ -49,7 +49,7 @@ fp.relative("C:\\Users\\JohnDoe\\AnotherExample.json")
 > "..\AnotherExample.json"
 ```
 
-### resolve(...segments)
+### resolve(...segments) <a id = "resolve"></a>
 
 Resolves a sequence of path segments into a new absolute Path. Respects `..` and will increment directories accordingly. Note that strings beginning with a single `.` will be treated as if the dot character does not exist. Use the "join" method as an alternative for appending file segments that begin with `.` (i.e. `".gitignore"` basename) to the current path.
 
@@ -69,7 +69,7 @@ fp.resolve("..\\AnotherExample.json").path
 > "C:/Users/JohnDoe/AnotherExample.json"
 ```
 
-### join(...segments)
+### join(...segments) <a id = "join"></a>
 
 Appends strings to the end of the underlying filepath, creating a new Path instance. Note that `..` and `.` are treated literally and will not be resolved. For appending file segments with resolving behavior use the `resolve` method.
 
@@ -90,7 +90,7 @@ fp.join("..\\AnotherExample.json").path
 > "C:/Users/JohnDoe/../AnotherExample.json"
 ```
 
-### withBasename(name)
+### withBasename(name) <a id = "withBasename"></a>
 
 Creates a new Path instance with a replaced basename.
 
@@ -109,7 +109,7 @@ fp.withBasename("IHeartOOP.json").path
 > "C:/Users/JohnDoe/IHeartOOP.json"
 ```
 
-### withStem(stem)
+### withStem(stem) <a id = "withStem"></a>
 
 Creates a new Path instance with a replaced stem.
 
@@ -128,7 +128,7 @@ fp.withStem("ANewStem").path
 > "C:/Users/JohnDoe/ANewStem.tar.gz"
 ```
 
-### withSuffix(suffix)
+### withSuffix(suffix) <a id = "withSuffix"></a>
 
 Creates a new Path instance with a replaced extension/suffix.
 
@@ -151,7 +151,7 @@ fp.withSuffix(["foo", "bar"]);
 > "C:/Users/JohnDoe/Example.foo.bar"
 ```
 
-### toString([useSystemPathDelimiter])
+### toString([useSystemPathDelimiter]) <a id = "toString"></a>
 
 Returns a string representation of the underlying filepath.
 
@@ -175,7 +175,7 @@ fp.toString(true)
 > "C:\\Users\\JohnDoe\\Example.tar.gz"
 ```
 
-### toJSON([useSystemPathDelimiter])
+### toJSON([useSystemPathDelimiter]) <a id = "toJSON"></a>
 
 Returns a JSON-compatible object representing the Path instance and its properties.
 

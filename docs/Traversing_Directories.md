@@ -2,11 +2,11 @@
 
 ## Associated Path Methods
 
-- [readDir()](#readDir)
-- [readDirSync()](#readDirSync)
-- [readDirIter()](#readDirIter)
-- [readDirIterSync()](#readDirIterSync)
-- [getPathsNLevelsAway()](#getPathsNLevelsAway)
+- <a href = "#readDir">readDir()</a>
+- <a href = "#readDirSync">readDirSync()</a>
+- <a href = "#readDirIter">readDirIter()</a>
+- <a href = "#readDirIterSync">readDirIterSync()</a>
+- <a href = "#getPathsNLevelsAway">getPathsNLevelsAway()</a>
 
 ## File Structure Example for this API
 
@@ -22,7 +22,7 @@ Example
     └── File_B2.json
 ```
 
-### readDir() <a name = "#readDir"></a>
+### readDir() <a id = "readDir"></a>
 
 **Asynchronously** retrieves a collection of child filepaths.
 
@@ -61,7 +61,7 @@ ES5CompatibilityWrapper();
 
 ```
 
-### readDirSync() <a name = "#readDirSync"></a>
+### readDirSync() <a id = "readDirSync"></a>
 
 **Synchronously** retrieves a collection of child filepaths.
 
@@ -95,7 +95,7 @@ console.log(await fp1.readDir());
 ]
 ```
 
-### readDirIter() <a name = "#readDirIter"></a>
+### readDirIter() <a id = "readDirIter"></a>
 
 **Asynchronously** yields child filepaths found in a directory.
 
@@ -134,7 +134,7 @@ ES5CompatibilityWrapper();
 }
 ```
 
-### readDirIterSync() <a name = "#readDirIterSync"></a>
+### readDirIterSync() <a id = "readDirIterSync"></a>
 
 **Synchronously** yields child filepaths found in a directory.
 
@@ -168,19 +168,21 @@ for (const child of fp1.readDirIterSync()) {
 }
 ```
 
-### getPathsNLevelsAway(depth [, asIterator, options]) <a name = "#getPathsNLevelsAway"></a>
+### getPathsNLevelsAway(depth [, asIterator, options]) <a id = "getPathsNLevelsAway"></a>
 
 Allows for asynchronous retrieval of filepaths N directory levels away from the underlying filepath.
 
 - Parameters:
+
   - `depth` -- `number` -- The number of directory levels from the current filepath that should be looked at. More particularly:
     - If the depth is greater than or equal to 1, then child/grandchild/etc. filepaths will be retrieved.
     - If the depth is equal to 0, then sibling filepaths will be retrieved.
     - If the depth is less than 0, then parent/grandparent/etc. filepaths will be retrieved.
-  - `asIterator` -- `boolean` -- If false, then the function returns a Promise that resolves into an Array of `Path` instances. If true, then the function returns a Promise that resolves to an AsyncIterator of Path instances. For this latter case, it is recommended to use the ES5 syntax: `await (const childPath of await instance.getPathsNLevelsAway())` 
+  - `asIterator` -- `boolean` -- If false, then the function returns a Promise that resolves into an Array of `Path` instances. If true, then the function returns a Promise that resolves to an AsyncIterator of Path instances. For this latter case, it is recommended to use the ES5 syntax: `await (const childPath of await instance.getPathsNLevelsAway())`
   - `options` -- `fast-glob.Options` -- The globbing options. For properties and their explanations, [please refer to the documentation in the `fast-glob` repository.](https://github.com/mrmlnc/fast-glob/blob/master/README.md)
 
 - Returns:
+
   - `Promise<Path[]>` - If `asIterator` is `false`, this function's Promise resolves into an array of `Path` instances.
 
 - Yields:

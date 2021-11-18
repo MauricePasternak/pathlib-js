@@ -2,10 +2,11 @@
 
 ## Associated Path Methods
 
-- [walk()](#walk)
-- [walkSync()](#walkSync)
-- [tree()](#tree)
-- [treeSync()](#treeSync)
+- <a href = "#walk">walk()</a>
+- <a href = "#walkSync">walkSync()</a>
+- <a href = "#tree">tree()</a>
+- <a href = "#treeSync">treeSync()</a>
+
 
 ## File Structure Example for this API
 
@@ -21,7 +22,7 @@ Example
     └── File_B2.json
 ```
 
-### walk() <a name = "#walk"></a>
+### walk() <a id = "walk"></a>
 
 **Asynchronously** walks down the branches of a folder structure, invoking a callback function for each filepath in the structure.
 
@@ -46,7 +47,7 @@ ES5CompatibilityWrapper();
 
 ```
 
-### walkSync() <a name = "#walkSync"></a>
+### walkSync() <a id = "walkSync"></a>
 
 **Synchronously** walks down the branches of a folder structure, invoking a callback function for each filepath in the structure.
 
@@ -67,7 +68,7 @@ fp1.walk(p => console.log(p.path));
 > C:/Users/JohnDoe/Example/Folder_B/File_B2.json
 ```
 
-### tree([asString, useSystemPathDelimiter]) <a name = "#tree"></a>
+### tree([asString, useSystemPathDelimiter]) <a id = "tree"></a>
 
 **Asynchronously** traverses the tree structure of the directory system, starting from the current instances as the root and returns a nested Object representation of the tree structure. Each branching of the tree is comprised of an object with two properties: `filepath`, which is the Path instance of the filepath at that location, and `children` which is either `null` in the case of a non-directory or an array of more branch objects.
 
@@ -108,7 +109,7 @@ ES5CompatibilityWrapper();
 }
 ```
 
-### treeSync([asString, useSystemPathDelimiter]) <a name = "#treeSync"></a>
+### treeSync([asString, useSystemPathDelimiter]) <a id = "treeSync"></a>
 
 **Synchronously** traverses the tree structure of the directory system, starting from the current instances as the root and returns a nested Object representation of the tree structure. Each branching of the tree is comprised of an object with two properties: "filepath", which is the Path instance of the filepath at that location, and "children" which is either null in the case of a non-directory or an array of more branch objects.
 

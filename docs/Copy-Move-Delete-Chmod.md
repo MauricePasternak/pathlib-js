@@ -2,16 +2,16 @@
 
 ## Associated Path Methods
 
-- [chmod()](#chmod)
-- [chmodSync()](#chmodSync)
-- [chown()](#chown)
-- [chownSync()](#chownSync)
-- [move()](#move)
-- [moveSync()](#moveSync)
-- [copy()](#copy)
-- [copySync()](#copySync)
-- [remove()](#remove)
-- [removeSync()](#removeSync)
+- <a href = "#chmod">chmod()</a>
+- <a href = "#chmodSync">chmodSync()</a>
+- <a href = "#chown">chown()</a>
+- <a href = "#chownSync">chownSync()</a>
+- <a href = "#move">move()</a>
+- <a href = "#moveSync">moveSync()</a>
+- <a href = "#copy">copy()</a>
+- <a href = "#copySync">copySync()</a>
+- <a href = "#remove">remove()</a>
+- <a href = "#removeSync">removeSync()</a>
 
 ## File Structure Example for this API
 
@@ -27,7 +27,9 @@ Example
     └── File_B2.json
 ```
 
-### chmod(mode) <a name = "#chmod"></a>
+### chmod(mode) <a id = "chmod"></a>
+
+Signature: **chmod(mode)**
 
 Asynchronously changes the permissions of the underlying filepath.
 
@@ -52,7 +54,7 @@ ES5CompatibilityWrapper();
 
 ```
 
-### chmodSync(mode) <a name = "#chmodSync"></a>
+### chmodSync(mode) <a id ="chmodSync"></a>
 
 Synchronously changes the permissions of the underlying filepath.
 
@@ -74,15 +76,15 @@ console.log(Path.parseModeIntoOctal(fp.statSync()));
 
 ```
 
-### chown(uid, gid) <a name = "#chown"></a>
+### chown(uid, gid) <a id ="chown"></a>
 
 **Asynchronously** changes the owner of a filepath.
 
-### chownSync(uid, gid) <a name = "#chown"></a>
+### chownSync(uid, gid) <a id ="chownSync"></a>
 
 **Synchronously** changes the owner of a filepath.
 
-### move(dst [, overwrite]) <a name = "#move"></a>
+### move(dst [, overwrite]) <a id ="move"></a>
 
 **Asynchronously** moves the underlying filepath or its children to the indicated destination.
 
@@ -108,7 +110,7 @@ ES5CompatibilityWrapper();
 > true
 ```
 
-### moveSync(dst [, overwrite]) <a name = "#moveSync"></a>
+### moveSync(dst [, overwrite]) <a id ="moveSync"></a>
 
 **Synchronously** moves the underlying filepath or its children to the indicated destination. Note that if the filepath being moved is a file, it itself will be moved. If, instead the filepath is a folder, then its contents will be moved to the indicated destination.
 
@@ -131,7 +133,7 @@ console.log(destination.existsSync());
 > true
 ```
 
-### copy(dst [, options]) <a name = "#copy"></a>
+### copy(dst [, options]) <a id ="copy"></a>
 
 **Asynchronously** moves the underlying filepath or its children to the indicated destination, creating directories as necessary.
 
@@ -161,7 +163,7 @@ ES5CompatibilityWrapper();
 > true
 ```
 
-### copySync(dst [, options]) <a name = "#copySync"></a>
+### copySync(dst [, options]) <a id ="copySync"></a>
 
 **Synchronously** moves the underlying filepath or its children to the indicated destination, creating directories as necessary.
 
@@ -188,7 +190,7 @@ console.log(destination.existsSync());
 > true
 ```
 
-### remove() <a name = "#remove"></a>
+### remove() <a id ="remove"></a>
 
 **Asynchronously** deletes the underlying filepath and its children.
 
@@ -208,7 +210,7 @@ ES5CompatibilityWrapper();
 > false
 ```
 
-### removeSync() <a name = "#removeSync"></a>
+### removeSync() <a id = "removeSync"></a>
 
 **Synchronously** deletes the underlying filepath and its children.
 

@@ -2,24 +2,24 @@
 
 ## Associated Path Methods
 
-- [open()](#open)
-- [openSync()](#openSync)
-- [read()](#read)
-- [readSync()](#readSync)
-- [write()](#write)
-- [writeSync()](#writeSync)
-- [readFile()](#readFile)
-- [readFileSync()](#readFileSync)
-- [writeFile()](#writeFile)
-- [writeFileSync()](#writeFileSync)
-- [readJSON()](#readJSON)
-- [readJSONSync()](#readJSONSync)
-- [writeJSON()](#writeJSON)
-- [writeJSONSync()](#writeJSONSync)
-- [glob()](#glob)
-- [globIter()](#globIter)
-- [globSync()](#globSync)
-- [watch()](#watch)
+- <a href = "#open">open()</a>
+- <a href = "#openSync">openSync()</a>
+- <a href = "#read">read()</a>
+- <a href = "#readSync">readSync()</a>
+- <a href = "#write">write()</a>
+- <a href = "#writeSync">writeSync()</a>
+- <a href = "#readFile">readFile()</a>
+- <a href = "#readFileSync">readFileSync()</a>
+- <a href = "#writeFile">writeFile()</a>
+- <a href = "#writeFileSync">writeFileSync()</a>
+- <a href = "#readJSON">readJSON()</a>
+- <a href = "#readJSONSync">readJSONSync()</a>
+- <a href = "#writeJSON">writeJSON()</a>
+- <a href = "#writeJSONSync">writeJSONSync()</a>
+- <a href = "#glob">glob()</a>
+- <a href = "#globIter">globIter()</a>
+- <a href = "#globSync">globSync()</a>
+- <a href = "#watch">watch()</a>
 
 ## File Structure Example for this API
 
@@ -35,7 +35,7 @@ Example
     └── File_B2.json
 ```
 
-### open(openOptions) <a name = "#open"></a>
+### open(openOptions) <a id = "open"></a>
 
 **Asynchronously** opens the underlying filepath with the indicated flags and permissions.
 
@@ -49,7 +49,7 @@ Example
 - Returns:
   - `Promise<number>` - A number representing the file descriptor of the opened file.
 
-### openSync(openOptions) <a name = "#openSync"></a>
+### openSync(openOptions) <a id = "openSync"></a>
 
 **Asynchronously** opens the underlying filepath with the indicated flags and permissions.
 
@@ -63,7 +63,7 @@ Example
 - Returns:
   - `number` - A number representing the file descriptor of the opened file.
 
-### read(buffer, offset, length, position [, openOptions]) <a name = "#read"></a>
+### read(buffer, offset, length, position [, openOptions]) <a id = "read"></a>
 
 **Asynchronously** reads the contents of the underlying filepath into a given Buffer.
 
@@ -85,7 +85,7 @@ Example
     - `bytesRead` -- `number` -- The number of bytes which were read from the file.
     - `buffer` -- `NodeJS.TypedArray | DataView` -- The updated `Buffer` with the contents of the file.
 
-### readSync(buffer, offset, length, position [, openOptions]) <a name = "#readSync"></a>
+### readSync(buffer, offset, length, position [, openOptions]) <a id = "readSync"></a>
 
 **Synchronously** reads the contents of the underlying filepath into a given Buffer.
 
@@ -107,7 +107,7 @@ Example
     - `bytesRead` -- `number` -- The number of bytes which were read from the file.
     - `buffer` -- `NodeJS.TypedArray | DataView` -- The updated `Buffer` with the contents of the file.
 
-### write(buffer [, offset, length, position, openOptions]) <a name = "#write"></a>
+### write(buffer [, offset, length, position, openOptions]) <a id = "write"></a>
 
 **Asynchronously** writes from a buffer or buffer-like container into the underlying file.
 
@@ -127,7 +127,7 @@ Example
     - `bytesWritten` -- `number` -- The number of bytes which were read from the file.
     - `buffer` -- `NodeJS.TypedArray | DataView` -- The buffer or buffer-like that was written into the file.
 
-### writeSync(buffer [, offset, length, position, openOptions]) <a name = "#writeSync"></a>
+### writeSync(buffer [, offset, length, position, openOptions]) <a id = "writeSync"></a>
 
 **Synchronously** writes from a buffer or buffer-like container into the underlying file.
 
@@ -147,7 +147,7 @@ Example
     - `bytesWritten` -- `number` -- The number of bytes which were read from the file.
     - `buffer` -- `NodeJS.TypedArray | DataView` -- The buffer or buffer-like that was written into the file.
 
-### readFile([options]) <a name = "#readFile"></a>
+### readFile([options]) <a id = "readFile"></a>
 
 **Asynchronously** reads in and parses the contents of the underlying filepath.
 
@@ -160,7 +160,7 @@ Example
 - Returns:
   - `Buffer | string` - The contents of the file; as a `Buffer` when no encoding is specified.
 
-### readFileSync([options]) <a name = "#readFileSync"></a>
+### readFileSync([options]) <a id = "readFileSync"></a>
 
 **Synchronously** reads in and parses the contents of the underlying filepath.
 
@@ -173,7 +173,7 @@ Example
 - Returns:
   - `Buffer | string` - The contents of the file; as a `Buffer` when no encoding is specified.
 
-### writeFile(data [, options]) <a name = "#writeFile"></a>
+### writeFile(data [, options]) <a id = "writeFile"></a>
 
 **Asynchronously** formats data into a given encoding, if any, and writes it into the underlying filepath.
 
@@ -185,7 +185,7 @@ Example
     - `encoding` -- `string` -- The encoding to use when parsing file content.
     - `flag` -- `string` -- the mode that the file should be opened in. Defaults to "w".
 
-### writeFileSync(data [, options]) <a name = "#writeFileSync"></a>
+### writeFileSync(data [, options]) <a id = "writeFileSync"></a>
 
 **Synchronously** formats data into a given encoding, if any, and writes it into the underlying filepath.
 
@@ -197,7 +197,7 @@ Example
     - `encoding` -- `string` -- The encoding to use when parsing file content.
     - `flag` -- `string` -- the mode that the file should be opened in. Defaults to "w".
 
-### readJSON([options]) <a name = "#readJSON"></a>
+### readJSON([options]) <a id = "readJSON"></a>
 
 **Asynchronously** reads in the underlying JSON file.
 
@@ -211,7 +211,7 @@ Example
 - Returns:
   - `JSONObject` - An Object compatible with saving to or from .json files.
 
-### readJSONSync([options]) <a name = "#readJSONSync"></a>
+### readJSONSync([options]) <a id = "readJSONSync"></a>
 
 **Synchronously** reads in the underlying JSON file.
 
@@ -225,7 +225,7 @@ Example
 - Returns:
   - `JSONObject` - An Object compatible with saving to or from .json files.
 
-### writeJSON(data [, options]) <a name = "#writeJSON"></a>
+### writeJSON(data [, options]) <a id = "writeJSON"></a>
 
 **Asynchronously** formats an Object and writes it into the underlying .json file.
 
@@ -240,7 +240,7 @@ Example
     - `encoding` -- `string` -- The encoding to use when parsing file content. Defaults to "utf8".
     - `flag` -- `string` -- the mode that the file should be opened in. Defaults to "w".
 
-### writeJSONSync(data [, options]) <a name = "#writeJSONSync"></a>
+### writeJSONSync(data [, options]) <a id = "writeJSONSync"></a>
 
 **Asynchronously** formats an Object and writes it into the underlying .json file.
 
@@ -255,7 +255,7 @@ Example
     - `encoding` -- `string` -- The encoding to use when parsing file content. Defaults to "utf8".
     - `flag` -- `string` -- the mode that the file should be opened in. Defaults to "w".
 
-### glob(patterns [, options]) <a name = "#glob"></a>
+### glob(patterns [, options]) <a id = "glob"></a>
 
 **Asynchronously** globs for filepaths stemming from the underlying path.
 
@@ -298,7 +298,7 @@ ES5CompatibilityWrapper();
 ]
 ```
 
-### globIter(patterns [, options]) <a name = "#globIter"></a>
+### globIter(patterns [, options]) <a id = "globIter"></a>
 
 Allows for asynchronous iteration over a glob query, yielding Path instances of matched directories.
 
@@ -342,7 +342,7 @@ ES5CompatibilityWrapper();
 ```
 
 
-### globSync(patterns [, options]) <a name = "#globSync"></a>
+### globSync(patterns [, options]) <a id = "globSync"></a>
 
 **Synchronously** globs for filepaths stemming from the underlying path.
 
@@ -382,7 +382,7 @@ console.log(fp.globSync("**/*.json", { extglob: true }));
 ]
 ```
 
-### watch(data [, options]) <a name = "#watch"></a>
+### watch(data [, options]) <a id = "watch"></a>
 
 **Synchronously** globs for filepaths stemming from the underlying path.
 

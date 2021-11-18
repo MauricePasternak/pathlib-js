@@ -2,12 +2,12 @@
 
 ## Associated Path Methods
 
-- [makeDir()](#makeDir)
-- [makeDirSync()](#makeDirSync)
-- [makeFile()](#makeFile)
-- [makeFileSync()](#makeFileSync)
-- [makeSymlink()](#makeSymlink)
-- [makeSymlinkSync()](#makeSymlinkSync)
+- <a href = "#makeDir">makeDir()</a>
+- <a href = "#makeDirSync">makeDirSync()</a>
+- <a href = "#makeFile">makeFile()</a>
+- <a href = "#makeFileSync">makeFileSync()</a>
+- <a href = "#makeSymlink">makeSymlink()</a>
+- <a href = "#makeSymlinkSync">makeSymlinkSync()</a>
 
 ## File Structure Example for this API
 
@@ -19,7 +19,7 @@ Example
 └── Folder_B
 ```
 
-### makeDir([mode]) <a name = "#makeDir"></a>
+### makeDir([mode]) <a id = "makeDir"></a>
 
 Asynchronously forces the underlying filepath to be made as a directory, making parent directories as appropriate.
 
@@ -42,7 +42,7 @@ ES5CompatibilityWrapper();
 
 ```
 
-### makeDirSync([mode]) <a name = "#makeDirSync"></a>
+### makeDirSync([mode]) <a id = "makeDirSync"></a>
 
 Synchronously forces the underlying filepath to be made as a directory, making parent directories as appropriate.
 
@@ -62,7 +62,7 @@ console.log(fp.existsSync());
 
 ```
 
-### makeFile([mode]) <a name = "#makeFile"></a>
+### makeFile([mode]) <a id = "makeFile"></a>
 
 Asynchronously forces the underlying filepath to be made as a file, making parent directories as appropriate.
 
@@ -85,7 +85,7 @@ ES5CompatibilityWrapper();
 
 ```
 
-### makeFileSync([mode]) <a name = "#makeFileSync"></a>
+### makeFileSync([mode]) <a id = "makeFileSync"></a>
 
 Synchronously forces the underlying filepath to be made as a file, making parent directories as appropriate.
 
@@ -105,7 +105,7 @@ console.log(fp.existsSync());
 
 ```
 
-### makeSymlink(dst) <a name = "#makeSymlink"></a>
+### makeSymlink(dst) <a id = "makeSymlink"></a>
 
 **Asynchronously** creates a Symlink at the indicated destination, linking to the underlying filepath.
 
@@ -118,7 +118,7 @@ console.log(fp.existsSync());
 - Returns:
   - `Path` - The destination filepath is returned as a Path instance if the operation was successful.
 
-### makeSymlink(dst) <a name = "#makeSymlink"></a>
+### makeSymlink(dst) <a id = "makeSymlinkSync"></a>
 
 **Synchronously** creates a Symlink at the indicated destination, linking to the underlying filepath.
 
