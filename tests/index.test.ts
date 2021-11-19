@@ -5,6 +5,7 @@ import { platform } from "os";
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+// TODO: add tests for readLink
 
 describe("Path properties", () => {
   const fp = new Path(__filename);

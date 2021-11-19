@@ -174,6 +174,28 @@ class Path {
   }
 
   /**
+   * If the underlying path is a symlink, asynchronously returns the Path of the target it links to.
+   * @returns A Path instance of the target that the symlink points to.
+   */
+  async readLink() {
+    if (!(await this.isSymbolicLink())) {
+      throw new Error("The underlying path not a symlink.");
+    }
+    return new Path(await fse.readlink(this.path));
+  }
+
+  /**
+   * If the underlying path is a symlink, asynchronously returns the Path of the target it links to.
+   * @returns A Path instance of the target that the symlink points to.
+   */
+  async readLinkSync() {
+    if (!this.isSymbolicLinkSync()) {
+      throw new Error("The underlying path not a symlink.");
+    }
+    return new Path(fse.readlinkSync(this.path));
+  }
+
+  /**
    * Appends strings to the end of the underlying filepath, creating a new Path instance. Note that ".." and "." are treated
    * literally and will not be resolved. For appending file segments with resolving behavior use the "resolve" method.
    * @param segments Strings which should be appended to the Path instance in order to create a new one.
@@ -843,11 +865,11 @@ class Path {
   }
 
   /**
-   * Asynchronously creates a new symlink of the underlying filepath.
+   * Asynchronously creates a new symlink path that will point to the underlying filepath.
    * @param dst The location of where the symlink should be made.
    */
-  async makeSymlink(dst: string | Path) {
-    const dest = typeof dst === "string" ? new Path(dst) : dst;
+  async makeSymlink(symlinkPath: string | Path) {
+    const dest = typeof symlinkPath === "string" ? new Path(symlinkPath) : symlinkPath;
     let linkType;
     if ((await this.isDirectory()) && dest.suffixes.length === 0) {
       linkType = "dir";
@@ -863,7 +885,7 @@ class Path {
   }
 
   /**
-   * Synchronously creates a new symlink of the underlying filepath.
+   * Synchronously creates a new symlink path that will point to the underlying filepath.
    * @param dst The location of where the symlink should be made.
    */
   makeSymlinkSync(dst: string | Path) {
