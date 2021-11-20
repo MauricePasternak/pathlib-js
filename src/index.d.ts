@@ -91,6 +91,7 @@ declare class Path {
      * @property suffixes An array of the individualized extentions, without periods.
      */
     constructor(...paths: string[]);
+    private _expanduser;
     private _parts;
     /**
      * Splits the underlying filepath into its individual components.
@@ -119,6 +120,16 @@ declare class Path {
      * @returns The resolved Path instance.
      */
     resolve(...segments: string[]): Path;
+    /**
+     * If the underlying path is a symlink, asynchronously returns the Path of the target it links to.
+     * @returns A Path instance of the target that the symlink points to.
+     */
+    readLink(): Promise<Path>;
+    /**
+     * If the underlying path is a symlink, asynchronously returns the Path of the target it links to.
+     * @returns A Path instance of the target that the symlink points to.
+     */
+    readLinkSync(): Path;
     /**
      * Appends strings to the end of the underlying filepath, creating a new Path instance. Note that ".." and "." are treated
      * literally and will not be resolved. For appending file segments with resolving behavior use the "resolve" method.
@@ -374,16 +385,29 @@ declare class Path {
      * representation of the new filepath permissions to impart on the created file.
      */
     makeFileSync(): void;
+    private _inferWindowsSymlinkType;
     /**
-     * Asynchronously creates a new symlink of the underlying filepath.
-     * @param dst The location of where the symlink should be made.
+     * Asynchronously creates a symlink.
+     * Either links the underlying filepath to a created symlink or has a target filepath be linking by the underlying symlink.
+     * @param target The corresponding target filepath that a symlink should be made to OR that is a symlink linking to the underlying filepath.
+     * @param targetIsLink Whether the filepath indicate in "target" should be treated as a symlink.
+     * If true, then the target is treated as the link and the underlying filepath must be an existing file or directory.
+     * If false, then the target must be an existing file or directory and the underlying filepath is the symlink.
+     * @param type On Windows only, a value of either "file" or "dir" denoting the type of symlink to create.
+     * Defaults to undefined, where an inference will be made based on the filepath being linked.
      */
-    makeSymlink(dst: string | Path): Promise<Path>;
+    makeSymlink(target: string | Path, targetIsLink: boolean, type?: fse.SymlinkType): Promise<Path>;
     /**
-     * Synchronously creates a new symlink of the underlying filepath.
-     * @param dst The location of where the symlink should be made.
+     * Synchronously creates a symlink.
+     * Either links the underlying filepath to a created symlink or has a target filepath be linking by the underlying symlink.
+     * @param target The corresponding target filepath that a symlink should be made to OR that is a symlink linking to the underlying filepath.
+     * @param targetIsLink Whether the filepath indicate in "target" should be treated as a symlink.
+     * If true, then the target is treated as the link and the underlying filepath must be an existing file or directory.
+     * If false, then the target must be an existing file or directory and the underlying filepath is the symlink.
+     * @param type On Windows only, a value of either "file" or "dir" denoting the type of symlink to create.
+     * Defaults to undefined, where an inference will be made based on the filepath being linked.
      */
-    makeSymlinkSync(dst: string | Path): Path;
+    makeSymlinkSync(target: string | Path, targetIsLink: boolean, type?: fse.SymlinkType): Path;
     /**
      * Asynchronously tests a user's permissions for the underling filepath.
      * @param mode the permissions to check for. Use fs.constants variables as input, NOT octal numbers.

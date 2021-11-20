@@ -431,60 +431,57 @@ describe("Permissions", function () {
     }
 });
 describe("Detection of filepaths at Nth level away", function () {
-    var fp = new src_1.default(__dirname).join("FolderA");
-    var expectedSiblingBasenames = new Set(["FolderA", "FolderB"]);
-    var expectedChildrenBasenames = new Set(["File_A1.txt", "File_A2.txt"]);
-    var expectedParentBasenames = new Set(["src", "tests", "docs", "node_modules"]);
+    var fpRootForTest = new src_1.default(__dirname, "NthLevelAwayTest");
+    var fp0 = new src_1.default(__dirname, "NthLevelAwayTest", "Level-1", "Level0A");
+    var fp1 = new src_1.default(__dirname, "NthLevelAwayTest", "Level-1", "Level0B");
+    fp1.makeDirSync();
+    fp0.resolve("Level1A").makeDirSync();
+    fp0.resolve("Level1B").makeDirSync();
     it("Should be able to detect sibling filepaths", function () { return __awaiter(void 0, void 0, void 0, function () {
-        var siblingNames, _a, _b, siblingPath, e_3_1, expectedSiblingBasenames_1, expectedSiblingBasenames_1_1, name_1;
-        var e_4, _c;
-        var e_3, _d;
-        return __generator(this, function (_e) {
-            switch (_e.label) {
-                case 0:
-                    siblingNames = [];
-                    _e.label = 1;
-                case 1:
-                    _e.trys.push([1, 7, 8, 13]);
-                    return [4 /*yield*/, fp.getPathsNLevelsAway(0, true, { onlyDirectories: true })];
+        var siblingNames, _a, _b, basename;
+        var e_3, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0: return [4 /*yield*/, fp0.getPathsNLevelsAway(0, false, { onlyDirectories: true })];
+                case 1: return [4 /*yield*/, (_d.sent()).map(function (p) { return p.basename; })];
                 case 2:
-                    _a = __asyncValues.apply(void 0, [_e.sent()]);
-                    _e.label = 3;
-                case 3: return [4 /*yield*/, _a.next()];
-                case 4:
-                    if (!(_b = _e.sent(), !_b.done)) return [3 /*break*/, 6];
-                    siblingPath = _b.value;
-                    siblingNames.push(siblingPath.basename);
-                    _e.label = 5;
-                case 5: return [3 /*break*/, 3];
-                case 6: return [3 /*break*/, 13];
-                case 7:
-                    e_3_1 = _e.sent();
-                    e_3 = { error: e_3_1 };
-                    return [3 /*break*/, 13];
-                case 8:
-                    _e.trys.push([8, , 11, 12]);
-                    if (!(_b && !_b.done && (_d = _a.return))) return [3 /*break*/, 10];
-                    return [4 /*yield*/, _d.call(_a)];
-                case 9:
-                    _e.sent();
-                    _e.label = 10;
-                case 10: return [3 /*break*/, 12];
-                case 11:
-                    if (e_3) throw e_3.error;
-                    return [7 /*endfinally*/];
-                case 12: return [7 /*endfinally*/];
-                case 13:
+                    siblingNames = _d.sent();
                     try {
-                        for (expectedSiblingBasenames_1 = __values(expectedSiblingBasenames), expectedSiblingBasenames_1_1 = expectedSiblingBasenames_1.next(); !expectedSiblingBasenames_1_1.done; expectedSiblingBasenames_1_1 = expectedSiblingBasenames_1.next()) {
-                            name_1 = expectedSiblingBasenames_1_1.value;
-                            (0, assert_1.default)(siblingNames.includes(name_1));
+                        for (_a = __values(["Level0A", "Level0B"]), _b = _a.next(); !_b.done; _b = _a.next()) {
+                            basename = _b.value;
+                            (0, assert_1.default)(siblingNames.includes(basename));
+                        }
+                    }
+                    catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                    finally {
+                        try {
+                            if (_b && !_b.done && (_c = _a.return)) _c.call(_a);
+                        }
+                        finally { if (e_3) throw e_3.error; }
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it("Should be able to detect child filepaths", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var childNames, _a, _b, basename;
+        var e_4, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0: return [4 /*yield*/, fp0.getPathsNLevelsAway(1, false, { onlyDirectories: true })];
+                case 1: return [4 /*yield*/, (_d.sent()).map(function (p) { return p.basename; })];
+                case 2:
+                    childNames = _d.sent();
+                    try {
+                        for (_a = __values(["Level1A", "Level1B"]), _b = _a.next(); !_b.done; _b = _a.next()) {
+                            basename = _b.value;
+                            (0, assert_1.default)(childNames.includes(basename));
                         }
                     }
                     catch (e_4_1) { e_4 = { error: e_4_1 }; }
                     finally {
                         try {
-                            if (expectedSiblingBasenames_1_1 && !expectedSiblingBasenames_1_1.done && (_c = expectedSiblingBasenames_1.return)) _c.call(expectedSiblingBasenames_1);
+                            if (_b && !_b.done && (_c = _a.return)) _c.call(_a);
                         }
                         finally { if (e_4) throw e_4.error; }
                     }
@@ -492,125 +489,38 @@ describe("Detection of filepaths at Nth level away", function () {
             }
         });
     }); });
-    it("Should be able to detect child filepaths", function () { return __awaiter(void 0, void 0, void 0, function () {
-        var childrenNames, _a, _b, childPath, e_5_1, expectedChildrenBasenames_1, expectedChildrenBasenames_1_1, name_2;
-        var e_6, _c;
-        var e_5, _d;
-        return __generator(this, function (_e) {
-            switch (_e.label) {
-                case 0:
-                    childrenNames = [];
-                    _e.label = 1;
-                case 1:
-                    _e.trys.push([1, 7, 8, 13]);
-                    return [4 /*yield*/, fp.getPathsNLevelsAway(1, true, { onlyFiles: true })];
-                case 2:
-                    _a = __asyncValues.apply(void 0, [_e.sent()]);
-                    _e.label = 3;
-                case 3: return [4 /*yield*/, _a.next()];
-                case 4:
-                    if (!(_b = _e.sent(), !_b.done)) return [3 /*break*/, 6];
-                    childPath = _b.value;
-                    childrenNames.push(childPath.basename);
-                    _e.label = 5;
-                case 5: return [3 /*break*/, 3];
-                case 6: return [3 /*break*/, 13];
-                case 7:
-                    e_5_1 = _e.sent();
-                    e_5 = { error: e_5_1 };
-                    return [3 /*break*/, 13];
-                case 8:
-                    _e.trys.push([8, , 11, 12]);
-                    if (!(_b && !_b.done && (_d = _a.return))) return [3 /*break*/, 10];
-                    return [4 /*yield*/, _d.call(_a)];
-                case 9:
-                    _e.sent();
-                    _e.label = 10;
-                case 10: return [3 /*break*/, 12];
-                case 11:
-                    if (e_5) throw e_5.error;
-                    return [7 /*endfinally*/];
-                case 12: return [7 /*endfinally*/];
-                case 13:
-                    try {
-                        for (expectedChildrenBasenames_1 = __values(expectedChildrenBasenames), expectedChildrenBasenames_1_1 = expectedChildrenBasenames_1.next(); !expectedChildrenBasenames_1_1.done; expectedChildrenBasenames_1_1 = expectedChildrenBasenames_1.next()) {
-                            name_2 = expectedChildrenBasenames_1_1.value;
-                            (0, assert_1.default)(childrenNames.includes(name_2));
-                        }
-                    }
-                    catch (e_6_1) { e_6 = { error: e_6_1 }; }
-                    finally {
-                        try {
-                            if (expectedChildrenBasenames_1_1 && !expectedChildrenBasenames_1_1.done && (_c = expectedChildrenBasenames_1.return)) _c.call(expectedChildrenBasenames_1);
-                        }
-                        finally { if (e_6) throw e_6.error; }
-                    }
-                    return [2 /*return*/];
-            }
-        });
-    }); });
     it("Should be able to detect parent filepaths", function () { return __awaiter(void 0, void 0, void 0, function () {
-        var parentNames, _a, _b, parentPath, e_7_1, expectedParentBasenames_1, expectedParentBasenames_1_1, name_3;
-        var e_8, _c;
-        var e_7, _d;
-        return __generator(this, function (_e) {
-            switch (_e.label) {
-                case 0:
-                    parentNames = [];
-                    _e.label = 1;
-                case 1:
-                    _e.trys.push([1, 7, 8, 13]);
-                    return [4 /*yield*/, fp.getPathsNLevelsAway(-1, true, { onlyDirectories: true })];
+        var parentNames, _a, _b, basename;
+        var e_5, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0: return [4 /*yield*/, fp0.getPathsNLevelsAway(-1, false, { onlyDirectories: true })];
+                case 1: return [4 /*yield*/, (_d.sent()).map(function (p) { return p.basename; })];
                 case 2:
-                    _a = __asyncValues.apply(void 0, [_e.sent()]);
-                    _e.label = 3;
-                case 3: return [4 /*yield*/, _a.next()];
-                case 4:
-                    if (!(_b = _e.sent(), !_b.done)) return [3 /*break*/, 6];
-                    parentPath = _b.value;
-                    parentNames.push(parentPath.basename);
-                    _e.label = 5;
-                case 5: return [3 /*break*/, 3];
-                case 6: return [3 /*break*/, 13];
-                case 7:
-                    e_7_1 = _e.sent();
-                    e_7 = { error: e_7_1 };
-                    return [3 /*break*/, 13];
-                case 8:
-                    _e.trys.push([8, , 11, 12]);
-                    if (!(_b && !_b.done && (_d = _a.return))) return [3 /*break*/, 10];
-                    return [4 /*yield*/, _d.call(_a)];
-                case 9:
-                    _e.sent();
-                    _e.label = 10;
-                case 10: return [3 /*break*/, 12];
-                case 11:
-                    if (e_7) throw e_7.error;
-                    return [7 /*endfinally*/];
-                case 12: return [7 /*endfinally*/];
-                case 13:
+                    parentNames = _d.sent();
                     try {
-                        for (expectedParentBasenames_1 = __values(expectedParentBasenames), expectedParentBasenames_1_1 = expectedParentBasenames_1.next(); !expectedParentBasenames_1_1.done; expectedParentBasenames_1_1 = expectedParentBasenames_1.next()) {
-                            name_3 = expectedParentBasenames_1_1.value;
-                            (0, assert_1.default)(parentNames.includes(name_3));
+                        for (_a = __values(["Level-1"]), _b = _a.next(); !_b.done; _b = _a.next()) {
+                            basename = _b.value;
+                            (0, assert_1.default)(parentNames.includes(basename));
                         }
                     }
-                    catch (e_8_1) { e_8 = { error: e_8_1 }; }
+                    catch (e_5_1) { e_5 = { error: e_5_1 }; }
                     finally {
                         try {
-                            if (expectedParentBasenames_1_1 && !expectedParentBasenames_1_1.done && (_c = expectedParentBasenames_1.return)) _c.call(expectedParentBasenames_1);
+                            if (_b && !_b.done && (_c = _a.return)) _c.call(_a);
                         }
-                        finally { if (e_8) throw e_8.error; }
+                        finally { if (e_5) throw e_5.error; }
                     }
                     return [2 /*return*/];
             }
         });
     }); });
+    setTimeout(function () { return fpRootForTest.deleteSync(); }, 200);
 });
 describe("Making and removing filepaths", function () {
-    var candidateFile = new src_1.default(__dirname).join("FolderC/File_C1.csv");
-    var candidateDir = new src_1.default(__dirname).join("FolderC/SubfolderD");
-    var candidateSymlink = new src_1.default(__dirname).join("FolderC/SubfolderE/File_Symlink.symlink");
+    var fpRootForTest = new src_1.default(__dirname, "MakeAndRemakeFilePathTests");
+    var candidateFile = fpRootForTest.resolve("File_C1.csv");
+    var candidateDir = fpRootForTest.resolve("SubfolderD");
     it("Should be a clear test without the filepath existing initially", function () { return __awaiter(void 0, void 0, void 0, function () {
         var _a, _b;
         return __generator(this, function (_c) {
@@ -720,50 +630,95 @@ describe("Making and removing filepaths", function () {
             }
         });
     }); });
-    it("Should successfully make a symlink with makeSymlink, creating parent directories as needed", function () { return __awaiter(void 0, void 0, void 0, function () {
-        var error_5, _a;
+    setTimeout(function () { return fpRootForTest.deleteSync(); }, 200);
+});
+describe("Making and Reading Symlinks", function () {
+    var fpRootForTest = new src_1.default(__dirname, "SymlinkTests");
+    var exampleSourceFile = fpRootForTest.resolve("SourceFoo.txt");
+    var exampleTargetFile = fpRootForTest.resolve("TargetFoo.txt");
+    var exampleSourceDirectory = fpRootForTest.resolve("SourceDirectory");
+    var exampleTargetDirectory = fpRootForTest.resolve("TargetDirectory");
+    exampleSourceFile.makeFileSync();
+    exampleSourceDirectory.makeDirSync();
+    exampleTargetFile.makeFileSync();
+    exampleTargetDirectory.makeDirSync();
+    var symlinkFromSourceFile = fpRootForTest.resolve("SymlinkFromSourceFoo.symlink");
+    var symlinkFromSourceDirectory = fpRootForTest.resolve("SymlinkFromSourceBar.symlink");
+    var symlinkToTargetFile = fpRootForTest.resolve("SymlinkToTargetFoo.symlink");
+    var symlinkToTargetDirectory = fpRootForTest.resolve("SymlinkToTargetBar.symlink");
+    it("Should be able to make a valid link between a source file and a target symlink file", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0:
-                    _b.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, new src_1.default(__dirname, "FolderB", "File_B1.json").makeSymlink(candidateSymlink)];
+                case 0: return [4 /*yield*/, exampleSourceFile.makeSymlink(symlinkFromSourceFile, true)];
                 case 1:
                     _b.sent();
-                    return [3 /*break*/, 3];
+                    return [4 /*yield*/, sleep(10)];
                 case 2:
-                    error_5 = _b.sent();
-                    return [3 /*break*/, 3];
-                case 3: return [4 /*yield*/, sleep(50)];
-                case 4:
-                    _b.sent(); // Hack
+                    _b.sent();
                     _a = assert_1.default;
-                    return [4 /*yield*/, candidateSymlink.exists()];
-                case 5:
-                    _a.apply(void 0, [_b.sent()]);
+                    return [4 /*yield*/, symlinkFromSourceFile.readLink()];
+                case 3:
+                    _a.apply(void 0, [(_b.sent()).path === exampleSourceFile.path]);
                     return [2 /*return*/];
             }
         });
     }); });
-    it("Should successfully delete a folder and all its children", function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [4 /*yield*/, candidateFile.parent().remove()];
-                    case 1:
-                        _b.sent();
-                        return [4 /*yield*/, sleep(20)];
-                    case 2:
-                        _b.sent(); // Hack
-                        _a = assert_1.default;
-                        return [4 /*yield*/, candidateFile.exists()];
-                    case 3:
-                        _a.apply(void 0, [!(_b.sent())]);
-                        return [2 /*return*/];
-                }
-            });
+    it("Should be able to make a valid link between a source directory and a target symlink", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, exampleSourceDirectory.makeSymlink(symlinkFromSourceDirectory, true)];
+                case 1:
+                    _b.sent();
+                    return [4 /*yield*/, sleep(10)];
+                case 2:
+                    _b.sent(); // Hack
+                    _a = assert_1.default;
+                    return [4 /*yield*/, symlinkFromSourceDirectory.readLink()];
+                case 3:
+                    _a.apply(void 0, [(_b.sent()).path === exampleSourceDirectory.path]);
+                    return [2 /*return*/];
+            }
         });
-    });
+    }); });
+    it("Should be able to make a valid link between a source symlink and a target file", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, symlinkToTargetFile.makeSymlink(exampleTargetFile, false)];
+                case 1:
+                    _b.sent();
+                    return [4 /*yield*/, sleep(10)];
+                case 2:
+                    _b.sent(); // Hack
+                    _a = assert_1.default;
+                    return [4 /*yield*/, symlinkToTargetFile.readLink()];
+                case 3:
+                    _a.apply(void 0, [(_b.sent()).path === exampleTargetFile.path]);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it("Should be able to make a valid link between a source symlink and a target directory", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, symlinkToTargetDirectory.makeSymlink(exampleTargetDirectory, false)];
+                case 1:
+                    _b.sent();
+                    return [4 /*yield*/, sleep(10)];
+                case 2:
+                    _b.sent(); // Hack
+                    _a = assert_1.default;
+                    return [4 /*yield*/, symlinkToTargetDirectory.readLink()];
+                case 3:
+                    _a.apply(void 0, [(_b.sent()).path === exampleTargetDirectory.path]);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    setTimeout(function () { return fpRootForTest.deleteSync(); }, 400);
 });
 describe("Reading and Writing JSON files", function () {
     var jsonReadFile = new src_1.default(__dirname, "FolderB", "File_B1.json");
@@ -786,7 +741,7 @@ describe("Reading and Writing JSON files", function () {
         });
     }); });
     it("Should correctly write a JSON object into a valid JSON filepath", function () { return __awaiter(void 0, void 0, void 0, function () {
-        var error_6;
+        var error_5;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -796,7 +751,7 @@ describe("Reading and Writing JSON files", function () {
                     _a.sent();
                     return [3 /*break*/, 3];
                 case 2:
-                    error_6 = _a.sent();
+                    error_5 = _a.sent();
                     (0, assert_1.default)(false);
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/];
@@ -804,7 +759,7 @@ describe("Reading and Writing JSON files", function () {
         });
     }); });
     it("Should throw an error if the user attempts to write a JSON object into an invalid filepath", function () { return __awaiter(void 0, void 0, void 0, function () {
-        var error_7;
+        var error_6;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -815,13 +770,14 @@ describe("Reading and Writing JSON files", function () {
                     (0, assert_1.default)(false);
                     return [3 /*break*/, 3];
                 case 2:
-                    error_7 = _a.sent();
+                    error_6 = _a.sent();
                     (0, assert_1.default)(true);
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/];
             }
         });
     }); });
+    setTimeout(function () { return notAJSONFile.deleteSync(); }, 200);
 });
 describe("Reading and Writing other Files", function () {
     var testFile = new src_1.default(__dirname, "ReadWriteTestOther", "Test.txt");

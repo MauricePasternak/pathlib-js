@@ -100,15 +100,6 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
@@ -119,6 +110,15 @@ var __values = (this && this.__values) || function(o) {
         }
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -152,7 +152,7 @@ var Path = /** @class */ (function () {
         if (!paths || !paths.length || paths[0] === "") {
             throw new Error("Cannot instantiate a new Path instance on an empty string");
         }
-        this.path = (0, normalize_path_1.default)(path_1.default.resolve.apply(path_1.default, __spreadArray([], __read(paths), false)));
+        this.path = (0, normalize_path_1.default)(path_1.default.resolve(this._expanduser(paths.join("/"))));
         var _b = path_1.default.parse(this.path), dir = _b.dir, root = _b.root, base = _b.base, ext = _b.ext;
         this.root = (0, os_1.platform)() === "win32" ? root.replace("/", "") : root;
         this.basename = base;
@@ -225,6 +225,9 @@ var Path = /** @class */ (function () {
     Path.parseModeIntoOctal = function (mode) {
         return parseInt(((typeof mode === "number" ? mode : mode.mode) & 511).toString(8), 10);
     };
+    Path.prototype._expanduser = function (inputString) {
+        return inputString.startsWith("~") ? inputString.replace("~", (0, os_1.homedir)()) : inputString;
+    };
     Path.prototype._parts = function (normalizedString) {
         return (0, os_1.platform)() === "win32" ? normalizedString.split("/") : __spreadArray(["/"], __read(normalizedString.split("/").slice(1)), false);
     };
@@ -268,6 +271,37 @@ var Path = /** @class */ (function () {
             segments[_i] = arguments[_i];
         }
         return new (Path.bind.apply(Path, __spreadArray([void 0, this.path], __read(segments), false)))();
+    };
+    /**
+     * If the underlying path is a symlink, asynchronously returns the Path of the target it links to.
+     * @returns A Path instance of the target that the symlink points to.
+     */
+    Path.prototype.readLink = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, this.isSymbolicLink()];
+                    case 1:
+                        if (!(_b.sent())) {
+                            throw new Error("The underlying path not a symlink.");
+                        }
+                        _a = Path.bind;
+                        return [4 /*yield*/, fse.readlink(this.path)];
+                    case 2: return [2 /*return*/, new (_a.apply(Path, [void 0, _b.sent()]))()];
+                }
+            });
+        });
+    };
+    /**
+     * If the underlying path is a symlink, asynchronously returns the Path of the target it links to.
+     * @returns A Path instance of the target that the symlink points to.
+     */
+    Path.prototype.readLinkSync = function () {
+        if (!this.isSymbolicLinkSync()) {
+            throw new Error("The underlying path not a symlink.");
+        }
+        return new Path(fse.readlinkSync(this.path));
     };
     /**
      * Appends strings to the end of the underlying filepath, creating a new Path instance. Note that ".." and "." are treated
@@ -1342,57 +1376,126 @@ var Path = /** @class */ (function () {
             throw new Error("Cannot use makeDir on a directory-like type");
         fse.ensureFileSync(this.path);
     };
+    Path.prototype._inferWindowsSymlinkType = function (target) {
+        if (target.isDirectorySync()) {
+            return "dir";
+        }
+        else if (target.isFileSync()) {
+            return "file";
+        }
+        else {
+            throw new Error("Cannot create symlink to a filepath that is neither file nor directory.");
+        }
+    };
     /**
-     * Asynchronously creates a new symlink of the underlying filepath.
-     * @param dst The location of where the symlink should be made.
+     * Asynchronously creates a symlink.
+     * Either links the underlying filepath to a created symlink or has a target filepath be linking by the underlying symlink.
+     * @param target The corresponding target filepath that a symlink should be made to OR that is a symlink linking to the underlying filepath.
+     * @param targetIsLink Whether the filepath indicate in "target" should be treated as a symlink.
+     * If true, then the target is treated as the link and the underlying filepath must be an existing file or directory.
+     * If false, then the target must be an existing file or directory and the underlying filepath is the symlink.
+     * @param type On Windows only, a value of either "file" or "dir" denoting the type of symlink to create.
+     * Defaults to undefined, where an inference will be made based on the filepath being linked.
      */
-    Path.prototype.makeSymlink = function (dst) {
+    Path.prototype.makeSymlink = function (target, targetIsLink, type) {
         return __awaiter(this, void 0, void 0, function () {
-            var dest, linkType;
+            var targetPath, linkType, linkType;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        dest = typeof dst === "string" ? new Path(dst) : dst;
-                        return [4 /*yield*/, this.isDirectory()];
+                        targetPath = typeof target === "string" ? new Path(target) : target;
+                        if (!((0, os_1.platform)() === "win32")) return [3 /*break*/, 7];
+                        if (!targetIsLink) return [3 /*break*/, 3];
+                        linkType = type ? type : this._inferWindowsSymlinkType(this);
+                        return [4 /*yield*/, this.exists()];
                     case 1:
-                        if (!((_a.sent()) && dest.suffixes.length === 0)) return [3 /*break*/, 2];
-                        linkType = "dir";
-                        return [3 /*break*/, 4];
-                    case 2: return [4 /*yield*/, this.isFile()];
+                        if (!(_a.sent())) {
+                            throw new Error("The underlying source filepath does not exist. Cannot create a symlink if the source does not exist.");
+                        }
+                        return [4 /*yield*/, fse.ensureSymlink(this.path, targetPath.path, linkType)];
+                    case 2:
+                        _a.sent();
+                        return [3 /*break*/, 6];
                     case 3:
-                        if ((_a.sent()) && dest.suffixes.length > 0) {
-                            linkType = "file";
+                        linkType = type ? type : this._inferWindowsSymlinkType(targetPath);
+                        return [4 /*yield*/, targetPath.exists()];
+                    case 4:
+                        if (!(_a.sent())) {
+                            throw new Error("The target filepath does not exist. Cannot create a symlink if the target does not exist.");
                         }
-                        else {
-                            throw new Error("Either the path is neither file nor directory or the corresponding destination had a presence/absense of suffixes when it shouldn't have.");
-                        }
-                        _a.label = 4;
-                    case 4: return [4 /*yield*/, fse.ensureSymlink(this.path, dest.path, linkType)];
+                        return [4 /*yield*/, fse.ensureSymlink(targetPath.path, this.path, linkType)];
                     case 5:
                         _a.sent();
-                        return [2 /*return*/, dest];
+                        _a.label = 6;
+                    case 6: return [3 /*break*/, 13];
+                    case 7:
+                        if (!targetIsLink) return [3 /*break*/, 10];
+                        return [4 /*yield*/, this.exists()];
+                    case 8:
+                        if (!(_a.sent())) {
+                            throw new Error("The underlying source filepath does not exist. Cannot create a symlink if the source does not exist.");
+                        }
+                        return [4 /*yield*/, fse.ensureSymlink(this.path, targetPath.path)];
+                    case 9:
+                        _a.sent();
+                        return [3 /*break*/, 13];
+                    case 10: return [4 /*yield*/, targetPath.exists()];
+                    case 11:
+                        if (!(_a.sent())) {
+                            throw new Error("The target filepath does not exist. Cannot create a symlink if the target does not exist.");
+                        }
+                        return [4 /*yield*/, fse.ensureSymlink(targetPath.path, this.path)];
+                    case 12:
+                        _a.sent();
+                        _a.label = 13;
+                    case 13: return [2 /*return*/, targetPath];
                 }
             });
         });
     };
     /**
-     * Synchronously creates a new symlink of the underlying filepath.
-     * @param dst The location of where the symlink should be made.
+     * Synchronously creates a symlink.
+     * Either links the underlying filepath to a created symlink or has a target filepath be linking by the underlying symlink.
+     * @param target The corresponding target filepath that a symlink should be made to OR that is a symlink linking to the underlying filepath.
+     * @param targetIsLink Whether the filepath indicate in "target" should be treated as a symlink.
+     * If true, then the target is treated as the link and the underlying filepath must be an existing file or directory.
+     * If false, then the target must be an existing file or directory and the underlying filepath is the symlink.
+     * @param type On Windows only, a value of either "file" or "dir" denoting the type of symlink to create.
+     * Defaults to undefined, where an inference will be made based on the filepath being linked.
      */
-    Path.prototype.makeSymlinkSync = function (dst) {
-        var dest = typeof dst === "string" ? new Path(dst) : dst;
-        var linkType;
-        if (this.isDirectorySync() && dest.suffixes.length === 0) {
-            linkType = "dir";
-        }
-        else if (this.isFileSync() && dest.suffixes.length > 0) {
-            linkType = "file";
+    Path.prototype.makeSymlinkSync = function (target, targetIsLink, type) {
+        var targetPath = typeof target === "string" ? new Path(target) : target;
+        if ((0, os_1.platform)() === "win32") {
+            if (targetIsLink) {
+                var linkType = type ? type : this._inferWindowsSymlinkType(this);
+                if (!this.existsSync()) {
+                    throw new Error("The underlying source filepath does not exist. Cannot create a symlink if the source does not exist.");
+                }
+                fse.ensureSymlinkSync(this.path, targetPath.path, linkType);
+            }
+            else {
+                var linkType = type ? type : this._inferWindowsSymlinkType(targetPath);
+                if (!targetPath.existsSync()) {
+                    throw new Error("The target filepath does not exist. Cannot create a symlink if the target does not exist.");
+                }
+                fse.ensureSymlinkSync(targetPath.path, this.path, linkType);
+            }
         }
         else {
-            throw new Error("Either the path is neither file nor directory or the corresponding destination had a presence/absense of suffixes when it shouldn't have.");
+            if (targetIsLink) {
+                if (!this.existsSync()) {
+                    throw new Error("The underlying source filepath does not exist. Cannot create a symlink if the source does not exist.");
+                }
+                fse.ensureSymlinkSync(this.path, targetPath.path);
+            }
+            else {
+                if (!targetPath.existsSync()) {
+                    throw new Error("The target filepath does not exist. Cannot create a symlink if the target does not exist.");
+                }
+                fse.ensureSymlink(targetPath.path, this.path);
+            }
         }
-        fse.ensureSymlinkSync(this.path, dest.path, linkType);
-        return dest;
+        return targetPath;
     };
     Path.prototype.access = function (mode) {
         return __awaiter(this, void 0, void 0, function () {

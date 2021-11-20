@@ -105,7 +105,7 @@ console.log(fp.existsSync());
 
 ```
 
-### makeSymlink(dst) <a id = "makeSymlink"></a>
+### makeSymlink(target, targetIsLink [, type]) <a id = "makeSymlink"></a>
 
 **Asynchronously** creates a Symlink at the indicated destination, linking to the underlying filepath.
 
@@ -113,12 +113,16 @@ console.log(fp.existsSync());
 
 - Parameters:
 
-  - `dst` -- `string | Path` -- The destination to make the symlink at. Must be detected as the same filepath type as the underlying filepath (i.e. if the underlying filepath is a file, the symlink must have extensions).
+  - `target` -- `string | Path` -- Depending on the value of `targetIsLink`, this can be one of two things:
+    - If `targetIsLink` is `true`, then this should be the path of the created symlink which will point to the underlying filepath of the `Path` instance using this method. The underlying filepath is assumed to already exist, and will throw an Error if this is not the case.
+    - If `targetIsLink` is `false`, then the underlying filepath of the `Path` instance using this method is interpreted as the symlink and `target` is an existing filepath it will symlink to.
+  - `targetIsLink` -- `boolean` -- Whether the filepath indicated in `target` is the symlink to be made (`true`) or whether the underlying filepath is the symlink (`false`) while the target is an existing filepath.
+  - `type` -- `"dir" | "file" | undefined` -- Only relevant on Windows. The type of symlink to make. If left `undefined` (default), the method will attempt to infer the type based on the filepath being linked to.
 
 - Returns:
-  - `Path` - The destination filepath is returned as a Path instance if the operation was successful.
+  - `Path` - The filepath specified in `target` as a Path instance.
 
-### makeSymlink(dst) <a id = "makeSymlinkSync"></a>
+### makeSymlinkSync(target, targetIsLink [, type]) <a id = "makeSymlinkSync"></a>
 
 **Synchronously** creates a Symlink at the indicated destination, linking to the underlying filepath.
 
@@ -126,7 +130,11 @@ console.log(fp.existsSync());
 
 - Parameters:
 
-  - `dst` -- `string | Path` -- The destination to make the symlink at. Must be detected as the same filepath type as the underlying filepath (i.e. if the underlying filepath is a file, the symlink must have extensions).
+  - `target` -- `string | Path` -- Depending on the value of `targetIsLink`, this can be one of two things:
+    - If `targetIsLink` is `true`, then this should be the path of the created symlink which will point to the underlying filepath of the `Path` instance using this method. The underlying filepath is assumed to already exist, and will throw an Error if this is not the case.
+    - If `targetIsLink` is `false`, then the underlying filepath of the `Path` instance using this method is interpreted as the symlink and `target` is an existing filepath it will symlink to.
+  - `targetIsLink` -- `boolean` -- Whether the filepath indicated in `target` is the symlink to be made (`true`) or whether the underlying filepath is the symlink (`false`) while the target is an existing filepath.
+  - `type` -- `"dir" | "file" | undefined` -- Only relevant on Windows. The type of symlink to make. If left `undefined` (default), the method will attempt to infer the type based on the filepath being linked to.
 
 - Returns:
-  - `Path` - The destination filepath is returned as a Path instance if the operation was successful.
+  - `Path` - The filepath specified in `target` as a Path instance.

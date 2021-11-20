@@ -4,7 +4,7 @@ import * as fse from "fs-extra";
 import path from "path";
 import chokidar from "chokidar";
 import { trimChars } from "./utils";
-import { platform } from "os";
+import { platform, homedir } from "os";
 
 export interface SystemError {
   address: string;
@@ -119,7 +119,7 @@ class Path {
       throw new Error("Cannot instantiate a new Path instance on an empty string");
     }
 
-    this.path = normalize(path.resolve(...paths));
+    this.path = normalize(path.resolve(this._expanduser(paths.join("/"))));
     const { dir, root, base, ext } = path.parse(this.path);
     this.root = platform() === "win32" ? root.replace("/", "") : root;
     this.basename = base;
@@ -127,6 +127,10 @@ class Path {
     [this.stem, ...this.suffixes] = this.basename.split(".");
     this.ext = ext;
     this.descriptor = null;
+  }
+
+  private _expanduser(inputString: string) {
+    return inputString.startsWith("~") ? inputString.replace("~", homedir()) : inputString;
   }
 
   private _parts(normalizedString: string) {
@@ -171,6 +175,28 @@ class Path {
    */
   resolve(...segments: string[]) {
     return new Path(this.path, ...segments);
+  }
+
+  /**
+   * If the underlying path is a symlink, asynchronously returns the Path of the target it links to.
+   * @returns A Path instance of the target that the symlink points to.
+   */
+  async readLink() {
+    if (!(await this.isSymbolicLink())) {
+      throw new Error("The underlying path not a symlink.");
+    }
+    return new Path(await fse.readlink(this.path));
+  }
+
+  /**
+   * If the underlying path is a symlink, asynchronously returns the Path of the target it links to.
+   * @returns A Path instance of the target that the symlink points to.
+   */
+  readLinkSync() {
+    if (!this.isSymbolicLinkSync()) {
+      throw new Error("The underlying path not a symlink.");
+    }
+    return new Path(fse.readlinkSync(this.path));
   }
 
   /**
@@ -842,44 +868,106 @@ class Path {
     fse.ensureFileSync(this.path);
   }
 
-  /**
-   * Asynchronously creates a new symlink of the underlying filepath.
-   * @param dst The location of where the symlink should be made.
-   */
-  async makeSymlink(dst: string | Path) {
-    const dest = typeof dst === "string" ? new Path(dst) : dst;
-    let linkType;
-    if ((await this.isDirectory()) && dest.suffixes.length === 0) {
-      linkType = "dir";
-    } else if ((await this.isFile()) && dest.suffixes.length > 0) {
-      linkType = "file";
+  private _inferWindowsSymlinkType(target: Path) {
+    if (target.isDirectorySync()) {
+      return "dir";
+    } else if (target.isFileSync()) {
+      return "file";
     } else {
-      throw new Error(
-        "Either the path is neither file nor directory or the corresponding destination had a presence/absense of suffixes when it shouldn't have."
-      );
+      throw new Error("Cannot create symlink to a filepath that is neither file nor directory.");
     }
-    await fse.ensureSymlink(this.path, dest.path, linkType as fse.SymlinkType);
-    return dest;
   }
 
   /**
-   * Synchronously creates a new symlink of the underlying filepath.
-   * @param dst The location of where the symlink should be made.
+   * Asynchronously creates a symlink.
+   * Either links the underlying filepath to a created symlink or has a target filepath be linking by the underlying symlink.
+   * @param target The corresponding target filepath that a symlink should be made to OR that is a symlink linking to the underlying filepath.
+   * @param targetIsLink Whether the filepath indicate in "target" should be treated as a symlink.
+   * If true, then the target is treated as the link and the underlying filepath must be an existing file or directory.
+   * If false, then the target must be an existing file or directory and the underlying filepath is the symlink.
+   * @param type On Windows only, a value of either "file" or "dir" denoting the type of symlink to create.
+   * Defaults to undefined, where an inference will be made based on the filepath being linked.
    */
-  makeSymlinkSync(dst: string | Path) {
-    const dest = typeof dst === "string" ? new Path(dst) : dst;
-    let linkType;
-    if (this.isDirectorySync() && dest.suffixes.length === 0) {
-      linkType = "dir";
-    } else if (this.isFileSync() && dest.suffixes.length > 0) {
-      linkType = "file";
+  async makeSymlink(target: string | Path, targetIsLink: boolean, type?: fse.SymlinkType) {
+    const targetPath = typeof target === "string" ? new Path(target) : target;
+    if (platform() === "win32") {
+      if (targetIsLink) {
+        const linkType = type ? type : this._inferWindowsSymlinkType(this);
+        if (!(await this.exists())) {
+          throw new Error(
+            "The underlying source filepath does not exist. Cannot create a symlink if the source does not exist."
+          );
+        }
+        await fse.ensureSymlink(this.path, targetPath.path, linkType);
+      } else {
+        const linkType = type ? type : this._inferWindowsSymlinkType(targetPath);
+        if (!(await targetPath.exists())) {
+          throw new Error("The target filepath does not exist. Cannot create a symlink if the target does not exist.");
+        }
+        await fse.ensureSymlink(targetPath.path, this.path, linkType);
+      }
     } else {
-      throw new Error(
-        "Either the path is neither file nor directory or the corresponding destination had a presence/absense of suffixes when it shouldn't have."
-      );
+      if (targetIsLink) {
+        if (!(await this.exists())) {
+          throw new Error(
+            "The underlying source filepath does not exist. Cannot create a symlink if the source does not exist."
+          );
+        }
+        await fse.ensureSymlink(this.path, targetPath.path);
+      } else {
+        if (!(await targetPath.exists())) {
+          throw new Error("The target filepath does not exist. Cannot create a symlink if the target does not exist.");
+        }
+        await fse.ensureSymlink(targetPath.path, this.path);
+      }
     }
-    fse.ensureSymlinkSync(this.path, dest.path, linkType as fse.SymlinkType);
-    return dest;
+    return targetPath;
+  }
+
+  /**
+   * Synchronously creates a symlink.
+   * Either links the underlying filepath to a created symlink or has a target filepath be linking by the underlying symlink.
+   * @param target The corresponding target filepath that a symlink should be made to OR that is a symlink linking to the underlying filepath.
+   * @param targetIsLink Whether the filepath indicate in "target" should be treated as a symlink.
+   * If true, then the target is treated as the link and the underlying filepath must be an existing file or directory.
+   * If false, then the target must be an existing file or directory and the underlying filepath is the symlink.
+   * @param type On Windows only, a value of either "file" or "dir" denoting the type of symlink to create.
+   * Defaults to undefined, where an inference will be made based on the filepath being linked.
+   */
+  makeSymlinkSync(target: string | Path, targetIsLink: boolean, type?: fse.SymlinkType) {
+    const targetPath = typeof target === "string" ? new Path(target) : target;
+    if (platform() === "win32") {
+      if (targetIsLink) {
+        const linkType = type ? type : this._inferWindowsSymlinkType(this);
+        if (!this.existsSync()) {
+          throw new Error(
+            "The underlying source filepath does not exist. Cannot create a symlink if the source does not exist."
+          );
+        }
+        fse.ensureSymlinkSync(this.path, targetPath.path, linkType);
+      } else {
+        const linkType = type ? type : this._inferWindowsSymlinkType(targetPath);
+        if (!targetPath.existsSync()) {
+          throw new Error("The target filepath does not exist. Cannot create a symlink if the target does not exist.");
+        }
+        fse.ensureSymlinkSync(targetPath.path, this.path, linkType);
+      }
+    } else {
+      if (targetIsLink) {
+        if (!this.existsSync()) {
+          throw new Error(
+            "The underlying source filepath does not exist. Cannot create a symlink if the source does not exist."
+          );
+        }
+        fse.ensureSymlinkSync(this.path, targetPath.path);
+      } else {
+        if (!targetPath.existsSync()) {
+          throw new Error("The target filepath does not exist. Cannot create a symlink if the target does not exist.");
+        }
+        fse.ensureSymlink(targetPath.path, this.path);
+      }
+    }
+    return targetPath;
   }
 
   /**
