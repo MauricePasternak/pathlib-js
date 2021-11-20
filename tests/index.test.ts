@@ -1,11 +1,10 @@
-import Path, { treeBranch } from "../src";
+import Path from "../src";
 import assert from "assert";
 import { platform } from "os";
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-// TODO: add tests for readLink
 
 describe("Path properties", () => {
   const fp = new Path(__filename);
@@ -204,44 +203,46 @@ describe("Permissions", () => {
 });
 
 describe("Detection of filepaths at Nth level away", () => {
-  const fp = new Path(__dirname).join("FolderA");
-  const expectedSiblingBasenames = new Set(["FolderA", "FolderB"]);
-  const expectedChildrenBasenames = new Set(["File_A1.txt", "File_A2.txt"]);
-  const expectedParentBasenames = new Set(["src", "tests", "docs", "node_modules"]);
+  const fpRootForTest = new Path(__dirname, "NthLevelAwayTest");
+  const fp0 = new Path(__dirname, "NthLevelAwayTest", "Level-1", "Level0A");
+  const fp1 = new Path(__dirname, "NthLevelAwayTest", "Level-1", "Level0B");
+  fp1.makeDirSync();
+  fp0.resolve("Level1A").makeDirSync();
+  fp0.resolve("Level1B").makeDirSync();
 
   it("Should be able to detect sibling filepaths", async () => {
-    const siblingNames: string[] = [];
-    for await (const siblingPath of await fp.getPathsNLevelsAway(0, true, { onlyDirectories: true })) {
-      siblingNames.push(siblingPath.basename);
-    }
-    for (const name of expectedSiblingBasenames) {
-      assert(siblingNames.includes(name));
+    const siblingNames: string[] = await (
+      await fp0.getPathsNLevelsAway(0, false, { onlyDirectories: true })
+    ).map(p => p.basename);
+    for (const basename of ["Level0A", "Level0B"]) {
+      assert(siblingNames.includes(basename));
     }
   });
+
   it("Should be able to detect child filepaths", async () => {
-    const childrenNames: string[] = [];
-    for await (const childPath of await fp.getPathsNLevelsAway(1, true, { onlyFiles: true })) {
-      childrenNames.push(childPath.basename);
-    }
-    for (const name of expectedChildrenBasenames) {
-      assert(childrenNames.includes(name));
+    const childNames: string[] = await (
+      await fp0.getPathsNLevelsAway(1, false, { onlyDirectories: true })
+    ).map(p => p.basename);
+    for (const basename of ["Level1A", "Level1B"]) {
+      assert(childNames.includes(basename));
     }
   });
+
   it("Should be able to detect parent filepaths", async () => {
-    const parentNames: string[] = [];
-    for await (const parentPath of await fp.getPathsNLevelsAway(-1, true, { onlyDirectories: true })) {
-      parentNames.push(parentPath.basename);
-    }
-    for (const name of expectedParentBasenames) {
-      assert(parentNames.includes(name));
+    const parentNames: string[] = await (
+      await fp0.getPathsNLevelsAway(-1, false, { onlyDirectories: true })
+    ).map(p => p.basename);
+    for (const basename of ["Level-1"]) {
+      assert(parentNames.includes(basename));
     }
   });
+  setTimeout(() => fpRootForTest.deleteSync(), 200);
 });
 
 describe("Making and removing filepaths", () => {
-  const candidateFile = new Path(__dirname).join("FolderC/File_C1.csv");
-  const candidateDir = new Path(__dirname).join("FolderC/SubfolderD");
-  const candidateSymlink = new Path(__dirname).join("FolderC/SubfolderE/File_Symlink.symlink");
+  const fpRootForTest = new Path(__dirname, "MakeAndRemakeFilePathTests");
+  const candidateFile = fpRootForTest.resolve("File_C1.csv");
+  const candidateDir = fpRootForTest.resolve("SubfolderD");
   it("Should be a clear test without the filepath existing initially", async () => {
     assert(!(await candidateFile.exists()));
     assert(!(await candidateDir.exists()));
@@ -272,18 +273,46 @@ describe("Making and removing filepaths", () => {
     await sleep(20);
     assert(await candidateDir.exists());
   });
-  it("Should successfully make a symlink with makeSymlink, creating parent directories as needed", async () => {
-    try {
-      await new Path(__dirname, "FolderB", "File_B1.json").makeSymlink(candidateSymlink);
-    } catch (error) {}
-    await sleep(50); // Hack
-    assert(await candidateSymlink.exists());
+  setTimeout(() => fpRootForTest.deleteSync(), 200);
+});
+
+describe("Making and Reading Symlinks", () => {
+  const fpRootForTest = new Path(__dirname, "SymlinkTests");
+  const exampleSourceFile = fpRootForTest.resolve("SourceFoo.txt");
+  const exampleTargetFile = fpRootForTest.resolve("TargetFoo.txt");
+  const exampleSourceDirectory = fpRootForTest.resolve("SourceDirectory");
+  const exampleTargetDirectory = fpRootForTest.resolve("TargetDirectory");
+  exampleSourceFile.makeFileSync();
+  exampleSourceDirectory.makeDirSync();
+  exampleTargetFile.makeFileSync();
+  exampleTargetDirectory.makeDirSync();
+
+  const symlinkFromSourceFile = fpRootForTest.resolve("SymlinkFromSourceFoo.symlink");
+  const symlinkFromSourceDirectory = fpRootForTest.resolve("SymlinkFromSourceBar.symlink");
+  const symlinkToTargetFile = fpRootForTest.resolve("SymlinkToTargetFoo.symlink");
+  const symlinkToTargetDirectory = fpRootForTest.resolve("SymlinkToTargetBar.symlink");
+
+  it("Should be able to make a valid link between a source file and a target symlink file", async () => {
+    await exampleSourceFile.makeSymlink(symlinkFromSourceFile, true);
+    await sleep(10);
+    assert((await symlinkFromSourceFile.readLink()).path === exampleSourceFile.path);
   });
-  it("Should successfully delete a folder and all its children", async function () {
-    await candidateFile.parent().remove();
-    await sleep(20); // Hack
-    assert(!(await candidateFile.exists()));
+  it("Should be able to make a valid link between a source directory and a target symlink", async () => {
+    await exampleSourceDirectory.makeSymlink(symlinkFromSourceDirectory, true);
+    await sleep(10); // Hack
+    assert((await symlinkFromSourceDirectory.readLink()).path === exampleSourceDirectory.path);
   });
+  it("Should be able to make a valid link between a source symlink and a target file", async () => {
+    await symlinkToTargetFile.makeSymlink(exampleTargetFile, false);
+    await sleep(10); // Hack
+    assert((await symlinkToTargetFile.readLink()).path === exampleTargetFile.path);
+  });
+  it("Should be able to make a valid link between a source symlink and a target directory", async () => {
+    await symlinkToTargetDirectory.makeSymlink(exampleTargetDirectory, false);
+    await sleep(10); // Hack
+    assert((await symlinkToTargetDirectory.readLink()).path === exampleTargetDirectory.path);
+  });
+  setTimeout(() => fpRootForTest.deleteSync(), 400);
 });
 
 describe("Reading and Writing JSON files", () => {
@@ -313,6 +342,7 @@ describe("Reading and Writing JSON files", () => {
       assert(true);
     }
   });
+  setTimeout(() => notAJSONFile.deleteSync(), 200);
 });
 
 describe("Reading and Writing other Files", () => {
