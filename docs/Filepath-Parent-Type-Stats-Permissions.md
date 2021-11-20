@@ -16,6 +16,8 @@
 - <a href = "#isFIFOSync">isFIFOSync()</a>
 - <a href = "#access">access()</a>
 - <a href = "#accessSync">accessSync()</a>
+- <a href = "#readLink">readLink()</a>
+- <a href = "#readLinkSync">readLinkSync()</a>
 - <a href = "#parent">parent()</a>
 - <a href = "#containsImmediateChild">containsImmediateChild()</a>
 - <a href = "#containsImmediateChildSync">containsImmediateChildSync()</a>
@@ -262,6 +264,50 @@ console.log(fp2.isSymbolicLinkSync());
     - `canRead` -- `boolean` - Whether the current process has read access to the underlying filepath.
     - `canWrite` -- `boolean` - Whether the current process has write access to the underlying filepath.
     - `canExecute` -- `boolean` - Whether the underlying filepath can be executed by the current process.
+
+### readLink() <a id = "readLink"></a>
+
+**Asynchronously** determines the filepath that a symlink is pointing at. 
+**It is assumed that the underlying filepath invoking this method is a symlink. An error will be thrown if this is not the case.**
+
+- Returns:
+  - `Promise<Path>` - Returns the filepath that the symlink is pointing to, as a `Path` instance.
+
+```
+import Path from "pathlib-js"
+const ES5CompatibilityWrapper = async () => {
+  const filePointedTo = new Path("C:\\Users\\JohnDoe\\Example\\Folder_A\\File_A1.txt");
+  const symlinkPath = await filePointedTo.makeSymlink(
+    "C:\\Users\\JohnDoe\\Example\\Folder_B\\SymlinkExample.symlink",
+    true
+  );
+  console.log((await symlinkPath.readLink()).path === filePointedTo.path);
+};
+ES5CompatibilityWrapper();
+
+> true
+```
+
+### readLinkSync() <a id = "readLinkSync"></a>
+
+**Synchronously** determines the filepath that a symlink is pointing at. 
+**It is assumed that the underlying filepath invoking this method is a symlink. An error will be thrown if this is not the case.**
+
+- Returns:
+  - `Path` - Returns the filepath that the symlink is pointing to, as a `Path` instance.
+
+```
+import Path from "pathlib-js"
+const filePointedTo = new Path("C:\\Users\\JohnDoe\\Example\\Folder_A\\File_A1.txt");
+const symlinkPath = filePointedTo.makeSymlinkSync(
+  "C:\\Users\\JohnDoe\\Example\\Folder_B\\SymlinkExample.symlink",
+  true
+);
+console.log(symlinkPath.readLinkSync().path === filePointedTo.path);
+
+> true
+```
+
 
 ### parent() <a id = "parent"></a>
 
