@@ -130,7 +130,7 @@ class Path {
   }
 
   private _expanduser(inputString: string) {
-    return inputString.startsWith("~") ? inputString.replace("~", homedir()) : inputString;
+    return inputString.startsWith("~") ? inputString.replace("~", homedir()) + "/" : inputString + "/";
   }
 
   private _parts(normalizedString: string) {
@@ -505,9 +505,7 @@ class Path {
   parent(numIncrements?: number): Path {
     if (numIncrements == null) return new Path(this.dirname);
     const parts = this.parts();
-    return new Path(
-      numIncrements >= parts.length ? this.root : parts.slice(0, parts.length - numIncrements).join("/")
-    );
+    return new Path(numIncrements >= parts.length ? this.root : parts.slice(0, parts.length - numIncrements).join("/"));
   }
 
   /**

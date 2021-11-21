@@ -113,8 +113,13 @@ describe("Retrieving a parent", () => {
     assert(fp.parent(2).basename === "pathlib-js");
   });
   it("Should return the root directory if the numIncrements value is greater than the number of levels between the filepath and the root directory.", () => {
-    assert(fp.parent(9999).path === fp.root)
-  })
+    // console.log(fp.parent(9999));
+    assert(fp.parent(9999).path === fp.root);
+  });
+  it("Should return the same path as the one calling parent() if zero or a negative value is provided for numIncrements", () => {
+    assert(fp.path === fp.parent(-10).path);
+    assert(fp.path === fp.parent(0).path);
+  });
 });
 
 describe("Existence checking", () => {

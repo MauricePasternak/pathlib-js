@@ -226,7 +226,7 @@ var Path = /** @class */ (function () {
         return parseInt(((typeof mode === "number" ? mode : mode.mode) & 511).toString(8), 10);
     };
     Path.prototype._expanduser = function (inputString) {
-        return inputString.startsWith("~") ? inputString.replace("~", (0, os_1.homedir)()) : inputString;
+        return inputString.startsWith("~") ? inputString.replace("~", (0, os_1.homedir)()) + "/" : inputString + "/";
     };
     Path.prototype._parts = function (normalizedString) {
         return (0, os_1.platform)() === "win32" ? normalizedString.split("/") : __spreadArray(["/"], __read(normalizedString.split("/").slice(1)), false);
