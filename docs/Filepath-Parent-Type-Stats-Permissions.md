@@ -309,12 +309,18 @@ console.log(symlinkPath.readLinkSync().path === filePointedTo.path);
 ```
 
 
-### parent() <a id = "parent"></a>
+### parent([numIncrements]) <a id = "parent"></a>
 
-Retrieves the parent directory.
+Retrieves the parent or ancestor directory.
+
+- Parameters:
+  - `numIncrements` -- `number | undefined` -- The number of directory levels to increment in order to retrieve an ancestor filepath. 
+    - If `undefined` (the default), then the immediate parent directory is retrieved, if appropriate. 
+    - If 0 or less, then a copy of the current `Path` instance is returned.
+    - If the value of this parameter is greater than or equal to the number of levels between the filepath and the root directory, the latter is return as a `Path` instance
 
 - Returns:
-  - `Path` - The parent directory as a Path instance.
+  - `Path` - The parent or otherwise higher-order ancestor directory.
 
 ```
 import Path from "pathlib-js"

@@ -90,7 +90,6 @@ describe("New Path creation from previous", () => {
     assert(fpDir.resolve("./index.test.ts").path === new Path(__filename).path);
   });
   it("Should treat '..' and '.' literally when using the join() method", () => {
-    console.log(fpDir.join("../Test").path);
     assert(fpDir.join("../Test").path.endsWith("../Test"));
     assert(fpDir.join("./Test").path.endsWith("./Test"));
   });
@@ -110,6 +109,12 @@ describe("Retrieving a parent", () => {
     const newChild = pp.resolve("index.test.ts");
     assert(newChild.path === fp.path);
   });
+  it("Should be able to fetch higher-level directories if the appropriate numIncrements value is specified", () => {
+    assert(fp.parent(2).basename === "pathlib-js");
+  });
+  it("Should return the root directory if the numIncrements value is greater than the number of levels between the filepath and the root directory.", () => {
+    assert(fp.parent(9999).path === fp.root)
+  })
 });
 
 describe("Existence checking", () => {

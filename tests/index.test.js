@@ -84,6 +84,16 @@ describe("Path properties", function () {
         (0, assert_1.default)(fp.parent().path === new src_1.default(__dirname).path);
     });
 });
+describe("Path creation", function () {
+    it("Should be able to infer the home directory if a tilde was present as a path segment in the Path constructor", function () {
+        var homePath = new src_1.default("~/Test");
+        (0, assert_1.default)(homePath.dirname === (0, os_1.homedir)().replace(/\\/gm, "/"));
+    });
+    it("Should appropriately infer the current working directory if a period was provided to the Path constructor", function () {
+        var currentPath = new src_1.default(".");
+        (0, assert_1.default)(currentPath.path === process.cwd().replace(/\\/gm, "/"));
+    });
+});
 describe("Path parts", function () {
     var fp = new src_1.default(__dirname);
     it("Should correctly split a path into its components under typical conditions", function () {
@@ -133,7 +143,6 @@ describe("New Path creation from previous", function () {
         (0, assert_1.default)(fpDir.resolve("./index.test.ts").path === new src_1.default(__filename).path);
     });
     it("Should treat '..' and '.' literally when using the join() method", function () {
-        console.log(fpDir.join("../Test").path);
         (0, assert_1.default)(fpDir.join("../Test").path.endsWith("../Test"));
         (0, assert_1.default)(fpDir.join("./Test").path.endsWith("./Test"));
     });
@@ -151,6 +160,12 @@ describe("Retrieving a parent", function () {
     it("Should be able to re-create the child with resolve", function () {
         var newChild = pp.resolve("index.test.ts");
         (0, assert_1.default)(newChild.path === fp.path);
+    });
+    it("Should be able to fetch higher-level directories if the appropriate numIncrements value is specified", function () {
+        (0, assert_1.default)(fp.parent(2).basename === "pathlib-js");
+    });
+    it("Should return the root directory if the numIncrements value is greater than the number of levels between the filepath and the root directory.", function () {
+        (0, assert_1.default)(fp.parent(9999).path === fp.root);
     });
 });
 describe("Existence checking", function () {

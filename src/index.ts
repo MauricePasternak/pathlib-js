@@ -224,7 +224,7 @@ class Path {
   }
 
   /**
-   * Alias for this.(). Appends strings to the end of the underlying filepath, creating a new Path instance. Note that ".." and "." are treated
+   * Alias for this.join(). Appends strings to the end of the underlying filepath, creating a new Path instance. Note that ".." and "." are treated
    * literally and will not be resolved. For appending file segments with resolving behavior use the "resolve" method.
    * @param segments Strings which should be appended to the Path instance in order to create a new one.
    * @returns A new Path instance with the strings appended.
@@ -495,11 +495,19 @@ class Path {
   }
 
   /**
-   * Retrieves the parent directory.
-   * @returns The parent directory of this filepath as a Path instance.
+   * Retrieves the parent directory or an earlier ancestor filepath.
+   * @param numIncrements The number of directory levels to ascend.
+   * If this number exceeds number of ascentions required to reach the root directory,
+   * then the root directory itself is returned. If this number is 0 or less, it will return a copy of the current Path.
+   * Defaults to `undefined`, meaning that the immediate parent directory is returned.
+   * @returns The parent or higher ancestor (i.e grandparent) directory of this filepath as a Path instance.
    */
-  parent(): Path {
-    return new Path(this.dirname);
+  parent(numIncrements?: number): Path {
+    if (numIncrements == null) return new Path(this.dirname);
+    const parts = this.parts();
+    return new Path(
+      numIncrements >= parts.length ? this.root : parts.slice(0, parts.length - numIncrements).join("/")
+    );
   }
 
   /**
