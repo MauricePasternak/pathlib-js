@@ -379,13 +379,11 @@ declare class Path {
     makeDirSync(mode?: number): void;
     /**
      * Asynchronously creates a new file, including intermediate parental components.
-     * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511)
      * representation of the new filepath permissions to impart on the created file.
      */
     makeFile(): Promise<void>;
     /**
      * Synchronously creates a new file, including intermediate parental components.
-     * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511)
      * representation of the new filepath permissions to impart on the created file.
      */
     makeFileSync(): void;

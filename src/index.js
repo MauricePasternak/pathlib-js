@@ -1360,7 +1360,6 @@ var Path = /** @class */ (function () {
     };
     /**
      * Asynchronously creates a new file, including intermediate parental components.
-     * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511)
      * representation of the new filepath permissions to impart on the created file.
      */
     Path.prototype.makeFile = function () {
@@ -1375,7 +1374,6 @@ var Path = /** @class */ (function () {
     };
     /**
      * Synchronously creates a new file, including intermediate parental components.
-     * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511)
      * representation of the new filepath permissions to impart on the created file.
      */
     Path.prototype.makeFileSync = function () {
