@@ -31,6 +31,20 @@ export interface AccessResult {
     canWrite: boolean;
     canExecute: boolean;
 }
+export interface InterpRelativeOptions {
+    interpRelativeSource?: "cwd" | "path";
+}
+export interface MoveOptions extends InterpRelativeOptions {
+    overwrite?: boolean;
+}
+export interface CopyOptions extends fse.CopyOptions, InterpRelativeOptions {
+}
+export interface CopyOptionsSync extends fse.CopyOptionsSync, InterpRelativeOptions {
+}
+export interface SymlinkOptions extends InterpRelativeOptions {
+    targetIsLink?: boolean;
+    type?: "file" | "dir";
+}
 export declare type JSONObject = {
     [key: string]: JsonValue;
 };
@@ -387,6 +401,7 @@ declare class Path {
      * representation of the new filepath permissions to impart on the created file.
      */
     makeFileSync(): void;
+    private _interpPossibleRelativePath;
     private _inferWindowsSymlinkType;
     /**
      * Asynchronously creates a symlink.
@@ -398,7 +413,7 @@ declare class Path {
      * @param type On Windows only, a value of either "file" or "dir" denoting the type of symlink to create.
      * Defaults to undefined, where an inference will be made based on the filepath being linked.
      */
-    makeSymlink(target: string | Path, targetIsLink: boolean, type?: fse.SymlinkType): Promise<Path>;
+    makeSymlink(target: string | Path, options?: SymlinkOptions): Promise<Path>;
     /**
      * Synchronously creates a symlink.
      * Either links the underlying filepath to a created symlink or has a target filepath be linking by the underlying symlink.
@@ -409,7 +424,7 @@ declare class Path {
      * @param type On Windows only, a value of either "file" or "dir" denoting the type of symlink to create.
      * Defaults to undefined, where an inference will be made based on the filepath being linked.
      */
-    makeSymlinkSync(target: string | Path, targetIsLink: boolean, type?: fse.SymlinkType): Path;
+    makeSymlinkSync(target: string | Path, options?: SymlinkOptions): Path;
     /**
      * Asynchronously tests a user's permissions for the underling filepath.
      * @param mode the permissions to check for. Use fs.constants variables as input, NOT octal numbers.
@@ -461,45 +476,53 @@ declare class Path {
      * @param dst The filepath destination to where the underlying path should be moved.
      * If the instance is a directory, the children of the directory will be moved to this location.
      * If the instance is a file, it itself will be moved to the new location.
-     * @param overwrite Whether to movewrite existing filepaths during the procedure.
+     * @param options.overwrite Whether to overwrite existing filepaths. Defaults to `false`.
+     * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
+     * `"cwd"` (default) interprets them to be relative to the current working directory.
+     * `"path"` interprets them to be relative to the path calling this method.
      */
-    move(dst: string | Path, overwrite?: boolean): Promise<Path>;
+    move(dst: string | Path, options?: MoveOptions): Promise<Path>;
     /**
      * Synchronously moves the underlying filepath to the indicated destination.
      * @param dst The filepath destination to where the underlying path should be moved.
      * If the instance is a directory, the children of the directory will be moved to this location.
      * If the instance is a file, it itself will be moved to the new location.
-     * @param overwrite Whether to movewrite existing filepaths during the procedure.
+     * @param options.overwrite Whether to overwrite existing filepaths. Defaults to `false`.
+     * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
+     * `"cwd"` (default) interprets them to be relative to the current working directory.
+     * `"path"` interprets them to be relative to the path calling this method.
      */
-    moveSync(dst: string | Path, overwrite?: boolean): Path;
+    moveSync(dst: string | Path, options?: MoveOptions): Path;
     /**
      * Asynchronously copies the underlying filepath to the indicated destination.
      * @param dst The filepath destination to where the underlying path should be copied.
      * If the instance is a directory, the children of the directory will be copied to this location.
      * If the instance is a file, it itself will be copied to the new location.
+     * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
+     * `"cwd"` (default) interprets them to be relative to the current working directory.
+     * `"path"` interprets them to be relative to the path calling this method.
      * @param options.overwrite Whether to overwrite existing filepath during the operation. Defaults to true.
-     * @param options.errorOnExist Whether to throw an error if the destination already exists. Defaults to false.
-     * @param options.dereference Whether to dereference symlinks during the operation. Defaults to false.
-     * @param options.preserveTimestamps Whether to keep the same timestamps that existed in the source files.
-     * Defaults to false.
-     * @param options.filter A function to filter which filepaths should be copied.
-     * Should return true to copy the item, otherwise false.
+     * @param options.errorOnExist Whether to throw an error if the destination already exists. Defaults to `false`.
+     * @param options.dereference Whether to dereference symlinks during the operation. Defaults to `false`.
+     * @param options.preserveTimestamps Whether to keep the same timestamps that existed in the source files. Defaults to `false`.
+     * @param options.filter A function to filter which filepaths should be copied. Should return true to copy the item, otherwise false.
      */
-    copy(dst: string | Path, options?: fse.CopyOptions): Promise<Path>;
+    copy(dst: string | Path, options?: CopyOptions): Promise<Path>;
     /**
      * Synchronously copies the underlying filepath to the indicated destination.
      * @param dst The filepath destination to where the underlying path should be copied.
      * If the instance is a directory, the children of the directory will be copied to this location.
      * If the instance is a file, it itself will be copied to the new location.
+     * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
+     * `"cwd"` (default) interprets them to be relative to the current working directory.
+     * `"path"` interprets them to be relative to the path calling this method.
      * @param options.overwrite Whether to overwrite existing filepath during the operation. Defaults to true.
-     * @param options.errorOnExist Whether to throw an error if the destination already exists. Defaults to false.
-     * @param options.dereference Whether to dereference symlinks during the operation. Defaults to false.
-     * @param options.preserveTimestamps Whether to keep the same timestamps that existed in the source files.
-     * Defaults to false.
-     * @param options.filter A function to filter which filepaths should be copied.
-     * Should return true to copy the item, otherwise false.
+     * @param options.errorOnExist Whether to throw an error if the destination already exists. Defaults to `false`.
+     * @param options.dereference Whether to dereference symlinks during the operation. Defaults to `false`.
+     * @param options.preserveTimestamps Whether to keep the same timestamps that existed in the source files. Defaults to `false`.
+     * @param options.filter A function to filter which filepaths should be copied. Should return true to copy the item, otherwise false.
      */
-    copySync(dst: string | Path, options?: fse.CopyOptionsSync): Path;
+    copySync(dst: string | Path, options?: CopyOptionsSync): Path;
     /**
      * Asynchronously deletes the underlying filepath.
      */

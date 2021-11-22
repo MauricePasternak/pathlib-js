@@ -1381,6 +1381,16 @@ var Path = /** @class */ (function () {
             throw new Error("Cannot use makeDir on a directory-like type");
         fse.ensureFileSync(this.path);
     };
+    Path.prototype._interpPossibleRelativePath = function (target, interpRelativeSource) {
+        var result;
+        if (typeof target === "string") {
+            result = interpRelativeSource === "path" && !path_1.default.isAbsolute(target) ? this.resolve(target) : new Path(target);
+        }
+        else {
+            result = target;
+        }
+        return result;
+    };
     Path.prototype._inferWindowsSymlinkType = function (target) {
         if (target.isDirectorySync()) {
             return "dir";
@@ -1402,57 +1412,60 @@ var Path = /** @class */ (function () {
      * @param type On Windows only, a value of either "file" or "dir" denoting the type of symlink to create.
      * Defaults to undefined, where an inference will be made based on the filepath being linked.
      */
-    Path.prototype.makeSymlink = function (target, targetIsLink, type) {
+    Path.prototype.makeSymlink = function (target, options) {
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var targetPath, linkType, linkType;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var defaultOptions, updatedOptions, targetPath, linkType, linkType;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        targetPath = typeof target === "string" ? new Path(target) : target;
+                        defaultOptions = { targetIsLink: true, interpRelativeSource: "cwd", type: undefined };
+                        updatedOptions = options == null ? defaultOptions : Object.assign(defaultOptions, options);
+                        targetPath = this._interpPossibleRelativePath(target, updatedOptions === null || updatedOptions === void 0 ? void 0 : updatedOptions.interpRelativeSource);
                         if (!((0, os_1.platform)() === "win32")) return [3 /*break*/, 7];
-                        if (!targetIsLink) return [3 /*break*/, 3];
-                        linkType = type ? type : this._inferWindowsSymlinkType(this);
+                        if (!(updatedOptions === null || updatedOptions === void 0 ? void 0 : updatedOptions.targetIsLink)) return [3 /*break*/, 3];
+                        linkType = updatedOptions.type ? updatedOptions.type : this._inferWindowsSymlinkType(this);
                         return [4 /*yield*/, this.exists()];
                     case 1:
-                        if (!(_a.sent())) {
+                        if (!(_b.sent())) {
                             throw new Error("The underlying source filepath does not exist. Cannot create a symlink if the source does not exist.");
                         }
                         return [4 /*yield*/, fse.ensureSymlink(this.path, targetPath.path, linkType)];
                     case 2:
-                        _a.sent();
+                        _b.sent();
                         return [3 /*break*/, 6];
                     case 3:
-                        linkType = type ? type : this._inferWindowsSymlinkType(targetPath);
+                        linkType = (_a = updatedOptions.type) !== null && _a !== void 0 ? _a : this._inferWindowsSymlinkType(targetPath);
                         return [4 /*yield*/, targetPath.exists()];
                     case 4:
-                        if (!(_a.sent())) {
+                        if (!(_b.sent())) {
                             throw new Error("The target filepath does not exist. Cannot create a symlink if the target does not exist.");
                         }
                         return [4 /*yield*/, fse.ensureSymlink(targetPath.path, this.path, linkType)];
                     case 5:
-                        _a.sent();
-                        _a.label = 6;
+                        _b.sent();
+                        _b.label = 6;
                     case 6: return [3 /*break*/, 13];
                     case 7:
-                        if (!targetIsLink) return [3 /*break*/, 10];
+                        if (!updatedOptions.targetIsLink) return [3 /*break*/, 10];
                         return [4 /*yield*/, this.exists()];
                     case 8:
-                        if (!(_a.sent())) {
+                        if (!(_b.sent())) {
                             throw new Error("The underlying source filepath does not exist. Cannot create a symlink if the source does not exist.");
                         }
                         return [4 /*yield*/, fse.ensureSymlink(this.path, targetPath.path)];
                     case 9:
-                        _a.sent();
+                        _b.sent();
                         return [3 /*break*/, 13];
                     case 10: return [4 /*yield*/, targetPath.exists()];
                     case 11:
-                        if (!(_a.sent())) {
+                        if (!(_b.sent())) {
                             throw new Error("The target filepath does not exist. Cannot create a symlink if the target does not exist.");
                         }
                         return [4 /*yield*/, fse.ensureSymlink(targetPath.path, this.path)];
                     case 12:
-                        _a.sent();
-                        _a.label = 13;
+                        _b.sent();
+                        _b.label = 13;
                     case 13: return [2 /*return*/, targetPath];
                 }
             });
@@ -1468,18 +1481,21 @@ var Path = /** @class */ (function () {
      * @param type On Windows only, a value of either "file" or "dir" denoting the type of symlink to create.
      * Defaults to undefined, where an inference will be made based on the filepath being linked.
      */
-    Path.prototype.makeSymlinkSync = function (target, targetIsLink, type) {
-        var targetPath = typeof target === "string" ? new Path(target) : target;
+    Path.prototype.makeSymlinkSync = function (target, options) {
+        var _a;
+        var defaultOptions = { targetIsLink: true, interpRelativeSource: "cwd", type: undefined };
+        var updatedOptions = options == null ? defaultOptions : Object.assign(defaultOptions, options);
+        var targetPath = this._interpPossibleRelativePath(target, updatedOptions === null || updatedOptions === void 0 ? void 0 : updatedOptions.interpRelativeSource);
         if ((0, os_1.platform)() === "win32") {
-            if (targetIsLink) {
-                var linkType = type ? type : this._inferWindowsSymlinkType(this);
+            if (updatedOptions === null || updatedOptions === void 0 ? void 0 : updatedOptions.targetIsLink) {
+                var linkType = updatedOptions.type ? updatedOptions.type : this._inferWindowsSymlinkType(this);
                 if (!this.existsSync()) {
                     throw new Error("The underlying source filepath does not exist. Cannot create a symlink if the source does not exist.");
                 }
                 fse.ensureSymlinkSync(this.path, targetPath.path, linkType);
             }
             else {
-                var linkType = type ? type : this._inferWindowsSymlinkType(targetPath);
+                var linkType = (_a = updatedOptions.type) !== null && _a !== void 0 ? _a : this._inferWindowsSymlinkType(targetPath);
                 if (!targetPath.existsSync()) {
                     throw new Error("The target filepath does not exist. Cannot create a symlink if the target does not exist.");
                 }
@@ -1487,7 +1503,7 @@ var Path = /** @class */ (function () {
             }
         }
         else {
-            if (targetIsLink) {
+            if (updatedOptions.targetIsLink) {
                 if (!this.existsSync()) {
                     throw new Error("The underlying source filepath does not exist. Cannot create a symlink if the source does not exist.");
                 }
@@ -1497,7 +1513,7 @@ var Path = /** @class */ (function () {
                 if (!targetPath.existsSync()) {
                     throw new Error("The target filepath does not exist. Cannot create a symlink if the target does not exist.");
                 }
-                fse.ensureSymlink(targetPath.path, this.path);
+                fse.ensureSymlinkSync(targetPath.path, this.path);
             }
         }
         return targetPath;
@@ -1659,17 +1675,19 @@ var Path = /** @class */ (function () {
      * @param dst The filepath destination to where the underlying path should be moved.
      * If the instance is a directory, the children of the directory will be moved to this location.
      * If the instance is a file, it itself will be moved to the new location.
-     * @param overwrite Whether to movewrite existing filepaths during the procedure.
+     * @param options.overwrite Whether to overwrite existing filepaths. Defaults to `false`.
+     * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
+     * `"cwd"` (default) interprets them to be relative to the current working directory.
+     * `"path"` interprets them to be relative to the path calling this method.
      */
-    Path.prototype.move = function (dst, overwrite) {
-        if (overwrite === void 0) { overwrite = false; }
+    Path.prototype.move = function (dst, options) {
         return __awaiter(this, void 0, void 0, function () {
             var dest;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        dest = typeof dst === "string" ? new Path(dst) : dst;
-                        return [4 /*yield*/, fse.move(this.path, dest.path, { overwrite: overwrite })];
+                        dest = this._interpPossibleRelativePath(dst, options === null || options === void 0 ? void 0 : options.interpRelativeSource);
+                        return [4 /*yield*/, fse.move(this.path, dest.path, options !== null && options !== void 0 ? options : { overwrite: false })];
                     case 1:
                         _a.sent();
                         return [2 /*return*/, dest];
@@ -1682,12 +1700,14 @@ var Path = /** @class */ (function () {
      * @param dst The filepath destination to where the underlying path should be moved.
      * If the instance is a directory, the children of the directory will be moved to this location.
      * If the instance is a file, it itself will be moved to the new location.
-     * @param overwrite Whether to movewrite existing filepaths during the procedure.
+     * @param options.overwrite Whether to overwrite existing filepaths. Defaults to `false`.
+     * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
+     * `"cwd"` (default) interprets them to be relative to the current working directory.
+     * `"path"` interprets them to be relative to the path calling this method.
      */
-    Path.prototype.moveSync = function (dst, overwrite) {
-        if (overwrite === void 0) { overwrite = false; }
-        var dest = typeof dst === "string" ? new Path(dst) : dst;
-        fse.moveSync(this.path, dest.path, { overwrite: overwrite });
+    Path.prototype.moveSync = function (dst, options) {
+        var dest = this._interpPossibleRelativePath(dst, options === null || options === void 0 ? void 0 : options.interpRelativeSource);
+        fse.moveSync(this.path, dest.path, options !== null && options !== void 0 ? options : { overwrite: false });
         return dest;
     };
     /**
@@ -1695,13 +1715,14 @@ var Path = /** @class */ (function () {
      * @param dst The filepath destination to where the underlying path should be copied.
      * If the instance is a directory, the children of the directory will be copied to this location.
      * If the instance is a file, it itself will be copied to the new location.
+     * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
+     * `"cwd"` (default) interprets them to be relative to the current working directory.
+     * `"path"` interprets them to be relative to the path calling this method.
      * @param options.overwrite Whether to overwrite existing filepath during the operation. Defaults to true.
-     * @param options.errorOnExist Whether to throw an error if the destination already exists. Defaults to false.
-     * @param options.dereference Whether to dereference symlinks during the operation. Defaults to false.
-     * @param options.preserveTimestamps Whether to keep the same timestamps that existed in the source files.
-     * Defaults to false.
-     * @param options.filter A function to filter which filepaths should be copied.
-     * Should return true to copy the item, otherwise false.
+     * @param options.errorOnExist Whether to throw an error if the destination already exists. Defaults to `false`.
+     * @param options.dereference Whether to dereference symlinks during the operation. Defaults to `false`.
+     * @param options.preserveTimestamps Whether to keep the same timestamps that existed in the source files. Defaults to `false`.
+     * @param options.filter A function to filter which filepaths should be copied. Should return true to copy the item, otherwise false.
      */
     Path.prototype.copy = function (dst, options) {
         return __awaiter(this, void 0, void 0, function () {
@@ -1709,7 +1730,7 @@ var Path = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        dest = typeof dst === "string" ? new Path(dst) : dst;
+                        dest = this._interpPossibleRelativePath(dst, options === null || options === void 0 ? void 0 : options.interpRelativeSource);
                         return [4 /*yield*/, fse.copy(this.path, dest.path, options)];
                     case 1:
                         _a.sent();
@@ -1723,16 +1744,17 @@ var Path = /** @class */ (function () {
      * @param dst The filepath destination to where the underlying path should be copied.
      * If the instance is a directory, the children of the directory will be copied to this location.
      * If the instance is a file, it itself will be copied to the new location.
+     * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
+     * `"cwd"` (default) interprets them to be relative to the current working directory.
+     * `"path"` interprets them to be relative to the path calling this method.
      * @param options.overwrite Whether to overwrite existing filepath during the operation. Defaults to true.
-     * @param options.errorOnExist Whether to throw an error if the destination already exists. Defaults to false.
-     * @param options.dereference Whether to dereference symlinks during the operation. Defaults to false.
-     * @param options.preserveTimestamps Whether to keep the same timestamps that existed in the source files.
-     * Defaults to false.
-     * @param options.filter A function to filter which filepaths should be copied.
-     * Should return true to copy the item, otherwise false.
+     * @param options.errorOnExist Whether to throw an error if the destination already exists. Defaults to `false`.
+     * @param options.dereference Whether to dereference symlinks during the operation. Defaults to `false`.
+     * @param options.preserveTimestamps Whether to keep the same timestamps that existed in the source files. Defaults to `false`.
+     * @param options.filter A function to filter which filepaths should be copied. Should return true to copy the item, otherwise false.
      */
     Path.prototype.copySync = function (dst, options) {
-        var dest = typeof dst === "string" ? new Path(dst) : dst;
+        var dest = this._interpPossibleRelativePath(dst, options === null || options === void 0 ? void 0 : options.interpRelativeSource);
         fse.copySync(this.path, dest.path, options);
         return dest;
     };

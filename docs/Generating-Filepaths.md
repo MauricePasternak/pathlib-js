@@ -105,7 +105,7 @@ console.log(fp.existsSync());
 
 ```
 
-### makeSymlink(target, targetIsLink [, type]) <a id = "makeSymlink"></a>
+### makeSymlink(target [, options]) <a id = "makeSymlink"></a>
 
 **Asynchronously** creates a Symlink at the indicated destination, linking to the underlying filepath.
 
@@ -113,16 +113,20 @@ console.log(fp.existsSync());
 
 - Parameters:
 
-  - `target` -- `string | Path` -- Depending on the value of `targetIsLink`, this can be one of two things:
-    - If `targetIsLink` is `true`, then this should be the path of the created symlink which will point to the underlying filepath of the `Path` instance using this method. The underlying filepath is assumed to already exist, and will throw an Error if this is not the case.
+  - `target` -- `string | Path` -- Depending on the value of `options.targetIsLink`, this can be one of two things:
+    - If `targetIsLink` is `true` **(default)**, then this should be the path of the created symlink which will point to the underlying filepath of the `Path` instance using this method. The underlying filepath is assumed to already exist, and will throw an Error if this is not the case.
     - If `targetIsLink` is `false`, then the underlying filepath of the `Path` instance using this method is interpreted as the symlink and `target` is an existing filepath it will symlink to.
-  - `targetIsLink` -- `boolean` -- Whether the filepath indicated in `target` is the symlink to be made (`true`) or whether the underlying filepath is the symlink (`false`) while the target is an existing filepath.
-  - `type` -- `"dir" | "file" | undefined` -- Only relevant on Windows. The type of symlink to make. If left `undefined` (default), the method will attempt to infer the type based on the filepath being linked to.
+  - `options` -- `Object` -- An object with the following properties:
+    - `targetIsLink` -- `boolean` -- Whether the filepath indicated in `target` is the symlink to be made. Defaults to `true`.
+    - `type` -- `"dir" | "file" | undefined` -- Only relevant on Windows. The type of symlink to make. If left `undefined` **(default)**, the method will attempt to infer the type based on the filepath being linked to.
+    - `interpRelativeSource` -- `"cwd" | "path"` -- The interpretation to take when a relative path is provided:
+      - If `"cwd"` **(default)**, relative filepaths will be resolved according to the current working directory of the process calling this method.
+      - If `"path`", relative filepaths will be resolved according to the underlying filepath calling this method.
 
 - Returns:
   - `Path` - The filepath specified in `target` as a Path instance.
 
-### makeSymlinkSync(target, targetIsLink [, type]) <a id = "makeSymlinkSync"></a>
+### makeSymlinkSync(target [, options]) <a id = "makeSymlinkSync"></a>
 
 **Synchronously** creates a Symlink at the indicated destination, linking to the underlying filepath.
 
@@ -130,11 +134,15 @@ console.log(fp.existsSync());
 
 - Parameters:
 
-  - `target` -- `string | Path` -- Depending on the value of `targetIsLink`, this can be one of two things:
-    - If `targetIsLink` is `true`, then this should be the path of the created symlink which will point to the underlying filepath of the `Path` instance using this method. The underlying filepath is assumed to already exist, and will throw an Error if this is not the case.
+  - `target` -- `string | Path` -- Depending on the value of `options.targetIsLink`, this can be one of two things:
+    - If `targetIsLink` is `true` **(default)**, then this should be the path of the created symlink which will point to the underlying filepath of the `Path` instance using this method. The underlying filepath is assumed to already exist, and will throw an Error if this is not the case.
     - If `targetIsLink` is `false`, then the underlying filepath of the `Path` instance using this method is interpreted as the symlink and `target` is an existing filepath it will symlink to.
-  - `targetIsLink` -- `boolean` -- Whether the filepath indicated in `target` is the symlink to be made (`true`) or whether the underlying filepath is the symlink (`false`) while the target is an existing filepath.
-  - `type` -- `"dir" | "file" | undefined` -- Only relevant on Windows. The type of symlink to make. If left `undefined` (default), the method will attempt to infer the type based on the filepath being linked to.
+  - `options` -- `Object` -- An object with the following properties:
+    - `targetIsLink` -- `boolean` -- Whether the filepath indicated in `target` is the symlink to be made. Defaults to `true`.
+    - `type` -- `"dir" | "file" | undefined` -- Only relevant on Windows. The type of symlink to make. If left `undefined` **(default)**, the method will attempt to infer the type based on the filepath being linked to.
+    - `interpRelativeSource` -- `"cwd" | "path"` -- The interpretation to take when a relative path is provided:
+      - If `"cwd"` **(default)**, relative filepaths will be resolved according to the current working directory of the process calling this method.
+      - If `"path`", relative filepaths will be resolved according to the underlying filepath calling this method.
 
 - Returns:
   - `Path` - The filepath specified in `target` as a Path instance.

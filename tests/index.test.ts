@@ -314,22 +314,22 @@ describe("Making and Reading Symlinks", () => {
   const symlinkToTargetDirectory = fpRootForTest.resolve("SymlinkToTargetBar.symlink");
 
   it("Should be able to make a valid link between a source file and a target symlink file", async () => {
-    await exampleSourceFile.makeSymlink(symlinkFromSourceFile, true);
+    await exampleSourceFile.makeSymlink(symlinkFromSourceFile);
     await sleep(10);
     assert((await symlinkFromSourceFile.readLink()).path === exampleSourceFile.path);
   });
   it("Should be able to make a valid link between a source directory and a target symlink", async () => {
-    await exampleSourceDirectory.makeSymlink(symlinkFromSourceDirectory, true);
+    await exampleSourceDirectory.makeSymlink(symlinkFromSourceDirectory);
     await sleep(10); // Hack
     assert((await symlinkFromSourceDirectory.readLink()).path === exampleSourceDirectory.path);
   });
   it("Should be able to make a valid link between a source symlink and a target file", async () => {
-    await symlinkToTargetFile.makeSymlink(exampleTargetFile, false);
+    await symlinkToTargetFile.makeSymlink(exampleTargetFile, { targetIsLink: false });
     await sleep(10); // Hack
     assert((await symlinkToTargetFile.readLink()).path === exampleTargetFile.path);
   });
   it("Should be able to make a valid link between a source symlink and a target directory", async () => {
-    await symlinkToTargetDirectory.makeSymlink(exampleTargetDirectory, false);
+    await symlinkToTargetDirectory.makeSymlink(exampleTargetDirectory, { targetIsLink: false });
     await sleep(10); // Hack
     assert((await symlinkToTargetDirectory.readLink()).path === exampleTargetDirectory.path);
   });
@@ -376,32 +376,61 @@ describe("Reading and Writing other Files", () => {
   });
 });
 
-describe("Moving and copying filepaths", () => {
-  const copySrcPath = new Path(__dirname, "FolderX", "X1", "X1_1.foo");
-  const copyDstPath = new Path(__dirname, "FolderX", "X2", "X1_1.foo");
-  const moveSrcPath = new Path(__dirname, "FolderY", "Y1", "Y1_1.bar");
-  const moveDstPath = new Path(__dirname, "FolderY", "Y2", "Y1_1.bar");
+describe("Moving, Copying, and Deleting filepaths", () => {
+  const fpRootForTest = new Path(__dirname, "MoveCopyDeleteTests");
+  const copySrcPath = fpRootForTest.resolve("FolderX", "X1", "X1_1.foo");
+  const copyDstPath = fpRootForTest.resolve("FolderX", "X2", "X1_1.foo");
+  const moveSrcPath = fpRootForTest.resolve("FolderY", "Y1", "Y1_1.bar");
+  const moveDstPath = fpRootForTest.resolve("FolderY", "Y2", "Y1_1.bar");
   copySrcPath.makeFileSync();
   moveSrcPath.makeFileSync();
   it("Should be able to copy a filepath into another location, making parent directories as necessary. Following this, it should also be able to remove them.", async () => {
     assert(!(await copyDstPath.exists()));
-    await copySrcPath.copy(copyDstPath);
+    const dst = await copySrcPath.copy(copyDstPath);
+    assert(dst.path === copyDstPath.path);
     assert(await copyDstPath.exists());
-    await new Path(__dirname, "FolderX").remove();
+    await sleep(20); // Hack
+    await fpRootForTest.resolve("FolderX").remove();
     await sleep(20); // Hack
     assert(!(await copyDstPath.exists()));
     assert(!(await copySrcPath.exists()));
   });
+  it("As above, but accept a relative path (relative to the path itself, not cwd)", async () => {
+    const relString = "../Destination.txt";
+    const copySrcRelative = fpRootForTest.resolve("FolderRelativeCopy/Source.txt");
+    const copyDstRelative = copySrcRelative.resolve(relString);
+    assert(!(await copyDstRelative.exists()));
+    await copySrcRelative.makeFile();
+    await sleep(20); // Hack
+    const dst = await copySrcRelative.copy(relString, { interpRelativeSource: "path", overwrite: true });
+    await sleep(20); // Hack
+    assert(dst.path === copyDstRelative.path);
+    assert(await copyDstRelative.exists());
+  });
   it("Should be able to move a filepath into another location, making parent directories as necessary. Following this, it should also be able to remove them.", async () => {
     assert(!(await moveDstPath.exists()));
-    await moveSrcPath.move(moveDstPath);
+    const locMoved = await moveSrcPath.move(moveDstPath);
+    await sleep(20); // Hack
+    assert(locMoved.path === moveDstPath.path);
     assert(await moveDstPath.exists());
     assert(!(await moveSrcPath.exists()));
-    await new Path(__dirname, "FolderY").remove();
+    await fpRootForTest.resolve("FolderY").remove();
     await sleep(20); // Hack
     assert(!(await moveDstPath.exists()));
     assert(!(await moveSrcPath.exists()));
   });
+  it("As above, but accept a relative path (relative to the path itself, not cwd)", async () => {
+    const relString = "../Destination.txt";
+    const moveSrcRelative = fpRootForTest.resolve("FolderRelativeMove/Source.txt");
+    const moveDstRelative = moveSrcRelative.resolve(relString);
+    await moveSrcRelative.makeFile();
+    await sleep(20); // Hack
+    const dst = await moveSrcRelative.move(relString, { interpRelativeSource: "path", overwrite: true });
+    await sleep(20); // Hack
+    assert(dst.path === moveDstRelative.path);
+    assert(await moveDstRelative.exists());
+  });
+  setTimeout(() => fpRootForTest.deleteSync(), 700);
 });
 
 describe("Static methods work as intended", () => {

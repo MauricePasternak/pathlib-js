@@ -35,6 +35,18 @@ export interface AccessResult {
   canWrite: boolean;
   canExecute: boolean;
 }
+export interface InterpRelativeOptions {
+  interpRelativeSource?: "cwd" | "path";
+}
+export interface MoveOptions extends InterpRelativeOptions {
+  overwrite?: boolean;
+}
+export interface CopyOptions extends fse.CopyOptions, InterpRelativeOptions {}
+export interface CopyOptionsSync extends fse.CopyOptionsSync, InterpRelativeOptions {}
+export interface SymlinkOptions extends InterpRelativeOptions {
+  targetIsLink?: boolean;
+  type?: "file" | "dir";
+}
 export type JSONObject = { [key: string]: JsonValue };
 export type JsonValue = null | boolean | number | string | JsonValue[] | JSONObject;
 export interface treeBranch<T extends Path | string> {
@@ -872,6 +884,16 @@ class Path {
     fse.ensureFileSync(this.path);
   }
 
+  private _interpPossibleRelativePath(target: string | Path, interpRelativeSource?: "cwd" | "path") {
+    let result: Path;
+    if (typeof target === "string") {
+      result = interpRelativeSource === "path" && !path.isAbsolute(target) ? this.resolve(target) : new Path(target);
+    } else {
+      result = target;
+    }
+    return result;
+  }
+
   private _inferWindowsSymlinkType(target: Path) {
     if (target.isDirectorySync()) {
       return "dir";
@@ -892,11 +914,13 @@ class Path {
    * @param type On Windows only, a value of either "file" or "dir" denoting the type of symlink to create.
    * Defaults to undefined, where an inference will be made based on the filepath being linked.
    */
-  async makeSymlink(target: string | Path, targetIsLink: boolean, type?: fse.SymlinkType) {
-    const targetPath = typeof target === "string" ? new Path(target) : target;
+  async makeSymlink(target: string | Path, options?: SymlinkOptions) {
+    const defaultOptions: SymlinkOptions = { targetIsLink: true, interpRelativeSource: "cwd", type: undefined };
+    const updatedOptions = options == null ? defaultOptions : Object.assign(defaultOptions, options);
+    const targetPath = this._interpPossibleRelativePath(target, updatedOptions?.interpRelativeSource);
     if (platform() === "win32") {
-      if (targetIsLink) {
-        const linkType = type ? type : this._inferWindowsSymlinkType(this);
+      if (updatedOptions?.targetIsLink) {
+        const linkType = updatedOptions.type ? updatedOptions.type : this._inferWindowsSymlinkType(this);
         if (!(await this.exists())) {
           throw new Error(
             "The underlying source filepath does not exist. Cannot create a symlink if the source does not exist."
@@ -904,14 +928,14 @@ class Path {
         }
         await fse.ensureSymlink(this.path, targetPath.path, linkType);
       } else {
-        const linkType = type ? type : this._inferWindowsSymlinkType(targetPath);
+        const linkType = updatedOptions.type ?? this._inferWindowsSymlinkType(targetPath);
         if (!(await targetPath.exists())) {
           throw new Error("The target filepath does not exist. Cannot create a symlink if the target does not exist.");
         }
         await fse.ensureSymlink(targetPath.path, this.path, linkType);
       }
     } else {
-      if (targetIsLink) {
+      if (updatedOptions.targetIsLink) {
         if (!(await this.exists())) {
           throw new Error(
             "The underlying source filepath does not exist. Cannot create a symlink if the source does not exist."
@@ -938,11 +962,13 @@ class Path {
    * @param type On Windows only, a value of either "file" or "dir" denoting the type of symlink to create.
    * Defaults to undefined, where an inference will be made based on the filepath being linked.
    */
-  makeSymlinkSync(target: string | Path, targetIsLink: boolean, type?: fse.SymlinkType) {
-    const targetPath = typeof target === "string" ? new Path(target) : target;
+  makeSymlinkSync(target: string | Path, options?: SymlinkOptions) {
+    const defaultOptions: SymlinkOptions = { targetIsLink: true, interpRelativeSource: "cwd", type: undefined };
+    const updatedOptions = options == null ? defaultOptions : Object.assign(defaultOptions, options);
+    const targetPath = this._interpPossibleRelativePath(target, updatedOptions?.interpRelativeSource);
     if (platform() === "win32") {
-      if (targetIsLink) {
-        const linkType = type ? type : this._inferWindowsSymlinkType(this);
+      if (updatedOptions?.targetIsLink) {
+        const linkType = updatedOptions.type ? updatedOptions.type : this._inferWindowsSymlinkType(this);
         if (!this.existsSync()) {
           throw new Error(
             "The underlying source filepath does not exist. Cannot create a symlink if the source does not exist."
@@ -950,14 +976,14 @@ class Path {
         }
         fse.ensureSymlinkSync(this.path, targetPath.path, linkType);
       } else {
-        const linkType = type ? type : this._inferWindowsSymlinkType(targetPath);
+        const linkType = updatedOptions.type ?? this._inferWindowsSymlinkType(targetPath);
         if (!targetPath.existsSync()) {
           throw new Error("The target filepath does not exist. Cannot create a symlink if the target does not exist.");
         }
         fse.ensureSymlinkSync(targetPath.path, this.path, linkType);
       }
     } else {
-      if (targetIsLink) {
+      if (updatedOptions.targetIsLink) {
         if (!this.existsSync()) {
           throw new Error(
             "The underlying source filepath does not exist. Cannot create a symlink if the source does not exist."
@@ -968,7 +994,7 @@ class Path {
         if (!targetPath.existsSync()) {
           throw new Error("The target filepath does not exist. Cannot create a symlink if the target does not exist.");
         }
-        fse.ensureSymlink(targetPath.path, this.path);
+        fse.ensureSymlinkSync(targetPath.path, this.path);
       }
     }
     return targetPath;
@@ -1091,11 +1117,14 @@ class Path {
    * @param dst The filepath destination to where the underlying path should be moved.
    * If the instance is a directory, the children of the directory will be moved to this location.
    * If the instance is a file, it itself will be moved to the new location.
-   * @param overwrite Whether to movewrite existing filepaths during the procedure.
+   * @param options.overwrite Whether to overwrite existing filepaths. Defaults to `false`.
+   * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
+   * `"cwd"` (default) interprets them to be relative to the current working directory.
+   * `"path"` interprets them to be relative to the path calling this method.
    */
-  async move(dst: string | Path, overwrite = false) {
-    const dest = typeof dst === "string" ? new Path(dst) : dst;
-    await fse.move(this.path, dest.path, { overwrite });
+  async move(dst: string | Path, options?: MoveOptions) {
+    const dest = this._interpPossibleRelativePath(dst, options?.interpRelativeSource);
+    await fse.move(this.path, dest.path, options ?? { overwrite: false });
     return dest;
   }
 
@@ -1104,11 +1133,14 @@ class Path {
    * @param dst The filepath destination to where the underlying path should be moved.
    * If the instance is a directory, the children of the directory will be moved to this location.
    * If the instance is a file, it itself will be moved to the new location.
-   * @param overwrite Whether to movewrite existing filepaths during the procedure.
+   * @param options.overwrite Whether to overwrite existing filepaths. Defaults to `false`.
+   * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
+   * `"cwd"` (default) interprets them to be relative to the current working directory.
+   * `"path"` interprets them to be relative to the path calling this method.
    */
-  moveSync(dst: string | Path, overwrite = false) {
-    const dest = typeof dst === "string" ? new Path(dst) : dst;
-    fse.moveSync(this.path, dest.path, { overwrite });
+  moveSync(dst: string | Path, options?: MoveOptions) {
+    const dest = this._interpPossibleRelativePath(dst, options?.interpRelativeSource);
+    fse.moveSync(this.path, dest.path, options ?? { overwrite: false });
     return dest;
   }
 
@@ -1117,16 +1149,17 @@ class Path {
    * @param dst The filepath destination to where the underlying path should be copied.
    * If the instance is a directory, the children of the directory will be copied to this location.
    * If the instance is a file, it itself will be copied to the new location.
+   * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
+   * `"cwd"` (default) interprets them to be relative to the current working directory.
+   * `"path"` interprets them to be relative to the path calling this method.
    * @param options.overwrite Whether to overwrite existing filepath during the operation. Defaults to true.
-   * @param options.errorOnExist Whether to throw an error if the destination already exists. Defaults to false.
-   * @param options.dereference Whether to dereference symlinks during the operation. Defaults to false.
-   * @param options.preserveTimestamps Whether to keep the same timestamps that existed in the source files.
-   * Defaults to false.
-   * @param options.filter A function to filter which filepaths should be copied.
-   * Should return true to copy the item, otherwise false.
+   * @param options.errorOnExist Whether to throw an error if the destination already exists. Defaults to `false`.
+   * @param options.dereference Whether to dereference symlinks during the operation. Defaults to `false`.
+   * @param options.preserveTimestamps Whether to keep the same timestamps that existed in the source files. Defaults to `false`.
+   * @param options.filter A function to filter which filepaths should be copied. Should return true to copy the item, otherwise false.
    */
-  async copy(dst: string | Path, options?: fse.CopyOptions) {
-    const dest = typeof dst === "string" ? new Path(dst) : dst;
+  async copy(dst: string | Path, options?: CopyOptions) {
+    const dest = this._interpPossibleRelativePath(dst, options?.interpRelativeSource);
     await fse.copy(this.path, dest.path, options);
     return dest;
   }
@@ -1136,16 +1169,17 @@ class Path {
    * @param dst The filepath destination to where the underlying path should be copied.
    * If the instance is a directory, the children of the directory will be copied to this location.
    * If the instance is a file, it itself will be copied to the new location.
+   * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
+   * `"cwd"` (default) interprets them to be relative to the current working directory.
+   * `"path"` interprets them to be relative to the path calling this method.
    * @param options.overwrite Whether to overwrite existing filepath during the operation. Defaults to true.
-   * @param options.errorOnExist Whether to throw an error if the destination already exists. Defaults to false.
-   * @param options.dereference Whether to dereference symlinks during the operation. Defaults to false.
-   * @param options.preserveTimestamps Whether to keep the same timestamps that existed in the source files.
-   * Defaults to false.
-   * @param options.filter A function to filter which filepaths should be copied.
-   * Should return true to copy the item, otherwise false.
+   * @param options.errorOnExist Whether to throw an error if the destination already exists. Defaults to `false`.
+   * @param options.dereference Whether to dereference symlinks during the operation. Defaults to `false`.
+   * @param options.preserveTimestamps Whether to keep the same timestamps that existed in the source files. Defaults to `false`.
+   * @param options.filter A function to filter which filepaths should be copied. Should return true to copy the item, otherwise false.
    */
-  copySync(dst: string | Path, options?: fse.CopyOptionsSync) {
-    const dest = typeof dst === "string" ? new Path(dst) : dst;
+  copySync(dst: string | Path, options?: CopyOptionsSync) {
+    const dest = this._interpPossibleRelativePath(dst, options?.interpRelativeSource);
     fse.copySync(this.path, dest.path, options);
     return dest;
   }
