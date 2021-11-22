@@ -84,6 +84,16 @@ describe("Path properties", function () {
         (0, assert_1.default)(fp.parent().path === new src_1.default(__dirname).path);
     });
 });
+describe("Path creation", function () {
+    it("Should be able to infer the home directory if a tilde was present as a path segment in the Path constructor", function () {
+        var homePath = new src_1.default("~/Test");
+        (0, assert_1.default)(homePath.dirname === (0, os_1.homedir)().replace(/\\/gm, "/"));
+    });
+    it("Should appropriately infer the current working directory if a period was provided to the Path constructor", function () {
+        var currentPath = new src_1.default(".");
+        (0, assert_1.default)(currentPath.path === process.cwd().replace(/\\/gm, "/"));
+    });
+});
 describe("Path parts", function () {
     var fp = new src_1.default(__dirname);
     it("Should correctly split a path into its components under typical conditions", function () {
@@ -133,7 +143,6 @@ describe("New Path creation from previous", function () {
         (0, assert_1.default)(fpDir.resolve("./index.test.ts").path === new src_1.default(__filename).path);
     });
     it("Should treat '..' and '.' literally when using the join() method", function () {
-        console.log(fpDir.join("../Test").path);
         (0, assert_1.default)(fpDir.join("../Test").path.endsWith("../Test"));
         (0, assert_1.default)(fpDir.join("./Test").path.endsWith("./Test"));
     });
@@ -650,7 +659,7 @@ describe("Making and Reading Symlinks", function () {
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, exampleSourceFile.makeSymlink(symlinkFromSourceFile, true)];
+                case 0: return [4 /*yield*/, exampleSourceFile.makeSymlink(symlinkFromSourceFile)];
                 case 1:
                     _b.sent();
                     return [4 /*yield*/, sleep(10)];
@@ -668,7 +677,7 @@ describe("Making and Reading Symlinks", function () {
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, exampleSourceDirectory.makeSymlink(symlinkFromSourceDirectory, true)];
+                case 0: return [4 /*yield*/, exampleSourceDirectory.makeSymlink(symlinkFromSourceDirectory)];
                 case 1:
                     _b.sent();
                     return [4 /*yield*/, sleep(10)];
@@ -686,7 +695,7 @@ describe("Making and Reading Symlinks", function () {
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, symlinkToTargetFile.makeSymlink(exampleTargetFile, false)];
+                case 0: return [4 /*yield*/, symlinkToTargetFile.makeSymlink(exampleTargetFile, { targetIsLink: false })];
                 case 1:
                     _b.sent();
                     return [4 /*yield*/, sleep(10)];
@@ -704,7 +713,7 @@ describe("Making and Reading Symlinks", function () {
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, symlinkToTargetDirectory.makeSymlink(exampleTargetDirectory, false)];
+                case 0: return [4 /*yield*/, symlinkToTargetDirectory.makeSymlink(exampleTargetDirectory, { targetIsLink: false })];
                 case 1:
                     _b.sent();
                     return [4 /*yield*/, sleep(10)];
@@ -800,15 +809,16 @@ describe("Reading and Writing other Files", function () {
         });
     }); });
 });
-describe("Moving and copying filepaths", function () {
-    var copySrcPath = new src_1.default(__dirname, "FolderX", "X1", "X1_1.foo");
-    var copyDstPath = new src_1.default(__dirname, "FolderX", "X2", "X1_1.foo");
-    var moveSrcPath = new src_1.default(__dirname, "FolderY", "Y1", "Y1_1.bar");
-    var moveDstPath = new src_1.default(__dirname, "FolderY", "Y2", "Y1_1.bar");
+describe("Moving, Copying, and Deleting filepaths", function () {
+    var fpRootForTest = new src_1.default(__dirname, "MoveCopyDeleteTests");
+    var copySrcPath = fpRootForTest.resolve("FolderX", "X1", "X1_1.foo");
+    var copyDstPath = fpRootForTest.resolve("FolderX", "X2", "X1_1.foo");
+    var moveSrcPath = fpRootForTest.resolve("FolderY", "Y1", "Y1_1.bar");
+    var moveDstPath = fpRootForTest.resolve("FolderY", "Y2", "Y1_1.bar");
     copySrcPath.makeFileSync();
     moveSrcPath.makeFileSync();
     it("Should be able to copy a filepath into another location, making parent directories as necessary. Following this, it should also be able to remove them.", function () { return __awaiter(void 0, void 0, void 0, function () {
-        var _a, _b, _c, _d;
+        var _a, dst, _b, _c, _d;
         return __generator(this, function (_e) {
             switch (_e.label) {
                 case 0:
@@ -818,31 +828,68 @@ describe("Moving and copying filepaths", function () {
                     _a.apply(void 0, [!(_e.sent())]);
                     return [4 /*yield*/, copySrcPath.copy(copyDstPath)];
                 case 2:
-                    _e.sent();
+                    dst = _e.sent();
+                    (0, assert_1.default)(dst.path === copyDstPath.path);
                     _b = assert_1.default;
                     return [4 /*yield*/, copyDstPath.exists()];
                 case 3:
                     _b.apply(void 0, [_e.sent()]);
-                    return [4 /*yield*/, new src_1.default(__dirname, "FolderX").remove()];
+                    return [4 /*yield*/, sleep(20)];
                 case 4:
+                    _e.sent(); // Hack
+                    return [4 /*yield*/, fpRootForTest.resolve("FolderX").remove()];
+                case 5:
                     _e.sent();
                     return [4 /*yield*/, sleep(20)];
-                case 5:
+                case 6:
                     _e.sent(); // Hack
                     _c = assert_1.default;
                     return [4 /*yield*/, copyDstPath.exists()];
-                case 6:
+                case 7:
                     _c.apply(void 0, [!(_e.sent())]);
                     _d = assert_1.default;
                     return [4 /*yield*/, copySrcPath.exists()];
-                case 7:
+                case 8:
                     _d.apply(void 0, [!(_e.sent())]);
                     return [2 /*return*/];
             }
         });
     }); });
+    it("As above, but accept a relative path (relative to the path itself, not cwd)", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var relString, copySrcRelative, copyDstRelative, _a, dst, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    relString = "../Destination.txt";
+                    copySrcRelative = fpRootForTest.resolve("FolderRelativeCopy/Source.txt");
+                    copyDstRelative = copySrcRelative.resolve(relString);
+                    _a = assert_1.default;
+                    return [4 /*yield*/, copyDstRelative.exists()];
+                case 1:
+                    _a.apply(void 0, [!(_c.sent())]);
+                    return [4 /*yield*/, copySrcRelative.makeFile()];
+                case 2:
+                    _c.sent();
+                    return [4 /*yield*/, sleep(20)];
+                case 3:
+                    _c.sent(); // Hack
+                    return [4 /*yield*/, copySrcRelative.copy(relString, { interpRelativeSource: "path", overwrite: true })];
+                case 4:
+                    dst = _c.sent();
+                    return [4 /*yield*/, sleep(20)];
+                case 5:
+                    _c.sent(); // Hack
+                    (0, assert_1.default)(dst.path === copyDstRelative.path);
+                    _b = assert_1.default;
+                    return [4 /*yield*/, copyDstRelative.exists()];
+                case 6:
+                    _b.apply(void 0, [_c.sent()]);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
     it("Should be able to move a filepath into another location, making parent directories as necessary. Following this, it should also be able to remove them.", function () { return __awaiter(void 0, void 0, void 0, function () {
-        var _a, _b, _c, _d, _e;
+        var _a, locMoved, _b, _c, _d, _e;
         return __generator(this, function (_f) {
             switch (_f.label) {
                 case 0:
@@ -852,33 +899,67 @@ describe("Moving and copying filepaths", function () {
                     _a.apply(void 0, [!(_f.sent())]);
                     return [4 /*yield*/, moveSrcPath.move(moveDstPath)];
                 case 2:
-                    _f.sent();
+                    locMoved = _f.sent();
+                    return [4 /*yield*/, sleep(20)];
+                case 3:
+                    _f.sent(); // Hack
+                    (0, assert_1.default)(locMoved.path === moveDstPath.path);
                     _b = assert_1.default;
                     return [4 /*yield*/, moveDstPath.exists()];
-                case 3:
+                case 4:
                     _b.apply(void 0, [_f.sent()]);
                     _c = assert_1.default;
                     return [4 /*yield*/, moveSrcPath.exists()];
-                case 4:
-                    _c.apply(void 0, [!(_f.sent())]);
-                    return [4 /*yield*/, new src_1.default(__dirname, "FolderY").remove()];
                 case 5:
+                    _c.apply(void 0, [!(_f.sent())]);
+                    return [4 /*yield*/, fpRootForTest.resolve("FolderY").remove()];
+                case 6:
                     _f.sent();
                     return [4 /*yield*/, sleep(20)];
-                case 6:
+                case 7:
                     _f.sent(); // Hack
                     _d = assert_1.default;
                     return [4 /*yield*/, moveDstPath.exists()];
-                case 7:
+                case 8:
                     _d.apply(void 0, [!(_f.sent())]);
                     _e = assert_1.default;
                     return [4 /*yield*/, moveSrcPath.exists()];
-                case 8:
+                case 9:
                     _e.apply(void 0, [!(_f.sent())]);
                     return [2 /*return*/];
             }
         });
     }); });
+    it("As above, but accept a relative path (relative to the path itself, not cwd)", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var relString, moveSrcRelative, moveDstRelative, dst, _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    relString = "../Destination.txt";
+                    moveSrcRelative = fpRootForTest.resolve("FolderRelativeMove/Source.txt");
+                    moveDstRelative = moveSrcRelative.resolve(relString);
+                    return [4 /*yield*/, moveSrcRelative.makeFile()];
+                case 1:
+                    _b.sent();
+                    return [4 /*yield*/, sleep(20)];
+                case 2:
+                    _b.sent(); // Hack
+                    return [4 /*yield*/, moveSrcRelative.move(relString, { interpRelativeSource: "path", overwrite: true })];
+                case 3:
+                    dst = _b.sent();
+                    return [4 /*yield*/, sleep(20)];
+                case 4:
+                    _b.sent(); // Hack
+                    (0, assert_1.default)(dst.path === moveDstRelative.path);
+                    _a = assert_1.default;
+                    return [4 /*yield*/, moveDstRelative.exists()];
+                case 5:
+                    _a.apply(void 0, [_b.sent()]);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    setTimeout(function () { return fpRootForTest.deleteSync(); }, 700);
 });
 describe("Static methods work as intended", function () {
     it("Should be able to retrieve the current working directory and validate its existence", function () { return __awaiter(void 0, void 0, void 0, function () {

@@ -84,14 +84,18 @@ console.log(Path.parseModeIntoOctal(fp.statSync()));
 
 **Synchronously** changes the owner of a filepath.
 
-### move(dst [, overwrite]) <a id ="move"></a>
+### move(dst [, options]) <a id ="move"></a>
 
 **Asynchronously** moves the underlying filepath or its children to the indicated destination.
 
 - Parameters:
 
   - `dst` -- `string | Path` -- The filepath destination. Note that if the filepath being moved is a file, it itself will be moved. If, instead the filepath is a folder, then its contents will be moved to the indicated destination.
-  - `overwrite` -- `boolean` -- Whether to overwrite any existing filepaths during the operation.
+  - `options` -- `Object` -- An object with the following properties:
+    - `overwrite` -- `boolean` -- Whether to overwrite any existing filepaths during the operation. Defaults to `false`.
+    - `interpRelativeSource` -- `"cwd" | "path"` -- The interpretation to take when a relative path is provided:
+      - If `"cwd"` **(default)**, relative filepaths will be resolved according to the current working directory of the process calling this method.
+      - If `"path`", relative filepaths will be resolved according to the underlying filepath calling this method.
 
 - Returns:
   - `Path` - The destination filepath is returned as a Path instance if the operation was successful.
@@ -116,8 +120,12 @@ ES5CompatibilityWrapper();
 
 - Parameters:
 
-  - `dst` -- `string | Path` -- The filepath destination.
-  - `overwrite` -- `boolean` -- Whether to overwrite any existing filepaths during the operation.
+  - `dst` -- `string | Path` -- The filepath destination. Note that if the filepath being moved is a file, it itself will be moved. If, instead the filepath is a folder, then its contents will be moved to the indicated destination.
+  - `options` -- `Object` -- An object with the following properties:
+    - `overwrite` -- `boolean` -- Whether to overwrite any existing filepaths during the operation. Defaults to `false`.
+    - `interpRelativeSource` -- `"cwd" | "path"` -- The interpretation to take when a relative path is provided:
+      - If `"cwd"` **(default)**, relative filepaths will be resolved according to the current working directory of the process calling this method.
+      - If `"path`", relative filepaths will be resolved according to the underlying filepath calling this method.
 
 - Returns:
   - `Path` - The destination filepath is returned as a Path instance if the operation was successful.
@@ -145,6 +153,9 @@ console.log(destination.existsSync());
     - `errorOnExist` -- `boolean` -- when `overwrite` is `false` and the destination exists, throw an error. Default is `false`.
     - `dereference` -- `boolean` -- dereference symlinks, default is `false`.
     - `preserveTimestamps` -- `boolean` -- When true, will set last modification and access times to the ones of the original source files. When false, timestamp behavior is OS-dependent. Default is `false`.
+    - `interpRelativeSource` -- `"cwd" | "path"` -- The interpretation to take when a relative path is provided:
+      - If `"cwd"` **(default)**, relative filepaths will be resolved according to the current working directory of the process calling this method.
+      - If `"path`", relative filepaths will be resolved according to the underlying filepath calling this method.
 
 - Returns:
   - `Path` - The destination filepath is returned as a Path instance if the operation was successful.
@@ -175,6 +186,9 @@ ES5CompatibilityWrapper();
     - `errorOnExist` -- `boolean` -- when `overwrite` is `false` and the destination exists, throw an error. Default is `false`.
     - `dereference` -- `boolean` -- dereference symlinks, default is `false`.
     - `preserveTimestamps` -- `boolean` -- When true, will set last modification and access times to the ones of the original source files. When false, timestamp behavior is OS-dependent. Default is `false`.
+    - `interpRelativeSource` -- `"cwd" | "path"` -- The interpretation to take when a relative path is provided:
+      - If `"cwd"` **(default)**, relative filepaths will be resolved according to the current working directory of the process calling this method.
+      - If `"path`", relative filepaths will be resolved according to the underlying filepath calling this method.
 
 - Returns:
   - `Path` - The destination filepath is returned as a Path instance if the operation was successful.
