@@ -1,5 +1,5 @@
 LocalTesting/
 node_modules/
 tests/index.test.d.ts
-yarn-error.log
 yarn.lock
+yarn-error.log
