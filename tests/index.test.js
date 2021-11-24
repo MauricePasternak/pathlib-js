@@ -129,6 +129,9 @@ describe("New Path creation from previous", function () {
     it("Should generate an appropriate Path using withStem", function () {
         (0, assert_1.default)("TEST" === fpDir.withStem("TEST").basename);
     });
+    it("Should generate an appropriate Path using withExtension", function () {
+        (0, assert_1.default)(".bar" === testfile.withExtension("bar").ext);
+    });
     it("Should generate an appropriate Path using withSuffix argument as a String, even if user adds '.' to the start of a string and/or elements of an array argument", function () {
         var newFileByArray = testfile.withSuffix(["json", ".gz"]);
         var newFileByString = testfile.withSuffix(".json.gz");
@@ -289,8 +292,8 @@ describe("Globbing", function () {
     }); });
 });
 describe("Walking and Traversing Trees", function () {
-    var fp = new src_1.default(__dirname);
-    var nestedPath = new src_1.default(__dirname, "Foo", "Bar", "Baz.qui");
+    var fpRootForTest = new src_1.default(__dirname, "WalkTreesTest");
+    var nestedPath = fpRootForTest.resolve("Foo", "Bar", "Baz.qui");
     it("Should be able to traverse a nested directory structure in the expected order", function () { return __awaiter(void 0, void 0, void 0, function () {
         var orderOfNames, indexer;
         return __generator(this, function (_a) {
@@ -298,7 +301,7 @@ describe("Walking and Traversing Trees", function () {
                 case 0:
                     orderOfNames = ["FolderA", "File_A1.txt", "File_A2.txt", "FolderB", "File_B1.json", "File_B2.json"];
                     indexer = -1;
-                    return [4 /*yield*/, fp.walk(function (p) {
+                    return [4 /*yield*/, fpRootForTest.walk(function (p) {
                             if (orderOfNames.includes(p.basename)) {
                                 indexer++;
                                 (0, assert_1.default)(p.basename === orderOfNames[indexer]);
@@ -350,6 +353,7 @@ describe("Walking and Traversing Trees", function () {
             }
         });
     }); });
+    setTimeout(function () { return fpRootForTest.deleteSync(); }, 400);
 });
 describe("Directory iteration", function () {
     var fpFolderA = new src_1.default(__dirname).join("FolderA");
@@ -800,25 +804,42 @@ describe("Reading and Writing JSON files", function () {
     setTimeout(function () { return notAJSONFile.deleteSync(); }, 200);
 });
 describe("Reading and Writing other Files", function () {
-    var testFile = new src_1.default(__dirname, "ReadWriteTestOther", "Test.txt");
-    it("Should be able to write content to a file and then read that content from the same file in a separate operation", function () { return __awaiter(void 0, void 0, void 0, function () {
+    var testFile1 = new src_1.default(__dirname, "ReadWriteTestOther", "Test.txt");
+    var testFile2 = testFile1.withBasename("Test2.txt");
+    it("Should be able to write and then read content using writeFile and readFile in sequence", function () { return __awaiter(void 0, void 0, void 0, function () {
         var contents;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, testFile.writeFile("Hello World", { encoding: "ascii" })];
+                case 0: return [4 /*yield*/, testFile1.writeFile("Hello World", { encoding: "ascii" })];
                 case 1:
                     _a.sent();
-                    return [4 /*yield*/, testFile.readFile("ascii")];
+                    return [4 /*yield*/, testFile1.readFile("ascii")];
                 case 2:
                     contents = _a.sent();
                     (0, assert_1.default)(contents === "Hello World");
-                    return [4 /*yield*/, testFile.parent().remove()];
-                case 3:
-                    _a.sent();
                     return [2 /*return*/];
             }
         });
     }); });
+    it("Should be able to write and then read content using write and read in sequence", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var readRes;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, testFile2.write(Buffer.from("Hello World", "ascii"), 0, "Hello World".length, 0, false, {
+                        flags: "r+",
+                        ensureExists: true,
+                    })];
+                case 1:
+                    _a.sent();
+                    return [4 /*yield*/, testFile2.read(Buffer.from([0x62, 0x75, 0x66, 0x66, 0x65]), 0, 5, 0, true)];
+                case 2:
+                    readRes = _a.sent();
+                    (0, assert_1.default)(readRes.buffer.toString() === "Hello");
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    setTimeout(function () { return testFile1.parent().deleteSync(); }, 500);
 });
 describe("Moving, Copying, and Deleting filepaths", function () {
     var fpRootForTest = new src_1.default(__dirname, "MoveCopyDeleteTests");

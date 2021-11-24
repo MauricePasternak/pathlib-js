@@ -267,7 +267,7 @@ console.log(fp2.isSymbolicLinkSync());
 
 ### readLink() <a id = "readLink"></a>
 
-**Asynchronously** determines the filepath that a symlink is pointing at. 
+**Asynchronously** determines the filepath that a symlink is pointing at.
 **It is assumed that the underlying filepath invoking this method is a symlink. An error will be thrown if this is not the case.**
 
 - Returns:
@@ -290,7 +290,7 @@ ES5CompatibilityWrapper();
 
 ### readLinkSync() <a id = "readLinkSync"></a>
 
-**Synchronously** determines the filepath that a symlink is pointing at. 
+**Synchronously** determines the filepath that a symlink is pointing at.
 **It is assumed that the underlying filepath invoking this method is a symlink. An error will be thrown if this is not the case.**
 
 - Returns:
@@ -308,14 +308,14 @@ console.log(symlinkPath.readLinkSync().path === filePointedTo.path);
 > true
 ```
 
-
 ### parent([numIncrements]) <a id = "parent"></a>
 
 Retrieves the parent or ancestor directory.
 
 - Parameters:
-  - `numIncrements` -- `number | undefined` -- The number of directory levels to increment in order to retrieve an ancestor filepath. 
-    - If `undefined` (the default), then the immediate parent directory is retrieved, if appropriate. 
+
+  - `numIncrements` -- `number | undefined` -- The number of directory levels to increment in order to retrieve an ancestor filepath.
+    - If `undefined` (the default), then the immediate parent directory is retrieved, if appropriate.
     - If 0 or less, then a copy of the current `Path` instance is returned.
     - If the value of this parameter is greater than or equal to the number of levels between the filepath and the root directory, the latter is return as a `Path` instance
 
@@ -353,7 +353,7 @@ ES5CompatibilityWrapper();
 > false
 > Path {
   path: 'C:/Users/JohnDoe/Example/Folder_A/File_A1.txt',
-  root: 'C:/',
+  root: 'C:',
   basename: 'File_A1.txt',
   dirname: 'C:/Users/JohnDoe/Example/Folder_A',
   stem: 'File_A1',
@@ -382,7 +382,7 @@ console.log(fp1.containsImmediateChildSync("File_A1.txt"));
 > false
 > Path {
   path: 'C:/Users/JohnDoe/Example/Folder_A/File_A1.txt',
-  root: 'C:/',
+  root: 'C:',
   basename: 'File_A1.txt',
   dirname: 'C:/Users/JohnDoe/Example/Folder_A',
   stem: 'File_A1',

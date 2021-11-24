@@ -7,7 +7,6 @@
 - <a href = "#tree">tree()</a>
 - <a href = "#treeSync">treeSync()</a>
 
-
 ## File Structure Example for this API
 
 The following hypothetical folder structure will be used as a demonstration of the API.
@@ -94,7 +93,7 @@ ES5CompatibilityWrapper();
 {
   filepath: Path {
     path: 'C:/Users/JohnDoe/Example',
-    root: 'C:/',
+    root: 'C:',
     basename: 'Example',
     dirname: 'C:/Users/JohnDoe',
     stem: 'Example',
@@ -132,7 +131,7 @@ console.log(fp1.treeSync());
 {
   filepath: Path {
     path: 'C:/Users/JohnDoe/Example',
-    root: 'C:/',
+    root: 'C:',
     basename: 'Example',
     dirname: 'C:/Users/JohnDoe',
     stem: 'Example',

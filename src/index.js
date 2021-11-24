@@ -133,15 +133,15 @@ var utils_1 = require("./utils");
 var os_1 = require("os");
 var Path = /** @class */ (function () {
     /**
-     * @param paths A collection of strings which will be resolved and normalized into a filepath.
-     * This underlying filepath is then parsed to produce the properties.
+     * @param paths A collection of strings which will be **resolved and normalized** into a filepath.
      * @property path The normalized underlying filepath.
      * @property root The root directory of the underlying filepath.
      * @property basename The basename of the underlying filepath.
      * @property dirname An alias for the filepath of the parent directory.
      * @property stem The basename without any extensions.
-     * @property ext The full set of extensions as a single string.
+     * @property ext The last extension found in the basename. Includes period.
      * @property suffixes An array of the individualized extentions, without periods.
+     * @property descriptor The filepath descriptor if the underlying filepath is opened. `null` when the filepath is in a closed state.
      */
     function Path() {
         var _a;
@@ -150,7 +150,7 @@ var Path = /** @class */ (function () {
             paths[_i] = arguments[_i];
         }
         if (!paths || !paths.length || paths[0] === "") {
-            throw new Error("Cannot instantiate a new Path instance on an empty string");
+            throw new Error("Cannot instantiate a new Path instance on an empty string, empty array, or falsy value");
         }
         this.path = (0, normalize_path_1.default)(path_1.default.resolve(this._expanduser(paths.join("/"))));
         var _b = path_1.default.parse(this.path), dir = _b.dir, root = _b.root, base = _b.base, ext = _b.ext;
@@ -163,17 +163,21 @@ var Path = /** @class */ (function () {
     }
     /**
      * Get a Path representation of the current working directory.
-     * @returns The current working directory.
      */
     Path.pwd = function () {
         return new Path(process.cwd());
     };
     /**
-     * Get a Path representation of the current working directory.
-     * @returns The current working directory.
+     * Get a `Path` representation of the current working directory.
      */
     Path.cwd = function () {
         return new Path(process.cwd());
+    };
+    /**
+     * Get a `Path` representation of the home directory.
+     */
+    Path.home = function () {
+        return new Path((0, os_1.homedir)());
     };
     /**
      * Joins filepaths to create a single string representation, delimited by the system-specific
@@ -191,8 +195,8 @@ var Path = /** @class */ (function () {
         return paths.map(function (p) { return (typeof p === "string" ? new Path(p).toString() : p.toString()); }).join(path_1.default.delimiter);
     };
     /**
-     * Converts the PATH variable into an array of Path instances.
-     * @returns An Array of Path instances of the filepaths recorded in PATH.
+     * Converts the PATH variable into an array of `Path` instances.
+     * @returns An `Array` of `Path` instances of the filepaths recorded in PATH.
      */
     Path.getPATHAsPaths = function () {
         var e_1, _a;
@@ -218,9 +222,9 @@ var Path = /** @class */ (function () {
         return paths;
     };
     /**
-     * Parses the mode of a filepath into the more understandable octal representation (i.e. 777 for full-permissions)
+     * Parses the mode of a filepath into a more understandable octal-like representation (i.e. 777 for full-permissions)
      * @param mode The mode of a filepath, as received from fs.Stats or the fs.Stats object itself
-     * @returns The octal numeric representation of the filepath permissions
+     * @returns A 3-digit representation of the permissions indicated by the provided `mode`.
      */
     Path.parseModeIntoOctal = function (mode) {
         return parseInt(((typeof mode === "number" ? mode : mode.mode) & 511).toString(8), 10);
@@ -233,14 +237,14 @@ var Path = /** @class */ (function () {
     };
     /**
      * Splits the underlying filepath into its individual components.
-     * @returns An array of the strings comprising the Path instance.
+     * @returns An array of the strings comprising the `Path` instance.
      */
     Path.prototype.parts = function () {
         return this._parts(this.path);
     };
     /**
      * Alias for this.parts(). Splits the underlying filepath into its individual components.
-     * @returns An array of the strings comprising the Path instance.
+     * @returns An array of the strings comprising the `Path` instance.
      */
     Path.prototype.split = function () {
         return this.parts();
@@ -248,10 +252,8 @@ var Path = /** @class */ (function () {
     /**
      * Depicts the relative path from the Path instance to another filepath.
      * @param to The filepath that this instance should be compared against.
-     * @param useSystemPathDelimiter Whether to present the final string in accordance with the
-     * operating system's filepath delimiter.
-     * @returns A string representation of the relative path from the filepath represented by this
-     * Path instance to the filepath indicated.
+     * @param useSystemPathDelimiter Whether to present the final string in accordance with the operating system's filepath delimiter.
+     * @returns A `string` representation of the relative path.
      */
     Path.prototype.relative = function (to, useSystemPathDelimiter) {
         if (useSystemPathDelimiter === void 0) { useSystemPathDelimiter = false; }
@@ -260,10 +262,10 @@ var Path = /** @class */ (function () {
     };
     /**
      * Resolves a sequence of path segments into a new absolute Path. Respects ".." and will increment directories accordingly.
-     * Note that strings beginning with a single "." will be treated as if the dot character does not exist. Use the "join" method
-     * as an alternative for appending file segments that begin with "." to the current path.
+     * Note that strings beginning with a single "." will be treated as if the dot character does not exist. Use the `join()` method
+     * as an alternative for treating ".." and "." as literal.
      * @param segments An array of strings respresenting path segments to append and resolve to the underlying path.
-     * @returns The resolved Path instance.
+     * @returns The resolved `Path` instance.
      */
     Path.prototype.resolve = function () {
         var segments = [];
@@ -273,8 +275,8 @@ var Path = /** @class */ (function () {
         return new (Path.bind.apply(Path, __spreadArray([void 0, this.path], __read(segments), false)))();
     };
     /**
-     * If the underlying path is a symlink, asynchronously returns the Path of the target it links to.
-     * @returns A Path instance of the target that the symlink points to.
+     * Asynchronously retrieves the filepath that the underlying symlink is pointing to.
+     * @returns A `Path` instance of the target.
      */
     Path.prototype.readLink = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -294,8 +296,8 @@ var Path = /** @class */ (function () {
         });
     };
     /**
-     * If the underlying path is a symlink, asynchronously returns the Path of the target it links to.
-     * @returns A Path instance of the target that the symlink points to.
+     * Synchronously retrieves the filepath that the underlying symlink is pointing to.
+     * @returns A `Path` instance of the target.
      */
     Path.prototype.readLinkSync = function () {
         if (!this.isSymbolicLinkSync()) {
@@ -304,10 +306,10 @@ var Path = /** @class */ (function () {
         return new Path(fse.readlinkSync(this.path));
     };
     /**
-     * Appends strings to the end of the underlying filepath, creating a new Path instance. Note that ".." and "." are treated
-     * literally and will not be resolved. For appending file segments with resolving behavior use the "resolve" method.
+     * Appends strings to the end of the underlying filepath, creating a new `Path` instance. Note that ".." and "." are treated
+     * literally and will not be resolved. For appending file segments with resolving behavior use the `resolve()` method.
      * @param segments Strings which should be appended to the Path instance in order to create a new one.
-     * @returns A new Path instance with the strings appended.
+     * @returns A new `Path` instance with the strings appended.
      */
     Path.prototype.join = function () {
         var segments = [];
@@ -331,10 +333,10 @@ var Path = /** @class */ (function () {
         return copyPath;
     };
     /**
-     * Alias for this.join(). Appends strings to the end of the underlying filepath, creating a new Path instance. Note that ".." and "." are treated
-     * literally and will not be resolved. For appending file segments with resolving behavior use the "resolve" method.
+     * Alias of the `join()` method. Appends strings to the end of the underlying filepath, creating a new `Path` instance. Note that ".." and "." are treated
+     * literally and will not be resolved. For appending file segments with resolving behavior use the `resolve()` method.
      * @param segments Strings which should be appended to the Path instance in order to create a new one.
-     * @returns A new Path instance with the strings appended.
+     * @returns A new `Path` instance with the strings appended.
      */
     Path.prototype.append = function () {
         var segments = [];
@@ -346,7 +348,7 @@ var Path = /** @class */ (function () {
     /**
      * Creates a new Path instance with a replaced basename.
      * @param name The new basename to replace the existing one.
-     * @returns A new Path instance featuring the replacement basename.
+     * @returns A new `Path` instance featuring the replacement basename.
      */
     Path.prototype.withBasename = function (name) {
         return new Path(__spreadArray(__spreadArray([], __read(this.parts().slice(0, this.parts().length - 1)), false), [name], false).join("/"));
@@ -354,19 +356,19 @@ var Path = /** @class */ (function () {
     /**
      * Creates a new Path instance with a replaced stem.
      * @param stem The new stem to replace the existing one.
-     * @returns A new Path instance featuring the replacement stem.
+     * @returns A new `Path` instance featuring the replacement stem.
      */
     Path.prototype.withStem = function (stem) {
         var newBasename = __spreadArray([stem], __read(this.basename.split(".").slice(1)), false).join(".");
         return this.withBasename(newBasename);
     };
     /**
-     * Creates a new Path instance with a replaced final extension.
+     * Creates a new Path instance with a replaced set of suffix extensions.
      * @param suffix The new suffix to replace the existing one.
      * If provided an array of strings, it will concatenate with with a "." character before appending to the existing stem.
      * If provided a non-blank string, it will overwite anything after the first "." in the current basename.
      * If a blank string is provided, then all extensions will be removed.
-     * @returns A new Path instance featuring the replacement extension.
+     * @returns A new `Path` instance featuring the replaced suffix(es).
      */
     Path.prototype.withSuffix = function (suffix) {
         var newSuffixes = suffix === "" ? [] : Array.isArray(suffix) ? suffix.map(function (s) { return (0, utils_1.trimChars)(s, ["."]); }) : [(0, utils_1.trimChars)(suffix, ["."])];
@@ -374,9 +376,18 @@ var Path = /** @class */ (function () {
         return this.withBasename(newBasename);
     };
     /**
+     * Creates a new Path instance with a replaced last extension.
+     * @param ext The new extension to replace the existing one.
+     * @returns A new `Path` instance featuring the replacement last extension.
+     */
+    Path.prototype.withExtension = function (ext) {
+        var newSuffixes = this.suffixes.length >= 1 ? __spreadArray(__spreadArray([], __read(this.suffixes.slice(0, this.suffixes.length - 1)), false), [ext], false) : [ext];
+        return this.withBasename(__spreadArray([this.stem], __read(newSuffixes.map(function (s) { return (0, utils_1.trimChars)(s, ["."]); })), false).join("."));
+    };
+    /**
      * Depicts a string version of the Path instance.
-     * @param useSystemPathDelimiter Whether to respect the system-specific filepath delimiter.
-     * @returns A string representation of the underlying filepath.
+     * @param useSystemPathDelimiter Whether to respect the system-specific filepath delimiter. Defaults to `false`.
+     * @returns A `string` representation of the underlying filepath.
      */
     Path.prototype.toString = function (useSystemPathDelimiter) {
         if (useSystemPathDelimiter === void 0) { useSystemPathDelimiter = false; }
@@ -384,14 +395,14 @@ var Path = /** @class */ (function () {
     };
     /**
      * Depicts an Object version of the Path instance.
-     * @param useSystemPathDelimiter Whether to respect the system-specific filepath delimiter.
-     * @returns An Object representation of the underlying filepath.
+     * @param useSystemPathDelimiter Whether to respect the system-specific filepath delimiter. Defaults to `false`.
+     * @returns An `Object` representation of the underlying filepath.
      */
     Path.prototype.toJSON = function (useSystemPathDelimiter) {
         if (useSystemPathDelimiter === void 0) { useSystemPathDelimiter = false; }
         return {
-            path: useSystemPathDelimiter ? this.parts().join(path_1.default.sep) : this.path,
-            root: useSystemPathDelimiter ? this.root.split("/").join(path_1.default.sep) : this.root,
+            path: this.toString(useSystemPathDelimiter),
+            root: this.root,
             basename: this.basename,
             stem: this.stem,
             ext: this.ext,
@@ -399,8 +410,8 @@ var Path = /** @class */ (function () {
         };
     };
     /**
-     * Asynchronously retrieves the stat object for the Path instance.
-     * @returns The stat object for the underlying filepath.
+     * Asynchronously retrieves the stat object for the filepath.
+     * @returns The `Stats` object for the underlying filepath.
      */
     Path.prototype.stat = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -413,15 +424,15 @@ var Path = /** @class */ (function () {
         });
     };
     /**
-     * Synchronously retrieves the stat object for the Path instance.
-     * @returns The stat object for the underlying filepath.
+     * Synchronously retrieves the stat object for the filepath.
+     * @returns The `Stats` object for the underlying filepath.
      */
     Path.prototype.statSync = function () {
         return fse.statSync(this.path);
     };
     /**
      * Asynchronously checks whether the underlying filepath exists.
-     * @returns A boolean of whether the filepath exists or not.
+     * @returns A `boolean` of whether the filepath exists or not.
      */
     Path.prototype.exists = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -435,18 +446,23 @@ var Path = /** @class */ (function () {
     };
     /**
      * Synchronously checks whether the underlying filepath exists.
-     * @returns A boolean of whether the filepath exists or not.
+     * @returns A `boolean` of whether the filepath exists or not.
      */
     Path.prototype.existsSync = function () {
         return fse.pathExistsSync(this.path);
     };
+    Path.prototype._interpSystemError = function (err) {
+        if ((err === null || err === void 0 ? void 0 : err.code) === "ENOENT")
+            return false;
+        throw new Error(err.message);
+    };
     /**
-     * Asynchronously checks whether the Path instance is a directory.
-     * @returns A boolean of whether this is a directory or not.
+     * Asynchronously checks whether the filepath is a directory.
+     * @returns A `boolean` of whether this is a directory or not.
      */
     Path.prototype.isDirectory = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _err_1, err;
+            var _err_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -455,44 +471,31 @@ var Path = /** @class */ (function () {
                     case 1: return [2 /*return*/, (_a.sent()).isDirectory()];
                     case 2:
                         _err_1 = _a.sent();
-                        err = _err_1;
-                        if ((err === null || err === void 0 ? void 0 : err.code) === "ENOENT") {
-                            return [2 /*return*/, false];
-                        }
-                        else {
-                            throw new Error(err.message);
-                        }
-                        return [3 /*break*/, 3];
+                        return [2 /*return*/, this._interpSystemError(_err_1)];
                     case 3: return [2 /*return*/];
                 }
             });
         });
     };
     /**
-     * Synchronously checks whether the Path instance is a directory.
-     * @returns A boolean of whether this is a directory or not.
+     * Synchronously checks whether the filepath is a directory.
+     * @returns A `boolean` of whether this is a directory or not.
      */
     Path.prototype.isDirectorySync = function () {
         try {
             return fse.statSync(this.path).isDirectory();
         }
         catch (_err) {
-            var err = _err;
-            if ((err === null || err === void 0 ? void 0 : err.code) === "ENOENT") {
-                return false;
-            }
-            else {
-                throw new Error(err.message);
-            }
+            return this._interpSystemError(_err);
         }
     };
     /**
-     * Asynchronously checks whether the Path instance is a file.
-     * @returns A boolean of whether this is a file or not.
+     * Asynchronously checks whether the filepath is a file.
+     * @returns A `boolean` of whether this is a file or not.
      */
     Path.prototype.isFile = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _err_2, err;
+            var _err_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -501,44 +504,31 @@ var Path = /** @class */ (function () {
                     case 1: return [2 /*return*/, (_a.sent()).isFile()];
                     case 2:
                         _err_2 = _a.sent();
-                        err = _err_2;
-                        if ((err === null || err === void 0 ? void 0 : err.code) === "ENOENT") {
-                            return [2 /*return*/, false];
-                        }
-                        else {
-                            throw new Error(err.message);
-                        }
-                        return [3 /*break*/, 3];
+                        return [2 /*return*/, this._interpSystemError(_err_2)];
                     case 3: return [2 /*return*/];
                 }
             });
         });
     };
     /**
-     * Synchronously checks whether the Path instance is a file.
-     * @returns A boolean of whether this is a file or not.
+     * Synchronously checks whether the filepath is a file.
+     * @returns A `boolean` of whether this is a file or not.
      */
     Path.prototype.isFileSync = function () {
         try {
             return fse.statSync(this.path).isFile();
         }
         catch (_err) {
-            var err = _err;
-            if ((err === null || err === void 0 ? void 0 : err.code) === "ENOENT") {
-                return false;
-            }
-            else {
-                throw new Error(err.message);
-            }
+            return this._interpSystemError(_err);
         }
     };
     /**
-     * Asynchronously checks whether the Path instance is a symlink.
-     * @returns A boolean of whether this is a symlink or not.
+     * Asynchronously checks whether the filepath is a symlink.
+     * @returns A `boolean` of whether this is a symlink or not.
      */
     Path.prototype.isSymbolicLink = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _err_3, err;
+            var _err_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -547,44 +537,31 @@ var Path = /** @class */ (function () {
                     case 1: return [2 /*return*/, (_a.sent()).isSymbolicLink()];
                     case 2:
                         _err_3 = _a.sent();
-                        err = _err_3;
-                        if ((err === null || err === void 0 ? void 0 : err.code) === "ENOENT") {
-                            return [2 /*return*/, false];
-                        }
-                        else {
-                            throw new Error(err.message);
-                        }
-                        return [3 /*break*/, 3];
+                        return [2 /*return*/, this._interpSystemError(_err_3)];
                     case 3: return [2 /*return*/];
                 }
             });
         });
     };
     /**
-     * Synchronously checks whether the Path instance is a symlink.
-     * @returns A boolean of whether this is a symlink or not.
+     * Synchronously checks whether the filepath is a symlink.
+     * @returns A `boolean` of whether this is a symlink or not.
      */
     Path.prototype.isSymbolicLinkSync = function () {
         try {
             return fse.lstatSync(this.path).isSymbolicLink();
         }
         catch (_err) {
-            var err = _err;
-            if ((err === null || err === void 0 ? void 0 : err.code) === "ENOENT") {
-                return false;
-            }
-            else {
-                throw new Error(err.message);
-            }
+            return this._interpSystemError(_err);
         }
     };
     /**
-     * Asynchronously checks whether the Path instance is a socket.
-     * @returns A boolean of whether this is a socket or not.
+     * Asynchronously checks whether the filepath is a socket.
+     * @returns A `boolean` of whether this is a socket or not.
      */
     Path.prototype.isSocket = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _err_4, err;
+            var _err_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -593,44 +570,31 @@ var Path = /** @class */ (function () {
                     case 1: return [2 /*return*/, (_a.sent()).isSocket()];
                     case 2:
                         _err_4 = _a.sent();
-                        err = _err_4;
-                        if ((err === null || err === void 0 ? void 0 : err.code) === "ENOENT") {
-                            return [2 /*return*/, false];
-                        }
-                        else {
-                            throw new Error(err.message);
-                        }
-                        return [3 /*break*/, 3];
+                        return [2 /*return*/, this._interpSystemError(_err_4)];
                     case 3: return [2 /*return*/];
                 }
             });
         });
     };
     /**
-     * Synchronously checks whether the Path instance is a socket.
-     * @returns A boolean of whether this is a socket or not.
+     * Synchronously checks whether the filepath is a socket.
+     * @returns A `boolean` of whether this is a socket or not.
      */
     Path.prototype.isSocketSync = function () {
         try {
             return fse.statSync(this.path).isSocket();
         }
         catch (_err) {
-            var err = _err;
-            if ((err === null || err === void 0 ? void 0 : err.code) === "ENOENT") {
-                return false;
-            }
-            else {
-                throw new Error(err.message);
-            }
+            return this._interpSystemError(_err);
         }
     };
     /**
-     * Asynchronously checks whether the Path instance is a first-in-first-out queue.
-     * @returns A boolean of whether this is a first-in-first-out queue or not.
+     * Asynchronously checks whether the filepath is a first-in-first-out queue.
+     * @returns A `boolean` of whether this is a first-in-first-out queue or not.
      */
     Path.prototype.isFIFO = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _err_5, err;
+            var _err_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -639,44 +603,30 @@ var Path = /** @class */ (function () {
                     case 1: return [2 /*return*/, (_a.sent()).isFIFO()];
                     case 2:
                         _err_5 = _a.sent();
-                        err = _err_5;
-                        if ((err === null || err === void 0 ? void 0 : err.code) === "ENOENT") {
-                            return [2 /*return*/, false];
-                        }
-                        else {
-                            throw new Error(err.message);
-                        }
-                        return [3 /*break*/, 3];
+                        return [2 /*return*/, this._interpSystemError(_err_5)];
                     case 3: return [2 /*return*/];
                 }
             });
         });
     };
     /**
-     * Synchronously checks whether the Path instance is a first-in-first-out queue.
-     * @returns A boolean of whether this is a first-in-first-out queue or not.
+     * Synchronously checks whether the filepath is a first-in-first-out queue.
+     * @returns A `boolean` of whether this is a first-in-first-out queue or not.
      */
     Path.prototype.isFIFOSync = function () {
         try {
             return fse.statSync(this.path).isFIFO();
         }
         catch (_err) {
-            var err = _err;
-            if ((err === null || err === void 0 ? void 0 : err.code) === "ENOENT") {
-                return false;
-            }
-            else {
-                throw new Error(err.message);
-            }
+            return this._interpSystemError(_err);
         }
     };
     /**
      * Retrieves the parent directory or an earlier ancestor filepath.
-     * @param numIncrements The number of directory levels to ascend.
-     * If this number exceeds number of ascentions required to reach the root directory,
+     * @param numIncrements The number of directory levels to ascend. If this number exceeds number of ascentions required to reach the root directory,
      * then the root directory itself is returned. If this number is 0 or less, it will return a copy of the current Path.
      * Defaults to `undefined`, meaning that the immediate parent directory is returned.
-     * @returns The parent or higher ancestor (i.e grandparent) directory of this filepath as a Path instance.
+     * @returns The parent or higher ancestor (i.e grandparent) directory of this filepath as a `Path` instance.
      */
     Path.prototype.parent = function (numIncrements) {
         if (numIncrements == null)
@@ -687,7 +637,7 @@ var Path = /** @class */ (function () {
     /**
      * Asynchronously determines whether a directory contains a given child filepath or basename.
      * @param child Either a string representing a basename to search for or another Path instance to be located as a child of this instance.
-     * @returns The located child as a Path instance or false if no child path could be found.
+     * @returns The located child as a `Path` instance or `false` if no child path could be found.
      */
     Path.prototype.containsImmediateChild = function (child) {
         var e_2, _a, e_3, _b;
@@ -697,9 +647,8 @@ var Path = /** @class */ (function () {
                 switch (_g.label) {
                     case 0: return [4 /*yield*/, this.isDirectory()];
                     case 1:
-                        if (!(_g.sent())) {
+                        if (!(_g.sent()))
                             throw new Error("Cannot check the child of a path that is not a directory");
-                        }
                         if (!(typeof child === "string")) return [3 /*break*/, 14];
                         _g.label = 2;
                     case 2:
@@ -769,13 +718,12 @@ var Path = /** @class */ (function () {
     /**
      * Synchronously determines whether a directory contains a given child filepath or basename.
      * @param child Either a string representing a basename to search for or another Path instance to be located as a child of this instance.
-     * @returns The located child as a Path instance or false if no child path could be found.
+     * @returns The located child as a `Path` instance or `false` if no child path could be found.
      */
     Path.prototype.containsImmediateChildSync = function (child) {
         var e_4, _a, e_5, _b;
-        if (!this.isDirectorySync()) {
+        if (!this.isDirectorySync())
             throw new Error("Cannot check the child of a path that is not a directory");
-        }
         if (typeof child === "string") {
             try {
                 for (var _c = __values(this.readDirIterSync()), _d = _c.next(); !_d.done; _d = _c.next()) {
@@ -813,33 +761,16 @@ var Path = /** @class */ (function () {
     };
     // Private utility function for appending glob patterns to the underlying filepath.
     Path.prototype._prepGlobPatterns = function (patterns) {
-        var e_6, _a;
-        var asArr = [];
-        if (Array.isArray(patterns)) {
-            try {
-                for (var patterns_1 = __values(patterns), patterns_1_1 = patterns_1.next(); !patterns_1_1.done; patterns_1_1 = patterns_1.next()) {
-                    var pat = patterns_1_1.value;
-                    asArr.push([this.path, pat].join("/"));
-                }
-            }
-            catch (e_6_1) { e_6 = { error: e_6_1 }; }
-            finally {
-                try {
-                    if (patterns_1_1 && !patterns_1_1.done && (_a = patterns_1.return)) _a.call(patterns_1);
-                }
-                finally { if (e_6) throw e_6.error; }
-            }
-        }
-        else {
-            asArr.push([this.path, patterns].join("/"));
-        }
-        return asArr;
+        var _this = this;
+        return Array.isArray(patterns)
+            ? patterns.map(function (pat) { return [_this.path, pat].join("/"); })
+            : [[this.path, patterns].join("/")];
     };
     /**
      * Asynchronously globs for filepaths stemming from the Path instance.
      * @param patterns A string or collection of strings representing glob patterns to search.
-     * @param options FastGlob options, including whether to restrict the globbing to files, directories, etc.
-     * @returns An array of globbed Path instances.
+     * @param options [fast-glob options](https://www.npmjs.com/package/fast-glob#api), including whether to restrict the globbing to files, directories, etc.
+     * @returns An `array` of globbed `Path` instances.
      */
     Path.prototype.glob = function (patterns, options) {
         return __awaiter(this, void 0, void 0, function () {
@@ -858,13 +789,13 @@ var Path = /** @class */ (function () {
      * Asynchronously glob for filepaths stemming from the Path instance while yielding them instead of returning
      * an immediate array.
      * @param patterns A string or collection of strings representing glob patterns to search.
-     * @param options FastGlob options, including whether to restrict the globbing to files, directories, etc.
-     * @yields Path instances.
+     * @param options [fast-glob options](https://www.npmjs.com/package/fast-glob#api), including whether to restrict the globbing to files, directories, etc.
+     * @yields `Path` instances.
      */
     Path.prototype.globIter = function (patterns, options) {
         return __asyncGenerator(this, arguments, function globIter_1() {
-            var _a, _b, fp, e_7_1;
-            var e_7, _c;
+            var _a, _b, fp, e_6_1;
+            var e_6, _c;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
@@ -883,8 +814,8 @@ var Path = /** @class */ (function () {
                     case 5: return [3 /*break*/, 1];
                     case 6: return [3 /*break*/, 13];
                     case 7:
-                        e_7_1 = _d.sent();
-                        e_7 = { error: e_7_1 };
+                        e_6_1 = _d.sent();
+                        e_6 = { error: e_6_1 };
                         return [3 /*break*/, 13];
                     case 8:
                         _d.trys.push([8, , 11, 12]);
@@ -895,7 +826,7 @@ var Path = /** @class */ (function () {
                         _d.label = 10;
                     case 10: return [3 /*break*/, 12];
                     case 11:
-                        if (e_7) throw e_7.error;
+                        if (e_6) throw e_6.error;
                         return [7 /*endfinally*/];
                     case 12: return [7 /*endfinally*/];
                     case 13: return [2 /*return*/];
@@ -906,8 +837,8 @@ var Path = /** @class */ (function () {
     /**
      * Synchronously globs for filepaths stemming from the Path instance.
      * @param patterns A string or collection of strings representing glob patterns to search.
-     * @param options FastGlob options, including whether to restrict the globbing to files, directories, etc.
-     * @returns An array of globbed Path instances.
+     * @param options [fast-glob options](https://www.npmjs.com/package/fast-glob#api), including whether to restrict the globbing to files, directories, etc.
+     * @returns An `array` of globbed `Path` instances.
      */
     Path.prototype.globSync = function (patterns, options) {
         return fast_glob_1.default
@@ -915,39 +846,36 @@ var Path = /** @class */ (function () {
             .map(function (p) { return new Path(p); });
     };
     /**
-     * Asynchronously collects the children of a directory path as an array of Paths.
-     * @returns An array of Path instances that are children of the current instance.
+     * Asynchronously collects the children of a directory path.
+     * @returns An `array` of `Path` instances that are children of the current instance.
      */
     Path.prototype.readDir = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var paths;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, fse.readdir(this.path)];
-                    case 1:
-                        paths = (_a.sent()).map(function (basename) { return new Path(_this.path, basename); });
-                        return [2 /*return*/, paths];
+                    case 1: return [2 /*return*/, (_a.sent()).map(function (basename) { return new Path(_this.path, basename); })];
                 }
             });
         });
     };
     /**
-     * Synchronously collects the children of a directory path as an array of Paths.
-     * @returns An array of Path instances that are children of the current instance.
+     * Synchronously collects the children of a directory path.
+     * @returns An `array` of `Path` instances that are children of the current instance.
      */
     Path.prototype.readDirSync = function () {
         var _this = this;
         return fse.readdirSync(this.path).map(function (basename) { return _this.resolve(basename); });
     };
     /**
-     * Asynchronously yields child Path instances of the current instance.
-     * @yields A Path instance which is a child path of the current instance.
+     * Asynchronously yields child filepaths.
+     * @yields A child `Path` instance.
      */
     Path.prototype.readDirIter = function () {
         return __asyncGenerator(this, arguments, function readDirIter_1() {
-            var _a, _b, dir, e_8_1;
-            var e_8, _c;
+            var _a, _b, dir, e_7_1;
+            var e_7, _c;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
@@ -968,8 +896,8 @@ var Path = /** @class */ (function () {
                     case 6: return [3 /*break*/, 2];
                     case 7: return [3 /*break*/, 14];
                     case 8:
-                        e_8_1 = _d.sent();
-                        e_8 = { error: e_8_1 };
+                        e_7_1 = _d.sent();
+                        e_7 = { error: e_7_1 };
                         return [3 /*break*/, 14];
                     case 9:
                         _d.trys.push([9, , 12, 13]);
@@ -980,7 +908,7 @@ var Path = /** @class */ (function () {
                         _d.label = 11;
                     case 11: return [3 /*break*/, 13];
                     case 12:
-                        if (e_8) throw e_8.error;
+                        if (e_7) throw e_7.error;
                         return [7 /*endfinally*/];
                     case 13: return [7 /*endfinally*/];
                     case 14: return [2 /*return*/];
@@ -989,8 +917,8 @@ var Path = /** @class */ (function () {
         });
     };
     /**
-     * Synchronously yields child Path instances of the current instance.
-     * @yields A Path instance which is a child path of the current instance.
+     * Synchronously yields child filepaths.
+     * @yields A child `Path` instance.
      */
     Path.prototype.readDirIterSync = function () {
         var iterator, filesLeft, fileDirent;
@@ -1023,6 +951,7 @@ var Path = /** @class */ (function () {
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
+                        options && Object.assign(options, { stats: false, objectMode: false });
                         _a = depth > 1;
                         if (!_a) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.isDirectory()];
@@ -1063,16 +992,15 @@ var Path = /** @class */ (function () {
         });
     };
     /**
-     * Asynchronously traverses the tree structure of the directory system, starting from the current instance as the root.
-     * and allows for callbacks to occur for each encountered filepath.
+     * Asynchronously traverses the tree structure of the directory system, starting from the current instance as the root and allows for callbacks to occur for each encountered filepath.
      * @param callback A callback function for each encountered Path. Its first argument must accept a Path instance.
      */
     Path.prototype.walk = function (callback) {
         return __awaiter(this, void 0, void 0, function () {
             function walkStep(filepath, callback) {
-                var e_9, _a;
+                var e_8, _a;
                 return __awaiter(this, void 0, void 0, function () {
-                    var _b, _c, p, e_9_1;
+                    var _b, _c, p, e_8_1;
                     return __generator(this, function (_d) {
                         switch (_d.label) {
                             case 0:
@@ -1094,8 +1022,8 @@ var Path = /** @class */ (function () {
                             case 5: return [3 /*break*/, 1];
                             case 6: return [3 /*break*/, 13];
                             case 7:
-                                e_9_1 = _d.sent();
-                                e_9 = { error: e_9_1 };
+                                e_8_1 = _d.sent();
+                                e_8 = { error: e_8_1 };
                                 return [3 /*break*/, 13];
                             case 8:
                                 _d.trys.push([8, , 11, 12]);
@@ -1106,7 +1034,7 @@ var Path = /** @class */ (function () {
                                 _d.label = 10;
                             case 10: return [3 /*break*/, 12];
                             case 11:
-                                if (e_9) throw e_9.error;
+                                if (e_8) throw e_8.error;
                                 return [7 /*endfinally*/];
                             case 12: return [7 /*endfinally*/];
                             case 13: return [2 /*return*/];
@@ -1121,13 +1049,12 @@ var Path = /** @class */ (function () {
         });
     };
     /**
-     * Synchronously traverses the tree structure of the directory system, starting from the current instance as the root
-     * and allows for callbacks to occur for each encountered filepath.
+     * Synchronously traverses the tree structure of the directory system, starting from the current instance as the root and allows for callbacks to occur for each encountered filepath.
      * @param callback A callback function for each encountered Path. Its first argument must accept a Path instance.
      */
     Path.prototype.walkSync = function (callback) {
         function walkStep(filepath, callback) {
-            var e_10, _a;
+            var e_9, _a;
             try {
                 for (var _b = __values(filepath.readDirIterSync()), _c = _b.next(); !_c.done; _c = _b.next()) {
                     var p = _c.value;
@@ -1137,12 +1064,12 @@ var Path = /** @class */ (function () {
                     }
                 }
             }
-            catch (e_10_1) { e_10 = { error: e_10_1 }; }
+            catch (e_9_1) { e_9 = { error: e_9_1 }; }
             finally {
                 try {
                     if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
                 }
-                finally { if (e_10) throw e_10.error; }
+                finally { if (e_9) throw e_9.error; }
             }
         }
         walkStep(this, callback);
@@ -1152,8 +1079,8 @@ var Path = /** @class */ (function () {
         if (useSystemPathDelimiter === void 0) { useSystemPathDelimiter = false; }
         function traverseBranch(branchRoot, prevDepth) {
             return __awaiter(this, void 0, void 0, function () {
-                var branch, _a, _b, p, _c, _d, _e, e_11_1, branch, _f, _g, p, _h, _j, _k, e_12_1;
-                var e_11, _l, e_12, _m;
+                var branch, _a, _b, p, _c, _d, _e, e_10_1, branch, _f, _g, p, _h, _j, _k, e_11_1;
+                var e_10, _l, e_11, _m;
                 return __generator(this, function (_o) {
                     switch (_o.label) {
                         case 0:
@@ -1195,14 +1122,14 @@ var Path = /** @class */ (function () {
                             return [3 /*break*/, 2];
                         case 7: return [3 /*break*/, 10];
                         case 8:
-                            e_11_1 = _o.sent();
-                            e_11 = { error: e_11_1 };
+                            e_10_1 = _o.sent();
+                            e_10 = { error: e_10_1 };
                             return [3 /*break*/, 10];
                         case 9:
                             try {
                                 if (_b && !_b.done && (_l = _a.return)) _l.call(_a);
                             }
-                            finally { if (e_11) throw e_11.error; }
+                            finally { if (e_10) throw e_10.error; }
                             return [7 /*endfinally*/];
                         case 10: return [2 /*return*/, branch];
                         case 11:
@@ -1243,14 +1170,14 @@ var Path = /** @class */ (function () {
                             return [3 /*break*/, 13];
                         case 18: return [3 /*break*/, 21];
                         case 19:
-                            e_12_1 = _o.sent();
-                            e_12 = { error: e_12_1 };
+                            e_11_1 = _o.sent();
+                            e_11 = { error: e_11_1 };
                             return [3 /*break*/, 21];
                         case 20:
                             try {
                                 if (_g && !_g.done && (_m = _f.return)) _m.call(_f);
                             }
-                            finally { if (e_12) throw e_12.error; }
+                            finally { if (e_11) throw e_11.error; }
                             return [7 /*endfinally*/];
                         case 21: return [2 /*return*/, branch];
                     }
@@ -1263,7 +1190,7 @@ var Path = /** @class */ (function () {
         if (asString === void 0) { asString = false; }
         if (useSystemPathDelimiter === void 0) { useSystemPathDelimiter = false; }
         function traverseBranch(branchRoot, prevDepth) {
-            var e_13, _a, e_14, _b;
+            var e_12, _a, e_13, _b;
             if (asString) {
                 var branch = {
                     filepath: branchRoot.toString(useSystemPathDelimiter),
@@ -1274,7 +1201,7 @@ var Path = /** @class */ (function () {
                     for (var _c = __values(branchRoot.readDirIterSync()), _d = _c.next(); !_d.done; _d = _c.next()) {
                         var p = _d.value;
                         if (p.isDirectorySync()) {
-                            branch && branch.children && branch.children.push(traverseBranch(p, prevDepth + 1));
+                            branch.children && branch.children.push(traverseBranch(p, prevDepth + 1));
                         }
                         else {
                             branch.children &&
@@ -1286,12 +1213,12 @@ var Path = /** @class */ (function () {
                         }
                     }
                 }
-                catch (e_13_1) { e_13 = { error: e_13_1 }; }
+                catch (e_12_1) { e_12 = { error: e_12_1 }; }
                 finally {
                     try {
                         if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
                     }
-                    finally { if (e_13) throw e_13.error; }
+                    finally { if (e_12) throw e_12.error; }
                 }
                 return branch;
             }
@@ -1305,9 +1232,7 @@ var Path = /** @class */ (function () {
                     for (var _e = __values(branchRoot.readDirIterSync()), _f = _e.next(); !_f.done; _f = _e.next()) {
                         var p = _f.value;
                         if (p.isDirectorySync()) {
-                            branch &&
-                                branch.children &&
-                                branch.children.push(traverseBranch(p, prevDepth + 1));
+                            branch.children && branch.children.push(traverseBranch(p, prevDepth + 1));
                         }
                         else {
                             branch.children &&
@@ -1319,12 +1244,12 @@ var Path = /** @class */ (function () {
                         }
                     }
                 }
-                catch (e_14_1) { e_14 = { error: e_14_1 }; }
+                catch (e_13_1) { e_13 = { error: e_13_1 }; }
                 finally {
                     try {
                         if (_f && !_f.done && (_b = _e.return)) _b.call(_e);
                     }
-                    finally { if (e_14) throw e_14.error; }
+                    finally { if (e_13) throw e_13.error; }
                 }
                 return branch;
             }
@@ -1333,8 +1258,7 @@ var Path = /** @class */ (function () {
     };
     /**
      * Asynchronously creates a new directory, including intermediate parental components.
-     * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511)
-     * representation of the new filepath permissions to impart on the created directory.
+     * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511) representation of the new filepath permissions to impart on the created directory.
      */
     Path.prototype.makeDir = function (mode) {
         if (mode === void 0) { mode = 511; }
@@ -1349,8 +1273,7 @@ var Path = /** @class */ (function () {
     };
     /**
      * Synchronously creates a new directory, including intermediate parental components.
-     * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511)
-     * representation of the new filepath permissions to impart on the created directory.
+     * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511) representation of the new filepath permissions to impart on the created directory.
      */
     Path.prototype.makeDirSync = function (mode) {
         if (mode === void 0) { mode = 511; }
@@ -1360,7 +1283,6 @@ var Path = /** @class */ (function () {
     };
     /**
      * Asynchronously creates a new file, including intermediate parental components.
-     * representation of the new filepath permissions to impart on the created file.
      */
     Path.prototype.makeFile = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -1374,7 +1296,6 @@ var Path = /** @class */ (function () {
     };
     /**
      * Synchronously creates a new file, including intermediate parental components.
-     * representation of the new filepath permissions to impart on the created file.
      */
     Path.prototype.makeFileSync = function () {
         if (this.suffixes.length === 0)
@@ -1403,14 +1324,14 @@ var Path = /** @class */ (function () {
         }
     };
     /**
-     * Asynchronously creates a symlink.
-     * Either links the underlying filepath to a created symlink or has a target filepath be linking by the underlying symlink.
+     * Asynchronously creates a symlink. Either links the underlying filepath to a created symlink or has a target filepath be linking by the underlying symlink.
      * @param target The corresponding target filepath that a symlink should be made to OR that is a symlink linking to the underlying filepath.
      * @param targetIsLink Whether the filepath indicate in "target" should be treated as a symlink.
-     * If true, then the target is treated as the link and the underlying filepath must be an existing file or directory.
-     * If false, then the target must be an existing file or directory and the underlying filepath is the symlink.
+     * - If `true`, then the target is treated as the link and the underlying filepath must be an existing file or directory.
+     * - If `false`, then the target must be an existing file or directory and the underlying filepath is the symlink.
      * @param type On Windows only, a value of either "file" or "dir" denoting the type of symlink to create.
      * Defaults to undefined, where an inference will be made based on the filepath being linked.
+     * @returns The filepath outlined in `target` as a `Path` instance.
      */
     Path.prototype.makeSymlink = function (target, options) {
         var _a;
@@ -1472,14 +1393,14 @@ var Path = /** @class */ (function () {
         });
     };
     /**
-     * Synchronously creates a symlink.
-     * Either links the underlying filepath to a created symlink or has a target filepath be linking by the underlying symlink.
+     * Synchronously creates a symlink. Either links the underlying filepath to a created symlink or has a target filepath be linking by the underlying symlink.
      * @param target The corresponding target filepath that a symlink should be made to OR that is a symlink linking to the underlying filepath.
      * @param targetIsLink Whether the filepath indicate in "target" should be treated as a symlink.
-     * If true, then the target is treated as the link and the underlying filepath must be an existing file or directory.
-     * If false, then the target must be an existing file or directory and the underlying filepath is the symlink.
+     * - If `true`, then the target is treated as the link and the underlying filepath must be an existing file or directory.
+     * - If `false`, then the target must be an existing file or directory and the underlying filepath is the symlink.
      * @param type On Windows only, a value of either "file" or "dir" denoting the type of symlink to create.
      * Defaults to undefined, where an inference will be made based on the filepath being linked.
+     * @returns The filepath outlined in `target` as a `Path` instance.
      */
     Path.prototype.makeSymlinkSync = function (target, options) {
         var _a;
@@ -1520,8 +1441,8 @@ var Path = /** @class */ (function () {
     };
     Path.prototype.access = function (mode) {
         return __awaiter(this, void 0, void 0, function () {
-            var error_1, accessArr, resultArr, accessArr_1, accessArr_1_1, check, error_2, e_15_1;
-            var e_15, _a;
+            var error_1, accessArr, resultArr, accessArr_1, accessArr_1_1, check, error_2, e_14_1;
+            var e_14, _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -1564,14 +1485,14 @@ var Path = /** @class */ (function () {
                         return [3 /*break*/, 6];
                     case 11: return [3 /*break*/, 14];
                     case 12:
-                        e_15_1 = _b.sent();
-                        e_15 = { error: e_15_1 };
+                        e_14_1 = _b.sent();
+                        e_14 = { error: e_14_1 };
                         return [3 /*break*/, 14];
                     case 13:
                         try {
                             if (accessArr_1_1 && !accessArr_1_1.done && (_a = accessArr_1.return)) _a.call(accessArr_1);
                         }
-                        finally { if (e_15) throw e_15.error; }
+                        finally { if (e_14) throw e_14.error; }
                         return [7 /*endfinally*/];
                     case 14: return [2 /*return*/, Object.fromEntries([
                             ["canRead", resultArr[0]],
@@ -1583,7 +1504,7 @@ var Path = /** @class */ (function () {
         });
     };
     Path.prototype.accessSync = function (mode) {
-        var e_16, _a;
+        var e_15, _a;
         if (typeof mode === "number") {
             try {
                 fse.accessSync(this.path, mode);
@@ -1607,12 +1528,12 @@ var Path = /** @class */ (function () {
                 }
             }
         }
-        catch (e_16_1) { e_16 = { error: e_16_1 }; }
+        catch (e_15_1) { e_15 = { error: e_15_1 }; }
         finally {
             try {
                 if (accessArr_2_1 && !accessArr_2_1.done && (_a = accessArr_2.return)) _a.call(accessArr_2);
             }
-            finally { if (e_16) throw e_16.error; }
+            finally { if (e_15) throw e_15.error; }
         }
         return Object.fromEntries([
             ["canRead", resultArr[0]],
@@ -1622,10 +1543,9 @@ var Path = /** @class */ (function () {
     };
     /**
      * Asynchronously changes the permissions of the underlying filepath.
-     * Caveats: on Windows only the write permission can be changed, and the distinction
+     * * Caveats: on Windows only the write permission can be changed, and the distinction
      * among the permissions of group, owner or others is not implemented.
-     * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511)
-     * representation of the new filepath permissions.
+     * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511) representation of the new filepath permissions.
      */
     Path.prototype.chmod = function (mode) {
         return __awaiter(this, void 0, void 0, function () {
@@ -1641,10 +1561,9 @@ var Path = /** @class */ (function () {
     };
     /**
      * Synchronously changes the permissions of the underlying filepath.
-     * Caveats: on Windows only the write permission can be changed, and the distinction
+     * * Caveats: on Windows only the write permission can be changed, and the distinction
      * among the permissions of group, owner or others is not implemented.
-     * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511)
-     * representation of the new filepath permissions.
+     * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511) representation of the new filepath permissions.
      */
     Path.prototype.chmodSync = function (mode) {
         fse.chmodSync(this.path, mode);
@@ -1673,12 +1592,12 @@ var Path = /** @class */ (function () {
     /**
      * Asynchronously moves the underlying filepath to the indicated destination.
      * @param dst The filepath destination to where the underlying path should be moved.
-     * If the instance is a directory, the children of the directory will be moved to this location.
-     * If the instance is a file, it itself will be moved to the new location.
+     * - If the instance is a directory, the children of the directory will be moved to this location.
+     * - If the instance is a file, it itself will be moved to the new location.
      * @param options.overwrite Whether to overwrite existing filepaths. Defaults to `false`.
      * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
-     * `"cwd"` (default) interprets them to be relative to the current working directory.
-     * `"path"` interprets them to be relative to the path calling this method.
+     * - `"cwd"` **(default)** interprets them to be relative to the current working directory.
+     * - `"path"` interprets them to be relative to the path calling this method.
      */
     Path.prototype.move = function (dst, options) {
         return __awaiter(this, void 0, void 0, function () {
@@ -1698,12 +1617,12 @@ var Path = /** @class */ (function () {
     /**
      * Synchronously moves the underlying filepath to the indicated destination.
      * @param dst The filepath destination to where the underlying path should be moved.
-     * If the instance is a directory, the children of the directory will be moved to this location.
-     * If the instance is a file, it itself will be moved to the new location.
+     * - If the instance is a directory, the children of the directory will be moved to this location.
+     * - If the instance is a file, it itself will be moved to the new location.
      * @param options.overwrite Whether to overwrite existing filepaths. Defaults to `false`.
      * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
-     * `"cwd"` (default) interprets them to be relative to the current working directory.
-     * `"path"` interprets them to be relative to the path calling this method.
+     * - `"cwd"` **(default)** interprets them to be relative to the current working directory.
+     * - `"path"` interprets them to be relative to the path calling this method.
      */
     Path.prototype.moveSync = function (dst, options) {
         var dest = this._interpPossibleRelativePath(dst, options === null || options === void 0 ? void 0 : options.interpRelativeSource);
@@ -1716,9 +1635,9 @@ var Path = /** @class */ (function () {
      * If the instance is a directory, the children of the directory will be copied to this location.
      * If the instance is a file, it itself will be copied to the new location.
      * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
-     * `"cwd"` (default) interprets them to be relative to the current working directory.
-     * `"path"` interprets them to be relative to the path calling this method.
-     * @param options.overwrite Whether to overwrite existing filepath during the operation. Defaults to true.
+     * - `"cwd"` **(default)** interprets them to be relative to the current working directory.
+     * - `"path"` interprets them to be relative to the path calling this method.
+     * @param options.overwrite Whether to overwrite existing filepath during the operation. Defaults to `true`.
      * @param options.errorOnExist Whether to throw an error if the destination already exists. Defaults to `false`.
      * @param options.dereference Whether to dereference symlinks during the operation. Defaults to `false`.
      * @param options.preserveTimestamps Whether to keep the same timestamps that existed in the source files. Defaults to `false`.
@@ -1745,9 +1664,9 @@ var Path = /** @class */ (function () {
      * If the instance is a directory, the children of the directory will be copied to this location.
      * If the instance is a file, it itself will be copied to the new location.
      * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
-     * `"cwd"` (default) interprets them to be relative to the current working directory.
-     * `"path"` interprets them to be relative to the path calling this method.
-     * @param options.overwrite Whether to overwrite existing filepath during the operation. Defaults to true.
+     * - `"cwd"` **(default)** interprets them to be relative to the current working directory.
+     * - `"path"` interprets them to be relative to the path calling this method.
+     * @param options.overwrite Whether to overwrite existing filepath during the operation. Defaults to `true`.
      * @param options.errorOnExist Whether to throw an error if the destination already exists. Defaults to `false`.
      * @param options.dereference Whether to dereference symlinks during the operation. Defaults to `false`.
      * @param options.preserveTimestamps Whether to keep the same timestamps that existed in the source files. Defaults to `false`.
@@ -1770,7 +1689,7 @@ var Path = /** @class */ (function () {
         });
     };
     /**
-     * Alias for remove(). Asynchronously deletes the underlying filepath.
+     * Alias for `remove()`. Asynchronously deletes the underlying filepath.
      */
     Path.prototype.unlink = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -1781,7 +1700,7 @@ var Path = /** @class */ (function () {
         });
     };
     /**
-     * Alias for remove(). Asynchronously deletes the underlying filepath.
+     * Alias for `remove()`. Asynchronously deletes the underlying filepath.
      */
     Path.prototype.delete = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -1798,13 +1717,13 @@ var Path = /** @class */ (function () {
         fse.removeSync(this.path);
     };
     /**
-     * Alias for removeSync(). Synchronously deletes the underlying filepath.
+     * Alias for `removeSync()`. Synchronously deletes the underlying filepath.
      */
     Path.prototype.unlinkSync = function () {
         fse.removeSync(this.path);
     };
     /**
-     * Alias for removeSync(). Synchronously deletes the underlying filepath.
+     * Alias for `removeSync()`. Synchronously deletes the underlying filepath.
      */
     Path.prototype.deleteSync = function () {
         fse.removeSync(this.path);
@@ -1819,31 +1738,54 @@ var Path = /** @class */ (function () {
      * @returns The numeric file descriptor.
      */
     Path.prototype.open = function (openOptions) {
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var _b, trigger_1, _c;
+            var _this = this;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
-                        if (this.descriptor != null) {
+                        if (this.descriptor != null)
                             throw new Error("Detected that this filepath is already open.");
-                        }
-                        _a = openOptions.ensureExists && this.suffixes.length;
-                        if (!_a) return [3 /*break*/, 2];
+                        _b = openOptions.ensureExists && this.suffixes.length;
+                        if (!_b) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.isFile()];
                     case 1:
-                        _a = !(_c.sent());
-                        _c.label = 2;
+                        _b = !(_d.sent());
+                        _d.label = 2;
                     case 2:
-                        if (!_a) return [3 /*break*/, 4];
+                        if (!_b) return [3 /*break*/, 8];
                         return [4 /*yield*/, this.makeFile()];
                     case 3:
-                        _c.sent();
-                        _c.label = 4;
-                    case 4:
-                        _b = this;
-                        return [4 /*yield*/, fse.open(this.path, openOptions.flags, openOptions.mode)];
+                        _d.sent();
+                        trigger_1 = true;
+                        setTimeout(function () { return __awaiter(_this, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, this.exists()];
+                                    case 1:
+                                        if (!(_a.sent()) && trigger_1)
+                                            throw new Error("Timed out in ensuring that the file is made to exist.");
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }); }, (_a = openOptions.timeout) !== null && _a !== void 0 ? _a : 1000);
+                        _d.label = 4;
+                    case 4: return [4 /*yield*/, this.exists()];
                     case 5:
-                        _b.descriptor = _c.sent();
+                        if (!!(_d.sent())) return [3 /*break*/, 7];
+                        return [4 /*yield*/, (0, utils_1.sleep)(5)];
+                    case 6:
+                        _d.sent();
+                        return [3 /*break*/, 4];
+                    case 7:
+                        trigger_1 = false;
+                        _d.label = 8;
+                    case 8:
+                        _c = this;
+                        return [4 /*yield*/, fse.open(this.path, openOptions.flags, openOptions.mode)];
+                    case 9:
+                        _c.descriptor = _d.sent();
                         return [2 /*return*/, this.descriptor];
                 }
             });
@@ -1859,12 +1801,22 @@ var Path = /** @class */ (function () {
      * @returns The numeric file descriptor.
      */
     Path.prototype.openSync = function (openOptions) {
-        if (this.descriptor != null) {
+        var _this = this;
+        var _a;
+        if (this.descriptor != null)
             throw new Error("Detected that this filepath is already open.");
-        }
         // Ensure that the file exists
         if (openOptions.ensureExists && this.suffixes.length && !this.isFileSync()) {
             this.makeFileSync();
+            var trigger_2 = true;
+            setTimeout(function () {
+                if (!_this.existsSync() && trigger_2)
+                    throw new Error("Timed out in ensuring that the file is made to exist.");
+            }, (_a = openOptions.timeout) !== null && _a !== void 0 ? _a : 1000);
+            while (!this.existsSync()) {
+                (0, utils_1.sleepSync)(5);
+            }
+            trigger_2 = false;
         }
         this.descriptor = fse.openSync(this.path, openOptions.flags, openOptions.mode);
         return this.descriptor;
@@ -1874,9 +1826,8 @@ var Path = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (this.descriptor == null) {
+                        if (this.descriptor == null)
                             throw new Error("Cannot close a file that has not been opened.");
-                        }
                         return [4 /*yield*/, fse.close(this.descriptor)];
                     case 1:
                         _a.sent();
@@ -1887,9 +1838,8 @@ var Path = /** @class */ (function () {
         });
     };
     Path.prototype.closeSync = function () {
-        if (this.descriptor == null) {
+        if (this.descriptor == null)
             throw new Error("Cannot close a file that has not been opened.");
-        }
         fse.closeSync(this.descriptor);
         this.descriptor = null;
     };
@@ -1910,24 +1860,27 @@ var Path = /** @class */ (function () {
     Path.prototype.read = function (buffer, offset, length, position, closeAfterwards, openOptions) {
         if (closeAfterwards === void 0) { closeAfterwards = true; }
         return __awaiter(this, void 0, void 0, function () {
-            var fd, readResult, _a;
+            var readResult, _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, this.open(openOptions ? openOptions : { flags: "r" })];
+                    case 0:
+                        if (!(this.descriptor == null)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.open(openOptions !== null && openOptions !== void 0 ? openOptions : { flags: "r" })];
                     case 1:
-                        fd = _b.sent();
-                        return [4 /*yield*/, fse.read(fd, buffer, offset, length, position)];
-                    case 2:
+                        _b.sent();
+                        _b.label = 2;
+                    case 2: return [4 /*yield*/, fse.read(this.descriptor, buffer, offset, length, position)];
+                    case 3:
                         readResult = _b.sent();
                         _a = closeAfterwards;
-                        if (!_a) return [3 /*break*/, 4];
+                        if (!_a) return [3 /*break*/, 5];
                         return [4 /*yield*/, this.close()];
-                    case 3:
-                        _a = (_b.sent());
-                        _b.label = 4;
                     case 4:
+                        _a = (_b.sent());
+                        _b.label = 5;
+                    case 5:
                         _a;
-                        return [2 /*return*/, __assign(__assign({}, readResult), { fileDescriptor: closeAfterwards ? null : fd })];
+                        return [2 /*return*/, __assign(__assign({}, readResult), { fileDescriptor: closeAfterwards ? null : this.descriptor })];
                 }
             });
         });
@@ -1947,10 +1900,11 @@ var Path = /** @class */ (function () {
      */
     Path.prototype.readSync = function (buffer, offset, length, position, closeAfterwards, openOptions) {
         if (closeAfterwards === void 0) { closeAfterwards = true; }
-        var fd = this.openSync(openOptions ? openOptions : { flags: "r" });
-        var readResult = fse.readSync(fd, buffer, offset, length, position);
+        if (this.descriptor == null)
+            this.openSync(openOptions !== null && openOptions !== void 0 ? openOptions : { flags: "r" });
+        var readResult = fse.readSync(this.descriptor, buffer, offset, length, position);
         closeAfterwards && this.closeSync();
-        return { bytesRead: readResult, fileDescriptor: closeAfterwards ? null : fd };
+        return { bytesRead: readResult, fileDescriptor: closeAfterwards ? null : this.descriptor };
     };
     /**
      * Asynchronously writes buffer-like data into the underlying file.
@@ -1958,31 +1912,34 @@ var Path = /** @class */ (function () {
      * @param offset The position in the buffer from which to begin writing
      * @param length The number of bytes to write.
      * @param position Specifies where to begin writing into the file.
-     * @param closeAfterwards Whether to close the file after the operation completes. Defaults to true.
-     * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
+     * @param closeAfterwards Whether to close the file after the operation completes. Defaults to `true`.
+     * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to `"r"` for this method.
      * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
      */
     Path.prototype.write = function (buffer, offset, length, position, closeAfterwards, openOptions) {
         if (closeAfterwards === void 0) { closeAfterwards = true; }
         return __awaiter(this, void 0, void 0, function () {
-            var fd, writeResult, _a;
+            var writeResult, _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, this.open(openOptions !== null && openOptions !== void 0 ? openOptions : { flags: "w" })];
+                    case 0:
+                        if (!(this.descriptor == null)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.open(openOptions !== null && openOptions !== void 0 ? openOptions : { flags: "w" })];
                     case 1:
-                        fd = _b.sent();
-                        return [4 /*yield*/, fse.write(fd, buffer, offset, length, position)];
-                    case 2:
+                        _b.sent();
+                        _b.label = 2;
+                    case 2: return [4 /*yield*/, fse.write(this.descriptor, buffer, offset, length, position)];
+                    case 3:
                         writeResult = _b.sent();
                         _a = closeAfterwards;
-                        if (!_a) return [3 /*break*/, 4];
+                        if (!_a) return [3 /*break*/, 5];
                         return [4 /*yield*/, this.close()];
-                    case 3:
-                        _a = (_b.sent());
-                        _b.label = 4;
                     case 4:
+                        _a = (_b.sent());
+                        _b.label = 5;
+                    case 5:
                         _a;
-                        return [2 /*return*/, __assign(__assign({}, writeResult), { fileDescriptor: fd })];
+                        return [2 /*return*/, __assign(__assign({}, writeResult), { fileDescriptor: this.descriptor })];
                 }
             });
         });
@@ -1994,16 +1951,17 @@ var Path = /** @class */ (function () {
      * @param offset The position in the buffer from which to begin writing
      * @param length The number of bytes to write.
      * @param position Specifies where to begin writing into the file.
-     * @param closeAfterwards Whether to close the file after the operation completes. Defaults to true.
-     * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to "r" for this method.
+     * @param closeAfterwards Whether to close the file after the operation completes. Defaults to `true`.
+     * @param openOptions.flags A string denoting the mode in which this file should be opened. Defaults to `"r"` for this method.
      * @param openOptions.mode The permissions to set for the file upon opening (i.e. 0o511).
      */
     Path.prototype.writeSync = function (buffer, offset, length, position, closeAfterwards, openOptions) {
         if (closeAfterwards === void 0) { closeAfterwards = true; }
-        var fd = this.openSync(openOptions !== null && openOptions !== void 0 ? openOptions : { flags: "w" });
-        var writeResult = fse.writeSync(fd, buffer, offset, length, position);
+        if (this.descriptor == null)
+            this.openSync(openOptions !== null && openOptions !== void 0 ? openOptions : { flags: "w" });
+        var writeResult = fse.writeSync(this.descriptor, buffer, offset, length, position);
         closeAfterwards && this.closeSync();
-        return { bytesWritten: writeResult, fileDescriptor: fd };
+        return { bytesWritten: writeResult, fileDescriptor: this.descriptor };
     };
     Path.prototype.readFile = function (arg1, arg2) {
         return __awaiter(this, void 0, void 0, function () {
@@ -2041,8 +1999,8 @@ var Path = /** @class */ (function () {
     /**
      * Asynchronously writes data to the underlying filepath.
      * @param data The data to write to the file.
-     * @param options.encoding. The encoding to use in the write operation. Defaults to "utf8".
-     * @param options.mode. The permissions of the created file. Defaults to 0o666.
+     * @param options.encoding. The encoding to use in the write operation. Defaults to `"utf8"`.
+     * @param options.mode. The permissions of the created file. Defaults to `0o666`.
      * @param options.flag. The string denoting the mode in which the file is opened.
      */
     Path.prototype.writeFile = function (data, options) {
@@ -2060,8 +2018,8 @@ var Path = /** @class */ (function () {
     /**
      * Synchronously writes data to the underlying filepath.
      * @param data The data to write to the file.
-     * @param options.encoding. The encoding to use in the write operation. Defaults to "utf8".
-     * @param options.mode. The permissions of the created file. Defaults to 0o666.
+     * @param options.encoding. The encoding to use in the write operation. Defaults to `"utf8"`.
+     * @param options.mode. The permissions of the created file. Defaults to `0o666`.
      * @param options.flag. The string denoting the mode in which the file is opened.
      */
     Path.prototype.writeFileSync = function (data, options) {
@@ -2069,8 +2027,8 @@ var Path = /** @class */ (function () {
     };
     /**
      * Asynchronously reads in the underlying filepath JSON file and parses it into a JSON object.
-     * @param options.encoding. The encoding to use when parsing the JSON structure. Defaults to null.
-     * @param options.flag. The string denoting the mode in which the file is opened. Defaults to "r".
+     * @param options.encoding. The encoding to use when parsing the JSON structure. Defaults to `null`.
+     * @param options.flag. The string denoting the mode in which the file is opened. Defaults to `"r"`.
      * @returns A JSON object.
      */
     Path.prototype.readJSON = function (options) {
@@ -2079,7 +2037,7 @@ var Path = /** @class */ (function () {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.isFile()];
                     case 1:
-                        if (!(_a.sent()) || this.suffixes.slice(-1)[0] !== "json") {
+                        if (!(_a.sent()) || this.ext !== ".json") {
                             throw new Error("Cannot read JSON from a non-JSON filepath or a non-existent filepath");
                         }
                         return [4 /*yield*/, fse.readJSON(this.path, options)];
@@ -2090,12 +2048,12 @@ var Path = /** @class */ (function () {
     };
     /**
      * Synchronously reads in the underlying filepath JSON file and parses it into a JSON object.
-     * @param options.encoding. The encoding to use when parsing the JSON structure. Defaults to null.
-     * @param options.flag. The string denoting the mode in which the file is opened. Defaults to "r".
+     * @param options.encoding. The encoding to use when parsing the JSON structure. Defaults to `null`.
+     * @param options.flag. The string denoting the mode in which the file is opened. Defaults to `"r"`.
      * @returns A JSON object.
      */
     Path.prototype.readJSONSync = function (options) {
-        if (!this.isFileSync() || this.suffixes.slice(-1)[0] !== "json") {
+        if (!this.isFileSync() || this.ext !== ".json") {
             throw new Error("Cannot read JSON from a non-JSON filepath or a non-existent filepath");
         }
         return fse.readJSONSync(this.path, options);
@@ -2103,15 +2061,13 @@ var Path = /** @class */ (function () {
     /**
      * Asynchronously write a JSON-compatible object to a .json file.
      * @param data A JSON-compatible object to write into the file.
-     * @param options.space The number of spaces to indent or the character used to substitute for indents.
-     * Defaults to 0
-     * @param options.EOL The end-of-line character. Defaults to "\n".
+     * @param options.space The number of spaces to indent or the character used to substitute for indents. Defaults to `0`
+     * @param options.EOL The end-of-line character. Defaults to `"\n"`.
      * @param options.replacer. The JSON replacer array or function.
-     * @param options.encoding. The encoding to use in the write operation. Defaults to "utf8".
-     * @param options.mode. The permissions of the created file. Defaults to 0o666.
-     * @param options.flag. The string denoting the mode in which the file is opened.
-     * "w" for write and "a" for append. Defaults to "w".
-     * @param options.signal. An AbortSignal object that allows the termination of the operation midway.
+     * @param options.encoding. The encoding to use in the write operation. Defaults to `"utf8"`.
+     * @param options.mode. The permissions of the created file. Defaults to `0o666`.
+     * @param options.flag. The string denoting the mode in which the file is opened. `"w"` for write and `"a"` for append. Defaults to `"w"`.
+     * @param options.signal. An `AbortSignal` object that allows the termination of the operation midway.
      */
     Path.prototype.writeJSON = function (data, options) {
         return __awaiter(this, void 0, void 0, function () {
@@ -2132,15 +2088,13 @@ var Path = /** @class */ (function () {
     /**
      * Synchronously write a JSON-compatible object to a .json file.
      * @param data A JSON-compatible object to write into the file.
-     * @param options.space The number of spaces to indent or the character used to substitute for indents.
-     * Defaults to 0
-     * @param options.EOL The end-of-line character. Defaults to "\n".
+     * @param options.space The number of spaces to indent or the character used to substitute for indents. Defaults to `0`
+     * @param options.EOL The end-of-line character. Defaults to `"\n"`.
      * @param options.replacer. The JSON replacer array or function.
-     * @param options.encoding. The encoding to use in the write operation. Defaults to "utf8".
-     * @param options.mode. The permissions of the created file. Defaults to 0o666.
-     * @param options.flag. The string denoting the mode in which the file is opened.
-     * "w" for write and "a" for append. Defaults to "w".
-     * @param options.signal. An AbortSignal object that allows the termination of the operation midway.
+     * @param options.encoding. The encoding to use in the write operation. Defaults to `"utf8"`.
+     * @param options.mode. The permissions of the created file. Defaults to `0o666`.
+     * @param options.flag. The string denoting the mode in which the file is opened. `"w"` for write and `"a"` for append. Defaults to `"w"`.
+     * @param options.signal. An `AbortSignal` object that allows the termination of the operation midway.
      */
     Path.prototype.writeJSONSync = function (data, options) {
         if (this.suffixes.slice(-1)[0] !== "json") {
@@ -2150,7 +2104,7 @@ var Path = /** @class */ (function () {
     };
     /**
      * Wrapper around implementing a Chokidar watcher on the underlying filepath.
-     * @param options Chokidar options controlling the behavior of the filepath watcher.
+     * @param options [Chokidar options](https://github.com/paulmillr/chokidar) controlling the behavior of the filepath watcher.
      */
     Path.prototype.watch = function (options) {
         return chokidar_1.default.watch(this.path, options);

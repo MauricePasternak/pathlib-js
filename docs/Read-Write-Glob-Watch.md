@@ -262,8 +262,8 @@ Example
 - Parameters:
 
   - `patterns` -- `string | string[]` -- Glob patterns to match against in locating filepaths that are automatically appended to the underlying filepath.
-  - `options` -- `fast-glob.Options` -- The globbing options. For properties and their explanations, [please refer to the documentation in the `fast-glob` repository.](https://github.com/mrmlnc/fast-glob/blob/master/README.md) 
-  ⚠️ **NB**: By default, the underlying globbing options has `onlyFiles` set to `true`.
+  - `options` -- `fast-glob.Options` -- The globbing options. For properties and their explanations, [please refer to the documentation in the `fast-glob` repository.](https://github.com/mrmlnc/fast-glob/blob/master/README.md)
+    ⚠️ **NB**: By default, the underlying globbing options has `onlyFiles` set to `true`.
 
 - Returns:
   - `Promise<Path[]>` - An array of retrieved `Path` instances which matched the glob pattern(s).
@@ -279,7 +279,7 @@ ES5CompatibilityWrapper();
 > [
   Path {
     path: 'C:/Users/JohnDoe/Example/Folder_B/File_B1.json',
-    root: 'C:/',
+    root: 'C:',
     basename: 'File_B1.json',
     dirname: 'C:/Users/JohnDoe/Example/Folder_B',
     stem: 'File_B1',
@@ -288,7 +288,7 @@ ES5CompatibilityWrapper();
   },
   Path {
     path: 'C:/Users/JohnDoe/Example/Folder_B/File_B2.json',
-    root: 'C:/',
+    root: 'C:',
     basename: 'File_B2.json',
     dirname: 'C:/Users/JohnDoe/Example/Folder_B',
     stem: 'File_B2',
@@ -323,7 +323,7 @@ ES5CompatibilityWrapper();
 
 > Path {
   path: 'C:/Users/JohnDoe/Example/Folder_A',
-  root: 'C:/',
+  root: 'C:',
   basename: 'Folder_A',
   dirname: 'C:/Users/JohnDoe/Example',
   stem: 'Folder_A',
@@ -332,7 +332,7 @@ ES5CompatibilityWrapper();
 }
 > Path {
   path: 'C:/Users/JohnDoe/Example/Folder_B',
-  root: 'C:/',
+  root: 'C:',
   basename: 'Folder_B',
   dirname: 'C:/Users/JohnDoe/Example',
   stem: 'Folder_B',
@@ -340,7 +340,6 @@ ES5CompatibilityWrapper();
   suffixes: []
 }
 ```
-
 
 ### globSync(patterns [, options]) <a id = "globSync"></a>
 
@@ -363,7 +362,7 @@ console.log(fp.globSync("**/*.json", { extglob: true }));
 > [
   Path {
     path: 'C:/Users/JohnDoe/Example/Folder_B/File_B1.json',
-    root: 'C:/',
+    root: 'C:',
     basename: 'File_B1.json',
     dirname: 'C:/Users/JohnDoe/Example/Folder_B',
     stem: 'File_B1',
@@ -372,7 +371,7 @@ console.log(fp.globSync("**/*.json", { extglob: true }));
   },
   Path {
     path: 'C:/Users/JohnDoe/Example/Folder_B/File_B2.json',
-    root: 'C:/',
+    root: 'C:',
     basename: 'File_B2.json',
     dirname: 'C:/Users/JohnDoe/Example/Folder_B',
     stem: 'File_B2',

@@ -9,6 +9,7 @@
 - <a href = "#withBasename">withBasename()</a>
 - <a href = "#withStem">withStem()</a>
 - <a href = "#withSuffix">withSuffix()</a>
+- <a href = "#withExtension">withExtension()</a>
 - <a href = "#toString">toString()</a>
 - <a href = "#toJSON">toJSON()</a>
 
@@ -24,7 +25,7 @@ Retrieves the underlying filepath's components.
 ```
 import Path from "pathlib-js"
 const fp = new Path("C:\\Users\\JohnDoe\\Example.tar.gz");
-fp.parts()
+console.log(fp.parts())
 
 > [ 'C:', 'Users', 'JohnDoe', 'Example.tar.gz' ]
 ```
@@ -36,15 +37,15 @@ Depicts the relative path from the Path instance to another filepath.
 - Parameters:
 
   - `to` -- `string | Path` -- The filepath that the current underlying one should be compared against.
-  - `useSystemPathDelimiter` -- `boolean` -- Whether to have the output string respect system-specific filepath component delimiters (i.e. on Windows "\" separate file components instead of "/".). Defaults to `false`.
+  - `useSystemPathDelimiter` -- `boolean` -- Whether to have the output string respect system-specific filepath component delimiters (i.e. on Windows "\\" separates file components instead of "/".). Defaults to `false`.
 
 - Returns:
-  - `string` - Returns a string
+  - `string` - Returns a string representing the relative path.
 
 ```
 import Path from "pathlib-js"
 const fp = new Path("C:\\Users\\JohnDoe\\Example.tar.gz");
-fp.relative("C:\\Users\\JohnDoe\\AnotherExample.json")
+console.log(fp.relative("C:\\Users\\JohnDoe\\AnotherExample.json"));
 
 > "..\AnotherExample.json"
 ```
@@ -63,7 +64,7 @@ Resolves a sequence of path segments into a new absolute Path. Respects `..` and
 ```
 import Path from "pathlib-js"
 const fp = new Path("C:\\Users\\JohnDoe\\Example.tar.gz");
-fp.resolve("..\\AnotherExample.json").path
+console.log(fp.resolve("..\\AnotherExample.json").path);
 
 //Can use toString(true) to return the OS-specific string instead of the normalized path
 > "C:/Users/JohnDoe/AnotherExample.json"
@@ -85,7 +86,7 @@ Appends strings to the end of the underlying filepath, creating a new Path insta
 ```
 import Path from "pathlib-js"
 const fp = new Path("C:\\Users\\JohnDoe\\Example.tar.gz");
-fp.join("..\\AnotherExample.json").path
+console.log(fp.join("..\\AnotherExample.json").path);
 
 > "C:/Users/JohnDoe/../AnotherExample.json"
 ```
@@ -104,7 +105,7 @@ Creates a new Path instance with a replaced basename.
 ```
 import Path from "pathlib-js"
 const fp = new Path("C:\\Users\\JohnDoe\\Example.tar.gz");
-fp.withBasename("IHeartOOP.json").path
+console.log(fp.withBasename("IHeartOOP.json").path);
 
 > "C:/Users/JohnDoe/IHeartOOP.json"
 ```
@@ -123,14 +124,14 @@ Creates a new Path instance with a replaced stem.
 ```
 import Path from "pathlib-js"
 const fp = new Path("C:\\Users\\JohnDoe\\Example.tar.gz");
-fp.withStem("ANewStem").path
+console.log(fp.withStem("ANewStem").path);
 
 > "C:/Users/JohnDoe/ANewStem.tar.gz"
 ```
 
 ### withSuffix(suffix) <a id = "withSuffix"></a>
 
-Creates a new Path instance with a replaced extension/suffix.
+Creates a new Path instance with a replaced series of suffix extensions.
 
 - Parameters:
 
@@ -142,13 +143,32 @@ Creates a new Path instance with a replaced extension/suffix.
 ```
 import Path from "pathlib-js"
 const fp = new Path("C:\\Users\\JohnDoe\\Example.tar.gz");
-fp.withSuffix("json").path
+console.log(fp.withSuffix("json").path);
 
 > "C:/Users/JohnDoe/Example.json"
 
-fp.withSuffix(["foo", "bar"]);
+console.log(fp.withSuffix(["foo", "bar"]));
 
 > "C:/Users/JohnDoe/Example.foo.bar"
+```
+
+### withExtension(ext) <a id = "withExtension"></a>
+
+Creates a new Path instance with a replaced last extension. Unlike `withSuffix()`, this can only add/replace the terminal extension. Use the aforementioned method instead if multiple suffixes are present and an intermediate one needs to be replaced.
+
+- Parameters:
+
+  - `ext` -- `string` -- A string that will replace the existing final extension.
+
+- Returns:
+  - `Path` - A `Path` instance with the new final extension.
+
+```
+import Path from "pathlib-js"
+const fp = new Path("C:\\Users\\JohnDoe\\Example.tar.gz");
+fp.withExtension("zip").path
+
+> "C:/Users/JohnDoe/Example.tar.zip"
 ```
 
 ### toString([useSystemPathDelimiter]) <a id = "toString"></a>
@@ -157,7 +177,7 @@ Returns a string representation of the underlying filepath.
 
 - Parameters:
 
-  - `useSystemPathDelimiter` -- `boolean` -- Whether to have the output string respect system-specific filepath component delimiters (i.e. on Windows "\" separate file components instead of "/".). Defaults to `false`.
+  - `useSystemPathDelimiter` -- `boolean` -- Whether to have the output string respect system-specific filepath component delimiters (i.e. on Windows "\\" separates file components instead of "/".). Defaults to `false`.
 
 - Returns:
 
@@ -181,7 +201,7 @@ Returns a JSON-compatible object representing the Path instance and its properti
 
 - Parameters:
 
-  - `useSystemPathDelimiter` -- `boolean` -- Whether to have the output string respect system-specific filepath component delimiters (i.e. on Windows "\" separate file components instead of "/".). Defaults to `false`.
+  - `useSystemPathDelimiter` -- `boolean` -- Whether to have the output string respect system-specific filepath component delimiters (i.e. on Windows "\\" separates file components instead of "/".). Defaults to `false`.
 
 - Returns:
 
@@ -194,7 +214,7 @@ fp.toJSON(true)
 
 > {
   path: 'C:\\Users\\JohnDoe\\Example.tar.gz',
-  root: 'C:\\',
+  root: 'C:',
   basename: 'Example.tar.gz',
   stem: 'Example.tar',
   ext: '.gz',

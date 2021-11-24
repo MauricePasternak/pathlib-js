@@ -41,7 +41,7 @@ ES5CompatibilityWrapper();
 > [
   Path {
     path: 'C:/Users/JohnDoe/Example/Folder_A',
-    root: 'C:/',
+    root: 'C:',
     basename: 'Folder_A',
     dirname: 'C:/Users/JohnDoe/Example',
     stem: 'Folder_A',
@@ -50,7 +50,7 @@ ES5CompatibilityWrapper();
   },
   Path {
     path: 'C:/Users/JohnDoe/Example/Folder_B',
-    root: 'C:/',
+    root: 'C:',
     basename: 'Folder_B',
     dirname: 'C:/Users/JohnDoe/Example',
     stem: 'Folder_B',
@@ -76,7 +76,7 @@ console.log(await fp1.readDir());
 > [
   Path {
     path: 'C:/Users/JohnDoe/Example/Folder_A',
-    root: 'C:/',
+    root: 'C:',
     basename: 'Folder_A',
     dirname: 'C:/Users/JohnDoe/Example',
     stem: 'Folder_A',
@@ -85,7 +85,7 @@ console.log(await fp1.readDir());
   },
   Path {
     path: 'C:/Users/JohnDoe/Example/Folder_B',
-    root: 'C:/',
+    root: 'C:',
     basename: 'Folder_B',
     dirname: 'C:/Users/JohnDoe/Example',
     stem: 'Folder_B',
@@ -115,7 +115,7 @@ ES5CompatibilityWrapper();
 
 > Path {
   path: 'C:/Users/JohnDoe/Example/Folder_A',
-  root: 'C:/',
+  root: 'C:',
   basename: 'Folder_A',
   dirname: 'C:/Users/JohnDoe/Example',
   stem: 'Folder_A',
@@ -125,7 +125,7 @@ ES5CompatibilityWrapper();
 
 > Path {
   path: 'C:/Users/JohnDoe/Example/Folder_B',
-  root: 'C:/',
+  root: 'C:',
   basename: 'Folder_B',
   dirname: 'C:/Users/JohnDoe/Example',
   stem: 'Folder_B',
@@ -149,7 +149,7 @@ for (const child of fp1.readDirIterSync()) {
 
 > Path {
   path: 'C:/Users/JohnDoe/Example/Folder_A',
-  root: 'C:/',
+  root: 'C:',
   basename: 'Folder_A',
   dirname: 'C:/Users/JohnDoe/Example',
   stem: 'Folder_A',
@@ -159,7 +159,7 @@ for (const child of fp1.readDirIterSync()) {
 
 > Path {
   path: 'C:/Users/JohnDoe/Example/Folder_B',
-  root: 'C:/',
+  root: 'C:',
   basename: 'Folder_B',
   dirname: 'C:/Users/JohnDoe/Example',
   stem: 'Folder_B',
@@ -200,7 +200,7 @@ ES5CompatibilityWrapper()
 
 > Path {
   path: 'C:/Users/JohnDoe/Example/Folder_A',
-  root: 'C:/',
+  root: 'C:',
   basename: 'Folder_A',
   dirname: 'C:/Users/JohnDoe/Example',
   stem: 'Folder_A',
@@ -210,7 +210,7 @@ ES5CompatibilityWrapper()
 
 > Path {
   path: 'C:/Users/JohnDoe/Example/Folder_B',
-  root: 'C:/',
+  root: 'C:',
   basename: 'Folder_B',
   dirname: 'C:/Users/JohnDoe/Example',
   stem: 'Folder_B',
