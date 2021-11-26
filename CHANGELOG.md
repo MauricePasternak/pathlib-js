@@ -3,7 +3,9 @@
 All notable changes to this project will be documented in this file.
 **NB:** Dates have format YYYY-MM-DD.
 
-## [1.3.1] - 2021-11-24
+---
+
+## [1.3.1] - 2021-11-26
 
 ### Added
 
@@ -15,17 +17,22 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- Number of code lines decreased in certain is____ functions using a single private method for a common action between these methods.
+- A few functions had the first parameter as mandatory, when it is meant to be optional. It is now appropriately optional. Fixed functions include:
+  - `tree()`
+  - `treeSync()`
+  - `getPathsNLevelsAway()`
+- Number of code lines decreased in certain `is____` functions using a single private method for a common action between these methods.
 - `getPathsNLevelsAway()` had an unnessary mandatory 2nd parameter, `asIterator`. It has been fixed to be optional and set to a default value of `false`.
 - Several docstrings were updated and formatted to display types more distinctly.
 - Corrected certain spelling and gramatical mistakes in the documentation.
 - Documentation corrected to reflect's this library's approach to representing "root" on Windows (i.e. letter and colon only without slashes)
 
-
+---
 
 ## [1.3.0] - 2021-11-22
 
 ### Added
+
 Nothing new in this release.
 
 ### Changed

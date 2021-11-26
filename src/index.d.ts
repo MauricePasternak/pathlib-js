@@ -351,7 +351,7 @@ declare class Path {
      * @returns Either an Array of Path instances if asIterator was false, otherwise returns an AsyncIterator of
      * Path instances.
      */
-    getPathsNLevelsAway(depth: number, asIterator: true, options?: GlobOptions): Promise<AsyncGenerator<Path, void, unknown>>;
+    getPathsNLevelsAway(depth: number, asIterator?: true, options?: GlobOptions): Promise<AsyncGenerator<Path, void, unknown>>;
     getPathsNLevelsAway(depth: number, asIterator?: false, options?: GlobOptions): Promise<Path[]>;
     /**
      * Asynchronously traverses the tree structure of the directory system, starting from the current instance as the root and allows for callbacks to occur for each encountered filepath.
@@ -362,7 +362,7 @@ declare class Path {
      * Synchronously traverses the tree structure of the directory system, starting from the current instance as the root and allows for callbacks to occur for each encountered filepath.
      * @param callback A callback function for each encountered Path. Its first argument must accept a Path instance.
      */
-    walkSync(callback?: (p: Path, ...args: unknown[]) => void): void;
+    walkSync(callback?: (fp: Path, ...args: unknown[]) => void): void;
     /**
      * Asynchronously traverses the tree structure of the directory system, starting from the current instances as the root
      * and returns a nested Object representation of the tree structure. Each branching of the tree is comprised of an object
@@ -371,8 +371,8 @@ declare class Path {
      * @param asString Whether to convert the "filepath" property automatically to a string representation of the path instead.
      * @returns A representation of the filepath tree structure.
      */
-    tree(asString: true, useSystemPathDelimiter?: boolean): Promise<treeBranch<string>>;
-    tree(asString: false, useSystemPathDelimiter?: boolean): Promise<treeBranch<Path>>;
+    tree(asString?: true, useSystemPathDelimiter?: boolean): Promise<treeBranch<string>>;
+    tree(asString?: false, useSystemPathDelimiter?: boolean): Promise<treeBranch<Path>>;
     /**
      * Synchronously traverses the tree structure of the directory system, starting from the current instances as the root
      * and returns a nested Object representation of the tree structure. Each branching of the tree is comprised of an object

@@ -1057,10 +1057,10 @@ var Path = /** @class */ (function () {
             var e_9, _a;
             try {
                 for (var _b = __values(filepath.readDirIterSync()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                    var p = _c.value;
-                    callback && callback(p);
-                    if (p.isDirectorySync()) {
-                        walkStep(p, callback);
+                    var fp = _c.value;
+                    callback && callback(fp);
+                    if (fp.isDirectorySync()) {
+                        walkStep(fp, callback);
                     }
                 }
             }
@@ -1303,14 +1303,12 @@ var Path = /** @class */ (function () {
         fse.ensureFileSync(this.path);
     };
     Path.prototype._interpPossibleRelativePath = function (target, interpRelativeSource) {
-        var result;
         if (typeof target === "string") {
-            result = interpRelativeSource === "path" && !path_1.default.isAbsolute(target) ? this.resolve(target) : new Path(target);
+            return interpRelativeSource === "path" && !path_1.default.isAbsolute(target) ? this.resolve(target) : new Path(target);
         }
         else {
-            result = target;
+            return target;
         }
-        return result;
     };
     Path.prototype._inferWindowsSymlinkType = function (target) {
         if (target.isDirectorySync()) {
