@@ -1,4 +1,6 @@
 /// <reference types="node" />
+/// <reference types="node" />
+/// <reference types="node" />
 import { Options as GlobOptions } from "fast-glob";
 import * as fse from "fs-extra";
 import chokidar from "chokidar";
