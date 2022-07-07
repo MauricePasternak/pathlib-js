@@ -183,9 +183,9 @@ export default class Path {
       throw new Error("Cannot instantiate a new Path instance on an empty string, empty array, or falsy value");
     }
 
-    this.path = normalize(path.resolve(this._expanduser(paths.join("/"))));
+    this.path = this._capitalizeroot(normalize(path.resolve(this._expanduser(paths.join("/")))));
     const { dir, root, base, ext } = path.parse(this.path);
-    this.root = platform() === "win32" ? root.replace("/", "") : root;
+    this.root = root;
     this.basename = base;
     this.dirname = dir;
     [this.stem, ...this.suffixes] = this.basename.split(".");
@@ -195,6 +195,13 @@ export default class Path {
 
   private _expanduser(inputString: string) {
     return inputString.startsWith("~") ? inputString.replace("~", homedir()) + "/" : inputString + "/";
+  }
+
+  private _capitalizeroot(inputString: string) {
+    if (platform() !== "win32") return inputString; // Passthrough for Unix
+    const parts = inputString.split("/");
+    // Must account for edge case where the instance is created with "/" in windows
+    return parts.length === 1 ? parts[0].toUpperCase() + "/" : [parts[0].toUpperCase(), ...parts.slice(1)].join("/");
   }
 
   private _parts(normalizedString: string) {

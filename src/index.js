@@ -201,9 +201,9 @@ var Path = /** @class */ (function () {
         if (!paths || !paths.length || paths[0] === "") {
             throw new Error("Cannot instantiate a new Path instance on an empty string, empty array, or falsy value");
         }
-        this.path = (0, normalize_path_1.default)(path_1.default.resolve(this._expanduser(paths.join("/"))));
+        this.path = this._capitalizeroot((0, normalize_path_1.default)(path_1.default.resolve(this._expanduser(paths.join("/")))));
         var _b = path_1.default.parse(this.path), dir = _b.dir, root = _b.root, base = _b.base, ext = _b.ext;
-        this.root = (0, os_1.platform)() === "win32" ? root.replace("/", "") : root;
+        this.root = root;
         this.basename = base;
         this.dirname = dir;
         _a = __read(this.basename.split(".")), this.stem = _a[0], this.suffixes = _a.slice(1);
@@ -280,6 +280,13 @@ var Path = /** @class */ (function () {
     };
     Path.prototype._expanduser = function (inputString) {
         return inputString.startsWith("~") ? inputString.replace("~", (0, os_1.homedir)()) + "/" : inputString + "/";
+    };
+    Path.prototype._capitalizeroot = function (inputString) {
+        if ((0, os_1.platform)() !== "win32")
+            return inputString; // Passthrough for Unix
+        var parts = inputString.split("/");
+        // Must account for edge case where the instance is created with "/" in windows
+        return parts.length === 1 ? parts[0].toUpperCase() + "/" : __spreadArray([parts[0].toUpperCase()], __read(parts.slice(1)), false).join("/");
     };
     Path.prototype._parts = function (normalizedString) {
         return (0, os_1.platform)() === "win32" ? normalizedString.split("/") : __spreadArray(["/"], __read(normalizedString.split("/").slice(1)), false);
@@ -2159,3 +2166,4 @@ var Path = /** @class */ (function () {
     return Path;
 }());
 exports.default = Path;
+//# sourceMappingURL=index.js.map
