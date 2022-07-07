@@ -4,3 +4,5 @@ tests/index.test.d.ts
 yarn.lock
 yarn-error.log
 .vscode
+*.js
+*.js.map
