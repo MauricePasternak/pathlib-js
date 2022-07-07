@@ -1,5 +1,4 @@
 LocalTesting/
-media/
 node_modules/
 tests/index.test.d.ts
 yarn.lock
