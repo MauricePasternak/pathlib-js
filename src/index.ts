@@ -151,7 +151,7 @@ export default class Path {
   static getPATHAsPaths() {
     const paths = [] as Path[];
     if (!process?.env?.PATH) return paths;
-    for (const p of process?.env?.PATH?.split(path.delimiter)) {
+    for (const p of process.env.PATH.split(path.delimiter)) {
       if (p === "") continue;
       paths.push(new Path(p));
     }
@@ -1410,7 +1410,7 @@ export default class Path {
     if (typeof arg1 === "string") {
       return fse.readFile(this.path, arg1);
     }
-    if (typeof arg1 === "object" && arg1.hasOwnProperty("encoding")) {
+    if (typeof arg1 === "object" && "encoding" in arg1) {
       return fse.readFile(this.path, arg1);
     }
   }
@@ -1434,7 +1434,7 @@ export default class Path {
     if (typeof arg1 === "string") {
       return fse.readFileSync(this.path, arg1);
     }
-    if (typeof arg1 === "object" && arg1.hasOwnProperty("encoding")) {
+    if (typeof arg1 === "object" && "encoding" in arg1) {
       return fse.readFileSync(this.path, arg1);
     }
   }
