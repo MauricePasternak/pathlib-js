@@ -3,4 +3,6 @@ node_modules/
 tests/index.test.d.ts
 yarn.lock
 yarn-error.log
-.vscode
+.vscode/
+*.js
+*.js.map
