@@ -96,5 +96,12 @@
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
+  },
+  "typedocOptions": {
+    "entryPoints": ["src/index.ts"],
+    "out": "docs",
+    "exclude": ["node_modules", "tests", "LocalTesting"],
+    "excludeExternals": true,
+    "excludePrivate": true
   }
 }

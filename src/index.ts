@@ -1,3 +1,7 @@
+/**
+ * The pathlib-js library is a simple wrapper library offering the functionality of several optimized
+ * filepath libraries, such as chokidar, and fs-extra within a single Path class.
+ */
 import normalize from "normalize-path";
 import fg, { Options as GlobOptions } from "fast-glob";
 import * as fse from "fs-extra";
@@ -56,7 +60,48 @@ export interface treeBranch<T extends Path | string> {
   children: treeBranch<T>[] | null;
 }
 
-class Path {
+/**
+ * A wrapper class representing a filepath on which operations can be performed.
+ *
+ * @example
+ * Here are a few examples of how the Path class instantiates:
+ * ```js
+ * // Assume that the current working directory is "/home/jsmith/Documents/Work" on Unix and "C:\\Users\\JSmith\\Documents\\Work" for a windows user.
+ * const fp1 = new Path("~")
+ * const fp2 = new Path(".")
+ * const fp3 = new Path("..")
+ * const fp4_unix = new Path("/users/hsimpson/Documents")
+ * const fp4_win = new Path("C:\\Users\\HSimpson\\Documents")
+ * const fp5 = new Path("./foo")
+ * const fp6 = new Path("../bar")
+ * const fp7 = new Path("/")
+ * console.log([fp1.path, fp2.path, fp3.path, fp4_unix.path, fp4_win.path,
+ *              fp5.path, fp6.path, fp7.path
+ *              ].join("\n"));
+ *
+ * // For a Unix user:
+ * >>>
+ * /home/jsmith
+ * /home/jsmith/Documents/Work
+ * /home/jsmith/Documents
+ * /users/hsimpson/Documents
+ * // Windows example has been omitted
+ * /home/jsmith/Documents/Work/foo
+ * /home/jsmith/Documents/bar
+ * /
+ *
+ * // For a Windows user:
+ * >>>
+ * C:\Users\JSmith
+ * C:\Users\JSmith\Documents\Work
+ * C:\Users\JSmith\Documents
+ * // Unix example has been omitted
+ * C:\Users\HSimpson\Documents
+ * C:\Users\JSmith\Documents\Work\foo
+ * C:\Users\JSmith\Documents\bar
+ * ```
+ */
+export default class Path {
   root: string;
   path: string;
   dirname: string;
@@ -65,6 +110,7 @@ class Path {
   ext: string;
   suffixes: string[];
   descriptor: null | number;
+
   /**
    * Get a Path representation of the current working directory.
    */
@@ -1480,5 +1526,3 @@ class Path {
     return chokidar.watch(this.path, options);
   }
 }
-
-export default Path;
