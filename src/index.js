@@ -12,7 +12,11 @@ var __assign = (this && this.__assign) || function () {
 };
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -124,6 +128,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * The pathlib-js library is a simple wrapper library offering the functionality of several optimized
+ * filepath libraries, such as chokidar, and fs-extra within a single Path class.
+ */
 var normalize_path_1 = __importDefault(require("normalize-path"));
 var fast_glob_1 = __importDefault(require("fast-glob"));
 var fse = __importStar(require("fs-extra"));
@@ -131,6 +139,47 @@ var path_1 = __importDefault(require("path"));
 var chokidar_1 = __importDefault(require("chokidar"));
 var utils_1 = require("./utils");
 var os_1 = require("os");
+/**
+ * A wrapper class representing a filepath on which operations can be performed.
+ *
+ * @example
+ * Here are a few examples of how the Path class instantiates:
+ * ```js
+ * // Assume that the current working directory is "/home/jsmith/Documents/Work" on Unix and "C:\\Users\\JSmith\\Documents\\Work" for a windows user.
+ * const fp1 = new Path("~")
+ * const fp2 = new Path(".")
+ * const fp3 = new Path("..")
+ * const fp4_unix = new Path("/users/hsimpson/Documents")
+ * const fp4_win = new Path("C:\\Users\\HSimpson\\Documents")
+ * const fp5 = new Path("./foo")
+ * const fp6 = new Path("../bar")
+ * const fp7 = new Path("/")
+ * console.log([fp1.path, fp2.path, fp3.path, fp4_unix.path, fp4_win.path,
+ *              fp5.path, fp6.path, fp7.path
+ *              ].join("\n"));
+ *
+ * // For a Unix user:
+ * >>>
+ * /home/jsmith
+ * /home/jsmith/Documents/Work
+ * /home/jsmith/Documents
+ * /users/hsimpson/Documents
+ * // Windows example has been omitted
+ * /home/jsmith/Documents/Work/foo
+ * /home/jsmith/Documents/bar
+ * /
+ *
+ * // For a Windows user:
+ * >>>
+ * C:\Users\JSmith
+ * C:\Users\JSmith\Documents\Work
+ * C:\Users\JSmith\Documents
+ * // Unix example has been omitted
+ * C:\Users\HSimpson\Documents
+ * C:\Users\JSmith\Documents\Work\foo
+ * C:\Users\JSmith\Documents\bar
+ * ```
+ */
 var Path = /** @class */ (function () {
     /**
      * @param paths A collection of strings which will be **resolved and normalized** into a filepath.
