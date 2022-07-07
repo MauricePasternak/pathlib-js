@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width=50% src="https://i.imgur.com/h3FRe7k.png" alt="Project logo"></a>
+ <img width=50% src="./media/logo.png" alt="Project logo"></a>
 </p>
 
 ---
@@ -64,11 +64,11 @@ For example, if a particular Path instance was located in a variable `example` a
 
 <p align="center">
   <a href="" rel="noopener">
- <img width=80% src="https://i.imgur.com/3dGrFsV.png" alt="File Components of a Windows system"></a>
+ <img width=80% src="./media/WindowsPathComponents.png" alt="File Components of a Windows system"></a>
 </p>
 <p align="center">
   <a href="" rel="noopener">
- <img width=80% src="https://i.imgur.com/4gu8u25.png" alt="File Components of a Unix system"></a>
+ <img width=80% src="./media/UnixPathComponents.png" alt="File Components of a Unix system"></a>
 </p>
 
 ### Defining a path

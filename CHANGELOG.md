@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.3.2] - 2022-07-07
+
+### Added
+
+### Changed
+
+- `getPathsNLevelsAway` had undesireable behavior with the default not globbing folder filepaths. This has been changed such that, at default, directories will also be included in the output.
+
+### Fixed
+
+- On Windows systems, the `root` property was incorrect. Oftentimes lowercase and inconsistently with or without a trailing slash. This has been fixed to be similar to Python's pathlib output. For example: "C:/"
+
+---
+
 ## [1.3.1] - 2021-11-26
 
 ### Added

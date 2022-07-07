@@ -384,19 +384,13 @@ export default class Path {
      */
     readDirIterSync(): Generator<Path, void, unknown>;
     /**
-<<<<<<< HEAD
      * Retrieves filepaths located exactly N levels away from the underlying filepath.
      * Utilizes globbing under the hood, thereby requiring glob options.
      * @param depth The depth to retrieve filepaths from. Interpretation is as follows:
-=======
-     * Asynchronously retrieves filepaths located N levels away from the underlying filepath. Utilizes globbing under the hood, thereby requiring glob options.
-     * @param depth The depth to retrieve filepaths from.
->>>>>>> fix-#011_v1.3.0Optimizations
      * - If greater than or equal to 1, will retrieve child/grandchild/etc. paths.
      * - If equal to 0, will retrieve the current filepath and its siblings.
      * - If less than 0, will retrieve parent/grandparent/etc paths.
      * @param asIterator Whether the result should be an AsyncIterator of Path instances instead of an array of them.
-<<<<<<< HEAD
      * Defaults to false.
      * @param options Options governing the underlying globbing behavior that is used to retrieve the filepaths.
      * Is based off [fast-glob's options](https://www.npmjs.com/package/fast-glob).
@@ -407,12 +401,6 @@ export default class Path {
      * @returns Depends on the `asIterator` parameter:
      * - if true, returns an AsyncIterator of Path instances
      * - if false, returns an Array of Path instances
-=======
-     * Defaults to `false`.
-     * @param options [fast-glob options](https://www.npmjs.com/package/fast-glob#api) governing the underlying glob behavior.
-     * @returns Either an Array of Path instances if asIterator was false, otherwise returns an AsyncIterator of
-     * Path instances.
->>>>>>> fix-#011_v1.3.0Optimizations
      */
     getPathsNLevelsAway(depth: number, asIterator?: true, options?: GlobOptions): Promise<AsyncGenerator<Path, void, unknown>>;
     getPathsNLevelsAway(depth: number, asIterator?: false, options?: GlobOptions): Promise<Path[]>;

@@ -103,6 +103,9 @@
     "out": "docs",
     "exclude": ["node_modules", "tests", "LocalTesting"],
     "excludeExternals": true,
-    "excludePrivate": true
+    "excludePrivate": true,
+    "cleanOutputDir": false,
+    "readme": "README.md",
+    "media": "media"
   }
 }

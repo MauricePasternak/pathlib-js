@@ -44,7 +44,7 @@ describe("Path parts", () => {
   it("Should correctly split a path into its components under typical conditions", () => {
     const parts = fp.parts();
     assert(parts.length);
-    assert(parts[0] === fp.root);
+    assert(platform() === "win32" ? parts[0] + "/" === fp.root : parts[0] === fp.root);
     assert(parts.slice(parts.length - 1)[0] === fp.basename);
   });
   if (platform() !== "win32") {

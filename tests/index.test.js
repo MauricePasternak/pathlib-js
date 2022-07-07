@@ -99,7 +99,7 @@ describe("Path parts", function () {
     it("Should correctly split a path into its components under typical conditions", function () {
         var parts = fp.parts();
         (0, assert_1.default)(parts.length);
-        (0, assert_1.default)(parts[0] === fp.root);
+        (0, assert_1.default)((0, os_1.platform)() === "win32" ? parts[0] + "/" === fp.root : parts[0] === fp.root);
         (0, assert_1.default)(parts.slice(parts.length - 1)[0] === fp.basename);
     });
     if ((0, os_1.platform)() !== "win32") {
