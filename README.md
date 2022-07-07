@@ -17,14 +17,19 @@
 
 </div>
 
-## 📝 Table of Contents
+# 📝 Table of Contents
 
+- <a href = "#documentationlink">Documentation</a>
 - <a href = "#whypathlib">Why pathlib-js</a>
 - <a href = "#usage">Usage & API Links</a>
 - <a href = "#wrappers">The Wonderful Libraries that this wraps around</a>
 - <a href = "#testing">Testing</a>
 - <a href = "#authors">Authors</a>
 - <a href = "#acknowledgements">Acknowledgments</a>
+
+# Documentation <a id = "documentationlink"></a>
+
+Documentation for the Path class is now available at: [the github pages section of this repository](https://mauricepasternak.github.io/pathlib-js/)
 
 ## 🤔 Why pathlib-js? <a id = "whypathlib"></a>
 
@@ -54,8 +59,6 @@ or
 yarn add pathlib-js
 ```
 
-## 🛠️ Usage & API Links <a id = "usage"></a>
-
 ### Understanding parts of a Path
 
 `Path` instances carry properties that tie in with the typically-used components of a filepath.
@@ -84,21 +87,11 @@ console.log(fp1.path === fp2.path);
 > true
 ```
 
-### More concrete usages & API
-
-- [Manipulating filepath strings](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Filepath_String_Manipulation.md)
-- [Determinine filepath type, stats, existence.](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Filepath_Integrity-Stats-Type.md)
-- [File Structure Traversal - Individual Directories](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Traversing_Directories.md)
-- [File Structure Traversal - Tree Structures](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Traversing_Trees.md)
-- [Copying, moving, deleting, and changing permissions](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Filepath-Parent-Type-Stats-Permissions.md)
-- [Filepath Creation - Directories, Files, and Symlinks](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Generating-Filepaths.md)
-- [Reading, Writing, Globbing, and Watching](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Read-Write-Glob-Watch.md)
-
 ## 🧪 Testing <a id = "testing"></a>
 
 This library is regularly updating its test suite with additional case scenarios.
 
-At the current time, please anticipate the following conditional test failures:
+⚠️ At the current time, please anticipate the following conditional test failures: ⚠️
 
 - On Windows, `makeSymlink()` and `makeSymlinkSync()` methods will fail if the environment they are used in lacks administrator priveleges (i.e. testing in VScode without starting it up with admin priveleges). This caveat has not been seen on Unix-based systems.
 
