@@ -664,26 +664,36 @@ class Path {
   /**
    * Retrieves filepaths located exactly N levels away from the underlying filepath.
    * Utilizes globbing under the hood, thereby requiring glob options.
-   * @param depth The depth to retrieve filepaths from.
-   * If greater than or equal to 1, will retrieve child/grandchild/etc. paths.
-   * If equal to 0, will retrieve the current filepath and its siblings.
-   * If less than 0, will retrieve parent/grandparent/etc paths.
+   * @param depth The depth to retrieve filepaths from. Interpretation is as follows:
+   * - If greater than or equal to 1, will retrieve child/grandchild/etc. paths.
+   * - If equal to 0, will retrieve the current filepath and its siblings.
+   * - If less than 0, will retrieve parent/grandparent/etc paths.
    * @param asIterator Whether the result should be an AsyncIterator of Path instances instead of an array of them.
    * Defaults to false.
-   * @param options Options governing
-   * @returns Either an Array of Path instances if asIterator was false, otherwise returns an AsyncIterator of
-   * Path instances.
+   * @param options Options governing the underlying globbing behavior that is used to retrieve the filepaths.
+   * Is based off [fast-glob's options](https://www.npmjs.com/package/fast-glob).
+   * By default, the following options are set if no options are provided:
+   * - `onlyFiles`: false
+   * - `onlyDirectories`: false
+   * - `dot`: false (filepaths with basenames starting with a dot are ignored)
+   * @returns Depends on the `asIterator` parameter:
+   * - if true, returns an AsyncIterator of Path instances
+   * - if false, returns an Array of Path instances
    */
   async getPathsNLevelsAway(
     depth: number,
-    asIterator: true,
+    asIterator?: true,
     options?: GlobOptions
   ): Promise<AsyncGenerator<Path, void, unknown>>;
-  async getPathsNLevelsAway(depth: number, asIterator: false, options?: GlobOptions): Promise<Path[]>;
-  async getPathsNLevelsAway(depth: number, asIterator = false, options?: GlobOptions) {
+  async getPathsNLevelsAway(depth: number, asIterator?: false, options?: GlobOptions): Promise<Path[]>;
+  async getPathsNLevelsAway(depth: number, asIterator: boolean = false, options?: GlobOptions) {
     // Sanity check; child globbing only makes sense if the underlying filepath is a directory
     if (depth > 1 && !(await this.isDirectory()))
       throw new Error(`Cannot retrieve downstream filepaths for non-directory filepaths`);
+    if (!options) {
+      options = { onlyFiles: false, onlyDirectories: false, dot: false };
+    }
+
     // Child globbing
     if (depth > 0) {
       const globStar = [...Array(depth).keys()].reduce(acc => acc + "*", "");

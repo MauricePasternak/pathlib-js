@@ -1037,6 +1037,9 @@ var Path = /** @class */ (function () {
                         // Sanity check; child globbing only makes sense if the underlying filepath is a directory
                         if (_a)
                             throw new Error("Cannot retrieve downstream filepaths for non-directory filepaths");
+                        if (!options) {
+                            options = { onlyFiles: false, onlyDirectories: false, dot: false };
+                        }
                         if (!(depth > 0)) return [3 /*break*/, 6];
                         globStar = __spreadArray([], __read(Array(depth).keys()), false).reduce(function (acc) { return acc + "*"; }, "");
                         if (!asIterator) return [3 /*break*/, 3];
