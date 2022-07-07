@@ -1018,3 +1018,4 @@ describe("Static methods work as intended", function () {
         (0, assert_1.default)(/\d{3}/gm.test(mode.toString()));
     });
 });
+//# sourceMappingURL=index.test.js.map

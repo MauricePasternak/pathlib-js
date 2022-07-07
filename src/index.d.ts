@@ -152,6 +152,7 @@ export default class Path {
      */
     constructor(...paths: string[]);
     private _expanduser;
+    private _capitalizeroot;
     private _parts;
     /**
      * Splits the underlying filepath into its individual components.
