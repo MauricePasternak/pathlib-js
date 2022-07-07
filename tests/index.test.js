@@ -323,7 +323,7 @@ describe("Walking and Traversing Trees", function () {
                     return [4 /*yield*/, sleep(20)];
                 case 2:
                     _a.sent(); // Hack
-                    return [4 /*yield*/, nestedPath.parent().parent().tree(false)];
+                    return [4 /*yield*/, nestedPath.parent(2).tree(false)];
                 case 3:
                     treeStruct = _a.sent();
                     (0, assert_1.default)(treeStruct.children != null);

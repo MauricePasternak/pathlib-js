@@ -173,7 +173,7 @@ describe("Walking and Traversing Trees", () => {
   it("Should be able to create an appropriate tree structure", async () => {
     await nestedPath.makeFile();
     await sleep(20); // Hack
-    const treeStruct = await nestedPath.parent().parent().tree(false);
+    const treeStruct = await nestedPath.parent(2).tree(false);
     assert(treeStruct.children != null);
     const firstBranch = treeStruct.children[0];
     if (firstBranch.children == null) assert(false);
