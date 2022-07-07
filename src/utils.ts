@@ -6,3 +6,14 @@ export function trimChars(str: string, chars: string[]) {
   while (end > start && chars.indexOf(str[end - 1]) >= 0) --end;
   return start > 0 || end < str.length ? str.substring(start, end) : str;
 }
+
+export function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export function sleepSync(ms: number) {
+  const start = new Date().getTime(),
+    expire = start + ms;
+  while (new Date().getTime() < expire) {}
+  return;
+}

@@ -44,7 +44,7 @@ describe("Path parts", () => {
   it("Should correctly split a path into its components under typical conditions", () => {
     const parts = fp.parts();
     assert(parts.length);
-    assert(parts[0] === fp.root);
+    assert(platform() === "win32" ? parts[0] + "/" === fp.root : parts[0] === fp.root);
     assert(parts.slice(parts.length - 1)[0] === fp.basename);
   });
   if (platform() !== "win32") {
@@ -75,6 +75,9 @@ describe("New Path creation from previous", () => {
   });
   it("Should generate an appropriate Path using withStem", () => {
     assert("TEST" === fpDir.withStem("TEST").basename);
+  });
+  it("Should generate an appropriate Path using withExtension", () => {
+    assert(".bar" === testfile.withExtension("bar").ext);
   });
   it("Should generate an appropriate Path using withSuffix argument as a String, even if user adds '.' to the start of a string and/or elements of an array argument", () => {
     const newFileByArray = testfile.withSuffix(["json", ".gz"]);
@@ -155,12 +158,12 @@ describe("Globbing", () => {
 });
 
 describe("Walking and Traversing Trees", () => {
-  const fp = new Path(__dirname);
-  const nestedPath = new Path(__dirname, "Foo", "Bar", "Baz.qui");
+  const fpRootForTest = new Path(__dirname, "WalkTreesTest");
+  const nestedPath = fpRootForTest.resolve("Foo", "Bar", "Baz.qui");
   it("Should be able to traverse a nested directory structure in the expected order", async () => {
     const orderOfNames = ["FolderA", "File_A1.txt", "File_A2.txt", "FolderB", "File_B1.json", "File_B2.json"];
     let indexer = -1;
-    await fp.walk(p => {
+    await fpRootForTest.walk(p => {
       if (orderOfNames.includes(p.basename)) {
         indexer++;
         assert(p.basename === orderOfNames[indexer]);
@@ -170,7 +173,7 @@ describe("Walking and Traversing Trees", () => {
   it("Should be able to create an appropriate tree structure", async () => {
     await nestedPath.makeFile();
     await sleep(20); // Hack
-    const treeStruct = await nestedPath.parent().parent().tree(false);
+    const treeStruct = await nestedPath.parent(2).tree(false);
     assert(treeStruct.children != null);
     const firstBranch = treeStruct.children[0];
     if (firstBranch.children == null) assert(false);
@@ -184,6 +187,7 @@ describe("Walking and Traversing Trees", () => {
     assert(typeof treeStruct.filepath === "string" && treeStruct.children != null);
     assert(typeof treeStruct.children[0].filepath === "string");
   });
+  setTimeout(() => fpRootForTest.deleteSync(), 400);
 });
 
 describe("Directory iteration", () => {
@@ -367,13 +371,22 @@ describe("Reading and Writing JSON files", () => {
 });
 
 describe("Reading and Writing other Files", () => {
-  const testFile = new Path(__dirname, "ReadWriteTestOther", "Test.txt");
-  it("Should be able to write content to a file and then read that content from the same file in a separate operation", async () => {
-    await testFile.writeFile("Hello World", { encoding: "ascii" });
-    const contents = await testFile.readFile("ascii");
+  const testFile1 = new Path(__dirname, "ReadWriteTestOther", "Test.txt");
+  const testFile2 = testFile1.withBasename("Test2.txt");
+  it("Should be able to write and then read content using writeFile and readFile in sequence", async () => {
+    await testFile1.writeFile("Hello World", { encoding: "ascii" });
+    const contents = await testFile1.readFile("ascii");
     assert(contents === "Hello World");
-    await testFile.parent().remove();
   });
+  it("Should be able to write and then read content using write and read in sequence", async () => {
+    await testFile2.write(Buffer.from("Hello World", "ascii"), 0, "Hello World".length, 0, false, {
+      flags: "r+",
+      ensureExists: true,
+    });
+    const readRes = await testFile2.read(Buffer.from([0x62, 0x75, 0x66, 0x66, 0x65]), 0, 5, 0, true);
+    assert(readRes.buffer.toString() === "Hello");
+  });
+  setTimeout(() => testFile1.parent().deleteSync(), 500);
 });
 
 describe("Moving, Copying, and Deleting filepaths", () => {

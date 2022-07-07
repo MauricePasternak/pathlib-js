@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width=50% src="https://i.imgur.com/h3FRe7k.png" alt="Project logo"></a>
+ <img width=50% src="./media/logo.png" alt="Project logo"></a>
 </p>
 
 ---
@@ -12,20 +12,26 @@
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
 [![GitHub Issues](https://img.shields.io/github/issues/MauricePasternak/pathlib-js.svg)](https://github.com/MauricePasternak/pathlib-js/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/MauricePasternak/pathlib-js.svg)](https://github.com/MauricePasternak/pathlib-js/pulls)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 
 </div>
 
-## 📝 Table of Contents
+# 📝 Table of Contents
 
-- [Why pathlib-js](#about)
-- [Usage & API Links](#usage)
-- [The Wonderful Libraries that this wraps around](#wrappers)
-- [Testing](#testing)
-- [Authors](#authors)
-- [Acknowledgments](#acknowledgement)
+- <a href = "#documentationlink">Documentation</a>
+- <a href = "#whypathlib">Why pathlib-js</a>
+- <a href = "#usage">Usage & API Links</a>
+- <a href = "#wrappers">The Wonderful Libraries that this wraps around</a>
+- <a href = "#testing">Testing</a>
+- <a href = "#authors">Authors</a>
+- <a href = "#acknowledgements">Acknowledgments</a>
 
-## 🤔 Why pathlib-js? <a name = "about"></a>
+# Documentation <a id = "documentationlink"></a>
+
+Documentation for the Path class is now available at: [the github pages section of this repository](https://mauricepasternak.github.io/pathlib-js/)
+
+## 🤔 Why pathlib-js? <a id = "whypathlib"></a>
 
 If you're coming from Python, think of it this way: this library is to NodeJS's `fs` and `path` modules as Python's `pathlib` is to its own `os` module.
 
@@ -53,8 +59,6 @@ or
 yarn add pathlib-js
 ```
 
-## 🛠️ Usage & API Links <a name="usage"></a>
-
 ### Understanding parts of a Path
 
 `Path` instances carry properties that tie in with the typically-used components of a filepath.
@@ -63,11 +67,11 @@ For example, if a particular Path instance was located in a variable `example` a
 
 <p align="center">
   <a href="" rel="noopener">
- <img width=80% src="https://i.imgur.com/3dGrFsV.png" alt="File Components of a Windows system"></a>
+ <img width=80% src="./media/WindowsPathComponents.png" alt="File Components of a Windows system"></a>
 </p>
 <p align="center">
   <a href="" rel="noopener">
- <img width=80% src="https://i.imgur.com/4gu8u25.png" alt="File Components of a Unix system"></a>
+ <img width=80% src="./media/UnixPathComponents.png" alt="File Components of a Unix system"></a>
 </p>
 
 ### Defining a path
@@ -83,25 +87,15 @@ console.log(fp1.path === fp2.path);
 > true
 ```
 
-### More concrete usages & API
-
-- [Manipulating filepath strings](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Filepath_String_Manipulation.md)
-- [Determinine filepath type, stats, existence.](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Filepath_Integrity-Stats-Type.md)
-- [File Structure Traversal - Individual Directories](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Traversing_Directories.md)
-- [File Structure Traversal - Tree Structures](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Traversing_Trees.md)
-- [Copying, moving, deleting, and changing permissions](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Filepath-Parent-Type-Stats-Permissions.md)
-- [Filepath Creation - Directories, Files, and Symlinks](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Generating-Filepaths.md)
-- [Reading, Writing, Globbing, and Watching](https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Read-Write-Glob-Watch.md)
-
-## 🧪 Testing <a name = "testing"></a>
+## 🧪 Testing <a id = "testing"></a>
 
 This library is regularly updating its test suite with additional case scenarios.
 
-At the current time, please anticipate the following conditional test failures:
+⚠️ At the current time, please anticipate the following conditional test failures: ⚠️
 
 - On Windows, `makeSymlink()` and `makeSymlinkSync()` methods will fail if the environment they are used in lacks administrator priveleges (i.e. testing in VScode without starting it up with admin priveleges). This caveat has not been seen on Unix-based systems.
 
-## 🥇 The Wonderful Libraries that this wraps around <a name = "wrappers"></a>
+## 🥇 The Wonderful Libraries that this wraps around <a id = "wrappers"></a>
 
 This wouldn't be possible without these awesome libraries. Give them a star.
 
@@ -110,10 +104,10 @@ This wouldn't be possible without these awesome libraries. Give them a star.
 - [fast-glob](https://github.com/mrmlnc/fast-glob) - Robust and fast globbing potential.
 - [path-normalize](https://nodejs.org/en/) - Workhorse function for robustly normalizing filepaths
 
-## ✍️ Authors <a name = "authors"></a>
+## ✍️ Authors <a id = "authors"></a>
 
 - [@MauricePasternak](https://github.com/MauricePasternak)
 
-## 🎉 Acknowledgements <a name = "acknowledgement"></a>
+## 🎉 Acknowledgements <a id = "acknowledgements"></a>
 
 A thank you to the individuals who actually read README file from start to finish.
