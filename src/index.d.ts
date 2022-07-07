@@ -1,4 +1,6 @@
 /// <reference types="node" />
+/// <reference types="node" />
+/// <reference types="node" />
 import { Options as GlobOptions } from "fast-glob";
 import * as fse from "fs-extra";
 import chokidar from "chokidar";
@@ -321,18 +323,24 @@ declare class Path {
     /**
      * Retrieves filepaths located exactly N levels away from the underlying filepath.
      * Utilizes globbing under the hood, thereby requiring glob options.
-     * @param depth The depth to retrieve filepaths from.
-     * If greater than or equal to 1, will retrieve child/grandchild/etc. paths.
-     * If equal to 0, will retrieve the current filepath and its siblings.
-     * If less than 0, will retrieve parent/grandparent/etc paths.
+     * @param depth The depth to retrieve filepaths from. Interpretation is as follows:
+     * - If greater than or equal to 1, will retrieve child/grandchild/etc. paths.
+     * - If equal to 0, will retrieve the current filepath and its siblings.
+     * - If less than 0, will retrieve parent/grandparent/etc paths.
      * @param asIterator Whether the result should be an AsyncIterator of Path instances instead of an array of them.
      * Defaults to false.
-     * @param options Options governing
-     * @returns Either an Array of Path instances if asIterator was false, otherwise returns an AsyncIterator of
-     * Path instances.
+     * @param options Options governing the underlying globbing behavior that is used to retrieve the filepaths.
+     * Is based off [fast-glob's options](https://www.npmjs.com/package/fast-glob).
+     * By default, the following options are set if no options are provided:
+     * - `onlyFiles`: false
+     * - `onlyDirectories`: false
+     * - `dot`: false (filepaths with basenames starting with a dot are ignored)
+     * @returns Depends on the `asIterator` parameter:
+     * - if true, returns an AsyncIterator of Path instances
+     * - if false, returns an Array of Path instances
      */
-    getPathsNLevelsAway(depth: number, asIterator: true, options?: GlobOptions): Promise<AsyncGenerator<Path, void, unknown>>;
-    getPathsNLevelsAway(depth: number, asIterator: false, options?: GlobOptions): Promise<Path[]>;
+    getPathsNLevelsAway(depth: number, asIterator?: true, options?: GlobOptions): Promise<AsyncGenerator<Path, void, unknown>>;
+    getPathsNLevelsAway(depth: number, asIterator?: false, options?: GlobOptions): Promise<Path[]>;
     /**
      * Asynchronously traverses the tree structure of the directory system, starting from the current instance as the root.
      * and allows for callbacks to occur for each encountered filepath.

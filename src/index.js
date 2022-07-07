@@ -12,7 +12,11 @@ var __assign = (this && this.__assign) || function () {
 };
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -1033,6 +1037,9 @@ var Path = /** @class */ (function () {
                         // Sanity check; child globbing only makes sense if the underlying filepath is a directory
                         if (_a)
                             throw new Error("Cannot retrieve downstream filepaths for non-directory filepaths");
+                        if (!options) {
+                            options = { onlyFiles: false, onlyDirectories: false, dot: false };
+                        }
                         if (!(depth > 0)) return [3 /*break*/, 6];
                         globStar = __spreadArray([], __read(Array(depth).keys()), false).reduce(function (acc) { return acc + "*"; }, "");
                         if (!asIterator) return [3 /*break*/, 3];
