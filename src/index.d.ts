@@ -384,9 +384,9 @@ export default class Path {
      */
     readDirIterSync(): Generator<Path, void, unknown>;
     /**
-     * Asynchronously retrieves filepaths located N levels away from the underlying filepath.
+     * Retrieves filepaths located exactly N levels away from the underlying filepath.
      * Utilizes globbing under the hood, thereby requiring glob options.
-     * @param depth The depth to retrieve filepaths from.
+     * @param depth The depth to retrieve filepaths from. Interpretation is as follows:
      * - If greater than or equal to 1, will retrieve child/grandchild/etc. paths.
      * - If equal to 0, will retrieve the current filepath and its siblings.
      * - If less than 0, will retrieve parent/grandparent/etc paths.
