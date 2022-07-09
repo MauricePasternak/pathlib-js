@@ -1,6 +1,6 @@
 {
   "name": "pathlib-js",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "engines": {
     "node": ">=12"
   },
@@ -53,7 +53,9 @@
     "test": "ts-mocha ./tests/index.test.ts",
     "build": "tsc && yarn typedoc",
     "build:nocomments": "tsc -p ./tsconfig.nocomments.json",
-    "prod": "yarn build && yarn build:nocomments"
+    "prepprod": "yarn build && yarn build:nocomments",
+    "proddry": "yarn prepprod && npm publish --dry-run",
+    "prod": "yarn prepprod && npm publish"
   },
   "files": [
     "/src/index.d.ts",
