@@ -1,13 +1,16 @@
 /**
- * The pathlib-js library is a simple wrapper library offering the functionality of several optimized
- * filepath libraries, such as chokidar, and fs-extra within a single Path class.
+ * A library for filepath operations from an object-oriented approach.
+ *
+ * @remarks
+ * The `pathlib-js` library is a simple wrapper library offering the functionality of several optimized
+ * filepath libraries within a single Path class.
+ * @packageDocumentation
  */
 import normalize from "normalize-path";
-import fg, { Options as GlobOptions } from "fast-glob";
+import fg, { Options } from "fast-glob";
 import * as fse from "fs-extra";
 import path from "path";
 import chokidar from "chokidar";
-import { trimChars, sleep, sleepSync } from "./utils";
 import { platform, homedir } from "os";
 
 export interface SystemError {
@@ -21,6 +24,10 @@ export interface SystemError {
   port: number;
   syscall: string;
 }
+
+/**
+ * Property-only version of a Path instance.
+ */
 export interface PathJSON {
   path: Path | string;
   root: Path | string;
@@ -29,44 +36,133 @@ export interface PathJSON {
   ext: string;
   suffixes: string[];
 }
+
+/**
+ * Modified `fast-glob` options to prevent Typescript users from adding breaking properties such as "objectMode"
+ */
+export type GlobOptions = Omit<Options, "objectMode" | "stats">;
+
+/**
+ * Options controlling the behavior of methods involving the opening of filepaths
+ */
 export interface OpenFileOptions {
+  /**
+   * Determines whether the file to be opened must first be made to exist.
+   */
   ensureExists?: boolean;
+  /**
+   * The type of open operation (i.e. "r" for reading, "w" for writing)
+   */
   flags: string | number;
+  /**
+   * The permissions to give the file if it is generated during the operation.
+   */
   mode?: number;
-  timeout?: number;
 }
+
+/**
+ * Type representing the access operations available to a filepath by the operating system's user.
+ */
 export interface AccessResult {
   canRead: boolean;
   canWrite: boolean;
   canExecute: boolean;
 }
 export interface InterpRelativeOptions {
+  /**
+   * How to interpret the target/destination of the filepath operation when it is provided as a relative filepath.
+   * - `cwd` -- The target is resolved relative to the current working directory.
+   * - `path` -- The target is resolved relative to the Path instance which calls the method involving this option.
+   */
   interpRelativeSource?: "cwd" | "path";
 }
+
+/**
+ * Options controlling the behavior of methods involving the moving of filepaths
+ */
 export interface MoveOptions extends InterpRelativeOptions {
+  /**
+   * Whether to overwrite any existing filepath during the move operation.
+   */
   overwrite?: boolean;
 }
+
+/**
+ * Options controlling the behavior of asynchronous methods involving the copying of filepaths.
+ * Originally taken from fs-extra, which has the following properties:
+ * - `overwrite` -- Whether to overwrite existing filepath during the operation. Defaults to `true`.
+ * - `errorOnExist` -- Whether to throw an error if the destination already exists. Defaults to `false`.
+ * - `dereference` -- Whether to dereference symlinks during the operation. Defaults to `false`.
+ * - `preserveTimestamps` -- Whether to keep the same timestamps that existed in the source files. Defaults to `false`.
+ * - `filter` -- A function to filter which filepaths should be copied. Should return true to copy the item, otherwise false.
+ */
 export interface CopyOptions extends fse.CopyOptions, InterpRelativeOptions {}
+/**
+ * Options controlling the behavior of synchronous methods involving the copying of filepaths.
+ * Originally taken from fs-extra, which has the following properties:
+ * - `overwrite` -- Whether to overwrite existing filepath during the operation. Defaults to `true`.
+ * - `errorOnExist` -- Whether to throw an error if the destination already exists. Defaults to `false`.
+ * - `dereference` -- Whether to dereference symlinks during the operation. Defaults to `false`.
+ * - `preserveTimestamps` -- Whether to keep the same timestamps that existed in the source files. Defaults to `false`.
+ * - `filter` -- A function to filter which filepaths should be copied. Should return true to copy the item, otherwise false.
+ */
 export interface CopyOptionsSync extends fse.CopyOptionsSync, InterpRelativeOptions {}
+
+/**
+ * Options controlling the behavior of methods involving symlink operations.
+ */
 export interface SymlinkOptions extends InterpRelativeOptions {
+  /**
+   * Whether the filepath indicate in "target" should be treated as a symlink.
+   * - If `true`, then the target is treated as the link and the filepath calling the method must be an existing file or directory.
+   * - If `false`, then the target must be an existing file or directory and the underlying filepath is the symlink that will be created.
+   */
   targetIsLink?: boolean;
+  /**
+   * On Windows only, a value of either `"file"` or `"dir"` denoting the type of symlink to create.
+   * Defaults to `undefined`, where an inference will be made based on the filepath being linked.
+   */
   type?: "file" | "dir";
 }
+
 export type JSONObject = { [key: string]: JsonValue };
 export type JsonValue = null | boolean | number | string | JsonValue[] | JSONObject;
+
+/**
+ * A type representing a branchpoint from a tree filepath operation.
+ */
 export interface treeBranch<T extends Path | string> {
+  /**
+   * The filepath representing this branchpoint.
+   */
   filepath: T;
+  /**
+   * The number of branchpoints traversed thus far relative to the original filepath that called the tree operation.
+   */
   depth: number;
+  /**
+   * The child branches that can be found within this branch, if it is a directory. Otherwise, this is `null`.
+   */
   children: treeBranch<T>[] | null;
+}
+
+// Credit for performant answer: https://stackoverflow.com/questions/26156292/trim-specific-character-from-a-string
+function trimChars(str: string, chars: string[]) {
+  let start = 0,
+    end = str.length;
+  while (start < end && chars.indexOf(str[start]) >= 0) ++start;
+  while (end > start && chars.indexOf(str[end - 1]) >= 0) --end;
+  return start > 0 || end < str.length ? str.substring(start, end) : str;
 }
 
 /**
  * A wrapper class representing a filepath on which operations can be performed.
- *
  * @example
  * Here are a few examples of how the Path class instantiates:
  * ```js
- * // Assume that the current working directory is "/home/jsmith/Documents/Work" on Unix and "C:\\Users\\JSmith\\Documents\\Work" for a windows user.
+ * // Assume that the current working directory is:
+ * "/home/jsmith/Documents/Work" on Unix and
+ * "C:\\Users\\JSmith\\Documents\\Work" on Windows
  * const fp1 = new Path("~")
  * const fp2 = new Path(".")
  * const fp3 = new Path("..")
@@ -92,34 +188,105 @@ export interface treeBranch<T extends Path | string> {
  *
  * // For a Windows user:
  * >>>
- * C:\Users\JSmith
- * C:\Users\JSmith\Documents\Work
- * C:\Users\JSmith\Documents
+ * C:/Users/JSmith
+ * C:/Users/JSmith/Documents/Work
+ * C:/Users/JSmith/Documents
  * // Unix example has been omitted
- * C:\Users\HSimpson\Documents
- * C:\Users\JSmith\Documents\Work\foo
- * C:\Users\JSmith\Documents\bar
+ * C:/Users/HSimpson/Documents
+ * C:/Users/JSmith/Documents/Work/foo
+ * C:/Users/JSmith/Documents/bar
+ * C:/
  * ```
  */
 export default class Path {
+  /**
+   * The root directory of the filepath.
+   *
+   * @remarks
+   * **⚠️ In this library, the normalization process of the filepath results in the root being always
+   * expressed with forward slashes. (i.e. `C:/` instead of `C:\`).
+   * Windows users may find this more difficult to work with. ⚠️**
+   *
+   * @examples
+   * - For a Unix filepath of `/foo/bar/baz`, the root directory is `/`.
+   * - For a Windows filepath of `C:\foo\bar\baz`, the root directory is `C:\` (expressed as `C:/` in this library).
+   */
   root: string;
+
+  /**
+   * The full filepath represented by this Path instance.
+   */
   path: string;
+
+  /**
+   * The portion of the filepath other than the basename.
+   * @example
+   * - For a filepath of `/home/jsmith/Documents/Work/foo.txt`, the `dirname` is `/home/jsmith/Documents/Work`.
+   * - For a filepath of `C:\\Users\\JSmith\\Documents`, the `dirname` is `C:\\Users\\JSmith`.
+   */
   dirname: string;
+
+  /**
+   * The basename of a filepath.
+   * @example
+   * - For a filepath of `/foo/bar/baz.txt`, the basename is `baz.txt`.
+   * - For a filepath of `/foo/bar`, the basename is `bar`.
+   */
   basename: string;
+
+  /**
+   * The portion of the basename without the extension.
+   * @example
+   * - For a filepath of `/foo/bar/baz.txt`, the stem is `baz`.
+   * - For a filepath of `/foo/bar/baz`, the stem is `baz`.
+   */
   stem: string;
+
+  /**
+   * The final extension in the filepath.
+   *
+   * **⚠️ In this library, the leading dot is included as part of the extension. ⚠️**
+   * @example
+   * - For a filepath of `/foo/bar/baz.txt`, the extension is `.txt`.
+   * - For a filepath of `/foo/bar/baz`, the extension is an empty string.
+   * - For a filepath of `/foo/bar/baz.tar.gz`, the extension is `.gz`.
+   */
   ext: string;
+
+  /**
+   * An array of strings representing the individual extensions found at the end of the filepath.
+   *
+   * **⚠️In this library, the leading dot is included for each extension in the array.⚠️**
+   * @example
+   * ```js
+   * const fp1 = new Path("/home/jsmith/Documents/foo.txt");
+   * const fp2 = new Path("/home/jsmith/Documents/bar.tar.gz");
+   * const fp3 = new Path("/home/jsmith/Documents/baz");
+   * console.log(fp1.suffixes);
+   * >>> [ '.txt' ]
+   * console.log(fp2.suffixes);
+   * >>> [ '.tar', '.gz' ]
+   * console.log(fp3.suffixes);
+   * >>> []
+   * ```
+   */
   suffixes: string[];
+
+  /**
+   * The number that uniquely identifies a filepath in the operating system it resides.
+   * This is `null` while the filepath is closed and a `number` when the filepath is in an open state.
+   */
   descriptor: null | number;
 
   /**
-   * Get a Path representation of the current working directory.
+   * Get a `Path` representation of the current working directory.
    */
   static pwd() {
     return new Path(process.cwd());
   }
 
   /**
-   * Get a `Path` representation of the current working directory.
+   * Alias for `pwd`. Get a `Path` representation of the current working directory.
    */
   static cwd() {
     return new Path(process.cwd());
@@ -145,7 +312,7 @@ export default class Path {
   }
 
   /**
-   * Converts the PATH variable into an array of `Path` instances.
+   * Converts the PATH variable into an `Array` of `Path` instances.
    * @returns An `Array` of `Path` instances of the filepaths recorded in PATH.
    */
   static getPATHAsPaths() {
@@ -162,22 +329,16 @@ export default class Path {
    * Parses the mode of a filepath into a more understandable octal-like representation (i.e. 777 for full-permissions)
    * @param mode The mode of a filepath, as received from fs.Stats or the fs.Stats object itself
    * @returns A 3-digit representation of the permissions indicated by the provided `mode`.
+   * @example
+   * ```js
+   * console.log(Path.parseModeIntoOctal(16877))
+   * >>> 755
+   * ```
    */
   static parseModeIntoOctal(mode: number | fse.Stats) {
     return parseInt(((typeof mode === "number" ? mode : mode.mode) & 0o777).toString(8), 10);
   }
 
-  /**
-   * @param paths A collection of strings which will be **resolved and normalized** into a filepath.
-   * @property path The normalized underlying filepath.
-   * @property root The root directory of the underlying filepath.
-   * @property basename The basename of the underlying filepath.
-   * @property dirname An alias for the filepath of the parent directory.
-   * @property stem The basename without any extensions.
-   * @property ext The last extension found in the basename. Includes period.
-   * @property suffixes An array of the individualized extentions, without periods.
-   * @property descriptor The filepath descriptor if the underlying filepath is opened. `null` when the filepath is in a closed state.
-   */
   constructor(...paths: string[]) {
     if (!paths || !paths.length || paths[0] === "") {
       throw new Error("Cannot instantiate a new Path instance on an empty string, empty array, or falsy value");
@@ -188,7 +349,9 @@ export default class Path {
     this.root = root;
     this.basename = base;
     this.dirname = dir;
-    [this.stem, ...this.suffixes] = this.basename.split(".");
+    const _split = this.basename.split(".");
+    this.stem = _split[0];
+    this.suffixes = _split.slice(1).map(s => `.${s}`);
     this.ext = ext;
     this.descriptor = null;
   }
@@ -210,15 +373,21 @@ export default class Path {
 
   /**
    * Splits the underlying filepath into its individual components.
-   * @returns An array of the strings comprising the `Path` instance.
+   * @returns An `Array` of the strings comprising the `Path` instance.
+   * @example
+   * ```js
+   * const fp = new Path("/home/jsmith/Documents")
+   * console.log(fp.parts())
+   * >>> [ '/', 'home', 'jsmith', 'Documents' ]
+   * ```
    */
   parts() {
     return this._parts(this.path);
   }
 
   /**
-   * Alias for this.parts(). Splits the underlying filepath into its individual components.
-   * @returns An array of the strings comprising the `Path` instance.
+   * Alias for `this.parts()`. Splits the underlying filepath into its individual components.
+   * @returns An `Array` of the strings comprising the `Path` instance.
    */
   split() {
     return this.parts();
@@ -227,8 +396,15 @@ export default class Path {
   /**
    * Depicts the relative path from the Path instance to another filepath.
    * @param to The filepath that this instance should be compared against.
-   * @param useSystemPathDelimiter Whether to present the final string in accordance with the operating system's filepath delimiter.
+   * @param useSystemPathDelimiter Whether to present the final string in accordance with the operating
+   * system's filepath delimiter. Default is `false`.
    * @returns A `string` representation of the relative path.
+   * @example
+   * ```js
+   * const fp = new Path("/home/jsmith/Documents")
+   * console.log(fp.relative("/home"))
+   * >>> "../.."
+   * ```
    */
   relative(to: string | Path, useSystemPathDelimiter = false) {
     const relPath = path.relative(this.path, typeof to === "string" ? to : to.path);
@@ -236,11 +412,19 @@ export default class Path {
   }
 
   /**
-   * Resolves a sequence of path segments into a new absolute Path. Respects ".." and will increment directories accordingly.
-   * Note that strings beginning with a single "." will be treated as if the dot character does not exist. Use the `join()` method
-   * as an alternative for treating ".." and "." as literal.
-   * @param segments An array of strings respresenting path segments to append and resolve to the underlying path.
+   * Resolves a sequence of path segments into a new absolute Path from the underlying path.
+   * Respects ".." and will increment directories accordingly.
+   *
+   * ⚠️ Note that strings beginning with a single "." will be treated as if the dot character does not exist.
+   * Use the `join()` method as an alternative for treating ".." and "." as literal. ⚠️
+   * @param segments An `Array` of strings respresenting path segments to append and resolve to the underlying path.
    * @returns The resolved `Path` instance.
+   * @example
+   * ```js
+   * const fp = new Path("/home/jsmith/Documents")
+   * console.log(fp.resolve("../Downloads").path)
+   * >>> "/home/jsmith/Downloads"
+   * ```
    */
   resolve(...segments: string[]) {
     return new Path(this.path, ...segments);
@@ -249,17 +433,31 @@ export default class Path {
   /**
    * Asynchronously retrieves the filepath that the underlying symlink is pointing to.
    * @returns A `Path` instance of the target.
+   * @example
+   * ```js
+   * // symFP points to /home/jsmith/Documents
+   * const sympFP = new Path("/home/jsmith/ExampleSymlink.symlink")
+   * const origPath = (await symFP.readLink()).path
+   * console.log(origPath)
+   * >>> "/home/jsmith/Documents"
+   * ```
    */
   async readLink() {
-    if (!(await this.isSymbolicLink())) {
-      throw new Error("The underlying path not a symlink.");
-    }
+    if (!(await this.isSymbolicLink())) throw new Error("The underlying path not a symlink.");
     return new Path(await fse.readlink(this.path));
   }
 
   /**
    * Synchronously retrieves the filepath that the underlying symlink is pointing to.
    * @returns A `Path` instance of the target.
+   * @example
+   * ```js
+   * // symFP points to /home/jsmith/Documents
+   * const sympFP = new Path("/home/jsmith/ExampleSymlink.symlink")
+   * const origPath = symFP.readLinkSync().path
+   * console.log(origPath)
+   * >>> "/home/jsmith/Documents"
+   * ```
    */
   readLinkSync() {
     if (!this.isSymbolicLinkSync()) {
@@ -269,10 +467,20 @@ export default class Path {
   }
 
   /**
-   * Appends strings to the end of the underlying filepath, creating a new `Path` instance. Note that ".." and "." are treated
-   * literally and will not be resolved. For appending file segments with resolving behavior use the `resolve()` method.
+   * Appends strings to the end of the underlying filepath, creating a new `Path` instance.
+   *
+   * ⚠️ Note that ".." and "." are treated **literally** and will not be resolved.
+   * For appending file segments with resolving behavior use the `resolve()` method. ⚠️
    * @param segments Strings which should be appended to the Path instance in order to create a new one.
    * @returns A new `Path` instance with the strings appended.
+   * @example
+   * ```js
+   * const fp = new Path("/home/jsmith/Documents");
+   * console.log(fp.join("foo", "bar").path);
+   * console.log(fp.join("..", "baz").path);
+   * >>> "/home/jsmith/Documents/foo/bar"
+   * >>> "/home/jsmith/Documents/../baz"
+   * ```
    */
   join(...segments: string[]) {
     if (!segments.length) throw new Error("Cannot join with an empty string");
@@ -293,8 +501,10 @@ export default class Path {
   }
 
   /**
-   * Alias of the `join()` method. Appends strings to the end of the underlying filepath, creating a new `Path` instance. Note that ".." and "." are treated
-   * literally and will not be resolved. For appending file segments with resolving behavior use the `resolve()` method.
+   * Alias of the `join()` method. Appends strings to the end of the underlying filepath, creating a new `Path` instance.
+   *
+   * ⚠️ Note that ".." and "." are treated **literally** and will not be resolved.
+   * For appending file segments with resolving behavior use the `resolve()` method. ⚠️
    * @param segments Strings which should be appended to the Path instance in order to create a new one.
    * @returns A new `Path` instance with the strings appended.
    */
@@ -306,6 +516,12 @@ export default class Path {
    * Creates a new Path instance with a replaced basename.
    * @param name The new basename to replace the existing one.
    * @returns A new `Path` instance featuring the replacement basename.
+   * @example
+   * ```
+   * const fp = new Path("/home/jsmith/Documents/foo.txt")
+   * console.log(fp.withBasename("bar.json").path)
+   * >>> "/home/jsmith/Documents/bar.json"
+   * ```
    */
   withBasename(name: string) {
     return new Path([...this.parts().slice(0, this.parts().length - 1), name].join("/"));
@@ -315,6 +531,11 @@ export default class Path {
    * Creates a new Path instance with a replaced stem.
    * @param stem The new stem to replace the existing one.
    * @returns A new `Path` instance featuring the replacement stem.
+   * ```
+   * const fp = new Path("/home/jsmith/Documents/foo.txt")
+   * console.log(fp.withStem("bar").path)
+   * >>> "/home/jsmith/Documents/bar.txt"
+   * ```
    */
   withStem(stem: string) {
     const newBasename = [stem, ...this.basename.split(".").slice(1)].join(".");
@@ -323,11 +544,24 @@ export default class Path {
 
   /**
    * Creates a new Path instance with a replaced set of suffix extensions.
-   * @param suffix The new suffix to replace the existing one.
-   * If provided an array of strings, it will concatenate with with a "." character before appending to the existing stem.
-   * If provided a non-blank string, it will overwite anything after the first "." in the current basename.
-   * If a blank string is provided, then all extensions will be removed.
+   * @param suffix The new suffix to replace the existing one. Behavior patterns are as follows:
+   * - If provided an `Array` of strings, it will concatenate each with a "." character before appending to the existing stem.
+   * - If provided a non-blank string, it will overwite everything after the first "." in the current basename.
+   * - If a blank string is provided, then all extensions will be removed.
    * @returns A new `Path` instance featuring the replaced suffix(es).
+   * @example
+   * ```js
+   * const fp = new Path("/home/mpasternak/Documents/foo.tar.gz");
+   *
+   * console.log(fp.withSuffix(["bar", "baz"]).path);
+   * >>> "/home/mpasternak/Documents/foo.bar.baz"
+   *
+   * console.log(fp.withSuffix("qui").path);
+   * >>> "/home/mpasternak/Documents/foo.qui"
+   *
+   * console.log(fp.withSuffix("").path);
+   * >>> "/home/mpasternak/Documents/foo"
+   * ```
    */
   withSuffix(suffix: string | string[]) {
     const newSuffixes =
@@ -337,12 +571,34 @@ export default class Path {
   }
 
   /**
-   * Creates a new Path instance with a replaced last extension.
+   * Creates a new Path instance with a replaced **last extension**.
+   *
+   * ⚠️ If a suffix contains multiple components (i.e. .tar.gz) and the entirety of the suffix is desired to be replaced,
+   * use `this.withSuffix()`. ⚠️
    * @param ext The new extension to replace the existing one.
    * @returns A new `Path` instance featuring the replacement last extension.
+   * @example
+   * ```js
+   * const fp1 = new Path("/home/mpasternak/Documents/foo.tar.gz");
+   * console.log(fp1.withExtension("qui").path);
+   * console.log(fp1.withExtension("").path);
+   * >>> "/home/mpasternak/Documents/foo.tar.qui"
+   * >>> "/home/mpasternak/Documents/foo.tar"
+   *
+   * const fp2 = new Path("/home/mpasternak/Documents/bar.txt");
+   * console.log(fp2.withExtension(".json").path);
+   * console.log(fp2.withExtension("").path);
+   * >>> "/home/mpasternak/Documents/bar.json"
+   * >>> "/home/mpasternak/Documents/bar"
+   * ```
    */
   withExtension(ext: string) {
-    const newSuffixes = this.suffixes.length >= 1 ? [...this.suffixes.slice(0, this.suffixes.length - 1), ext] : [ext];
+    let newSuffixes: string[] = [];
+    if (ext === "") {
+      newSuffixes = [...this.suffixes.slice(0, this.suffixes.length - 1)];
+    } else {
+      newSuffixes = this.suffixes.length >= 1 ? [...this.suffixes.slice(0, this.suffixes.length - 1), ext] : [ext];
+    }
     return this.withBasename([this.stem, ...newSuffixes.map(s => trimChars(s, ["."]))].join("."));
   }
 
@@ -358,7 +614,7 @@ export default class Path {
   /**
    * Depicts an Object version of the Path instance.
    * @param useSystemPathDelimiter Whether to respect the system-specific filepath delimiter. Defaults to `false`.
-   * @returns An `Object` representation of the underlying filepath.
+   * @returns An `Object` representation of the underlying filepath; {@link PathJSON}.
    */
   toJSON(useSystemPathDelimiter = false) {
     return {
@@ -368,7 +624,7 @@ export default class Path {
       stem: this.stem,
       ext: this.ext,
       suffixes: this.suffixes,
-    };
+    } as PathJSON;
   }
 
   /**
@@ -530,10 +786,32 @@ export default class Path {
 
   /**
    * Retrieves the parent directory or an earlier ancestor filepath.
-   * @param numIncrements The number of directory levels to ascend. If this number exceeds number of ascentions required to reach the root directory,
-   * then the root directory itself is returned. If this number is 0 or less, it will return a copy of the current Path.
+   * @param numIncrements The number of directory levels to ascend.
+   * - If this number exceeds number of ascentions required to reach the root directory, then the root directory itself is returned.
+   * - If this number is equal to or less than 0, it will return a copy of the current Path.
+   *
    * Defaults to `undefined`, meaning that the immediate parent directory is returned.
    * @returns The parent or higher ancestor (i.e grandparent) directory of this filepath as a `Path` instance.
+   * @example
+   * ```
+   * const fp = new Path("/home/jsmith/Documents/foo.txt");
+   * console.log(fp.parent(0).path); // Returns the same path
+   * >>> "/home/jsmith/Documents/foo.txt"
+   * console.log(fp.parent(1).path); // Returns the immediate parent
+   * >>> "/home/jsmith/Documents"
+   * console.log(fp.parent(2).path); // Returns the grandparent
+   * >>> "/home/jsmith"
+   * console.log(fp.parent(3).path);
+   * >>> "/home"
+   * console.log(fp.parent(4).path);
+   * >>> "/"
+   * console.log(fp.parent(5).path);
+   * >>> "/"
+   * console.log(fp.parent(9001).path); // Exceeding root, the root is returned
+   * >>> "/"
+   * console.log(fp.parent(-9001).path); // Negative numbers return the same path
+   * >>> "/home/jsmith/Documents/foo.txt"
+   * ```
    */
   parent(numIncrements?: number): Path {
     if (numIncrements == null) return new Path(this.dirname);
@@ -543,14 +821,33 @@ export default class Path {
 
   /**
    * Asynchronously determines whether a directory contains a given child filepath or basename.
-   * @param child Either a string representing a basename to search for or another Path instance to be located as a child of this instance.
+   * @param child The child filepath to look for within the underlying filepath. The following are accepted:
+   * - The basename of the child filepath as a string
+   * - The fullpath of the child filepath as a string
+   * - A Path instance of the child filepath
    * @returns The located child as a `Path` instance or `false` if no child path could be found.
+   * @example
+   * ```js
+   * // In fp there exists a file called "foo.txt"
+   * const fp = new Path("/home/jsmith/Documents");
+   * const usingBasename = await fp.containsImmediateChild("foo.txt");
+   * const usingFullPath = await fp.containsImmediateChild("/home/jsmith/Documents/foo.txt");
+   * const usingPathInst = await fp.containsImmediateChild(fp.join("foo.txt"));
+   * usingBasename && console.log(usingBasename.path);
+   * >>> /home/jsmith/Documents/foo.txt
+   * usingFullPath && console.log(usingFullPath.path);
+   * >>> /home/jsmith/Documents/foo.txt
+   * usingPathInst && console.log(usingPathInst.path);
+   * >>> /home/jsmith/Documents/foo.txt
+   * console.log(await fp.containsImmediateChild("bar.json"));
+   * >>> false
+   * ```
    */
   async containsImmediateChild(child: string | Path) {
     if (!(await this.isDirectory())) throw new Error("Cannot check the child of a path that is not a directory");
     if (typeof child === "string") {
       for await (const childPath of this.readDirIter()) {
-        if (childPath.basename === child) return childPath;
+        if (childPath.basename === child || childPath.path === child) return childPath;
       }
       return false;
     } else {
@@ -563,8 +860,27 @@ export default class Path {
 
   /**
    * Synchronously determines whether a directory contains a given child filepath or basename.
-   * @param child Either a string representing a basename to search for or another Path instance to be located as a child of this instance.
+   * @param child The child filepath to look for within the underlying filepath. The following are accepted:
+   * - The basename of the child filepath as a string
+   * - The fullpath of the child filepath as a string
+   * - A Path instance of the child filepath
    * @returns The located child as a `Path` instance or `false` if no child path could be found.
+   * @example
+   * ```js
+   * // In fp there exists a file called "foo.txt"
+   * const fp = new Path("/home/jsmith/Documents");
+   * const usingBasename = fp.containsImmediateChildSync("foo.txt");
+   * const usingFullPath = fp.containsImmediateChildSync("/home/jsmith/Documents/foo.txt");
+   * const usingPathInst = fp.containsImmediateChildSync(fp.join("foo.txt"));
+   * usingBasename && console.log(usingBasename.path);
+   * >>> /home/jsmith/Documents/foo.txt
+   * usingFullPath && console.log(usingFullPath.path);
+   * >>> /home/jsmith/Documents/foo.txt
+   * usingPathInst && console.log(usingPathInst.path);
+   * >>> /home/jsmith/Documents/foo.txt
+   * console.log(fp.containsImmediateChildSync("bar.json"));
+   * >>> false
+   * ```
    */
   containsImmediateChildSync(child: string | Path) {
     if (!this.isDirectorySync()) throw new Error("Cannot check the child of a path that is not a directory");
@@ -591,14 +907,21 @@ export default class Path {
   /**
    * Asynchronously globs for filepaths stemming from the Path instance.
    * @param patterns A string or collection of strings representing glob patterns to search.
-   * @param options [fast-glob options](https://www.npmjs.com/package/fast-glob#api), including whether to restrict the globbing to files, directories, etc.
-   * @returns An `array` of globbed `Path` instances.
+   * @param options [fast-glob options](https://www.npmjs.com/package/fast-glob#api). By default:
+   * - `objectMode` is set to `false` and enforced
+   * - `stats` is set to `false` and enforced
+   * - `onlyDirectories` is set to `false`
+   * - `onlyFiles` is set to `false`
+   * - `dot` is set to `false`
+   * @returns An `Array` of globbed `Path` instances.
    */
   async glob(patterns: string | string[], options?: GlobOptions) {
-    const globs = await fg(
-      this._prepGlobPatterns(patterns),
-      options && Object.assign(options, { stats: false, objectMode: false })
-    );
+    // Merge defaults, user-input, and enforced-defaults
+    options = Object.assign({ onlyDirectories: false, onlyFiles: false, dot: false }, options, {
+      objectMode: false,
+      stats: false,
+    });
+    const globs = await fg(this._prepGlobPatterns(patterns), options);
     return globs.map(p => new Path(p));
   }
 
@@ -606,14 +929,21 @@ export default class Path {
    * Asynchronously glob for filepaths stemming from the Path instance while yielding them instead of returning
    * an immediate array.
    * @param patterns A string or collection of strings representing glob patterns to search.
-   * @param options [fast-glob options](https://www.npmjs.com/package/fast-glob#api), including whether to restrict the globbing to files, directories, etc.
+   * @param options [fast-glob options](https://www.npmjs.com/package/fast-glob#api). By default:
+   * - `objectMode` is set to `false` and enforced
+   * - `stats` is set to `false` and enforced
+   * - `onlyDirectories` is set to `false`
+   * - `onlyFiles` is set to `false`
+   * - `dot` is set to `false`
    * @yields `Path` instances.
    */
   async *globIter(patterns: string | string[], options?: GlobOptions) {
-    for await (const fp of fg.stream(
-      this._prepGlobPatterns(patterns),
-      options && Object.assign(options, { stats: false, objectMode: false })
-    )) {
+    // Merge defaults, user-input, and enforced-defaults
+    options = Object.assign({ onlyDirectories: false, onlyFiles: false, dot: false }, options, {
+      objectMode: false,
+      stats: false,
+    });
+    for await (const fp of fg.stream(this._prepGlobPatterns(patterns), options)) {
       yield typeof fp === "string" ? new Path(fp) : new Path(fp.toString());
     }
   }
@@ -621,18 +951,26 @@ export default class Path {
   /**
    * Synchronously globs for filepaths stemming from the Path instance.
    * @param patterns A string or collection of strings representing glob patterns to search.
-   * @param options [fast-glob options](https://www.npmjs.com/package/fast-glob#api), including whether to restrict the globbing to files, directories, etc.
-   * @returns An `array` of globbed `Path` instances.
+   * @param options [fast-glob options](https://www.npmjs.com/package/fast-glob#api). By default:
+   * - `objectMode` is set to `false` and enforced
+   * - `stats` is set to `false` and enforced
+   * - `onlyDirectories` is set to `false`
+   * - `onlyFiles` is set to `false`
+   * - `dot` is set to `false`
+   * @returns An `Array` of globbed `Path` instances.
    */
   globSync(patterns: string | string[], options?: GlobOptions) {
-    return fg
-      .sync(this._prepGlobPatterns(patterns), options && Object.assign(options, { stats: false, objectMode: false }))
-      .map(p => new Path(p));
+    // Merge defaults, user-input, and enforced-defaults
+    options = Object.assign({ onlyDirectories: false, onlyFiles: false, dot: false }, options, {
+      objectMode: false,
+      stats: false,
+    });
+    return fg.sync(this._prepGlobPatterns(patterns), options).map(p => new Path(p));
   }
 
   /**
    * Asynchronously collects the children of a directory path.
-   * @returns An `array` of `Path` instances that are children of the current instance.
+   * @returns An `Array` of `Path` instances that are children of the current instance.
    */
   async readDir() {
     return (await fse.readdir(this.path)).map(basename => new Path(this.path, basename));
@@ -640,7 +978,7 @@ export default class Path {
 
   /**
    * Synchronously collects the children of a directory path.
-   * @returns An `array` of `Path` instances that are children of the current instance.
+   * @returns An `Array` of `Path` instances that are children of the current instance.
    */
   readDirSync() {
     return fse.readdirSync(this.path).map(basename => this.resolve(basename));
@@ -678,8 +1016,8 @@ export default class Path {
    * - If greater than or equal to 1, will retrieve child/grandchild/etc. paths.
    * - If equal to 0, will retrieve the current filepath and its siblings.
    * - If less than 0, will retrieve parent/grandparent/etc paths.
-   * @param asIterator Whether the result should be an AsyncIterator of Path instances instead of an array of them.
-   * Defaults to false.
+   * @param asIterator Whether the result should be an `AsyncIterator` of `Path` instances instead of an `Array` of them.
+   * Defaults to `false`.
    * @param options Options governing the underlying globbing behavior that is used to retrieve the filepaths.
    * Is based off [fast-glob's options](https://www.npmjs.com/package/fast-glob).
    * By default, the following options are set if no options are provided:
@@ -687,8 +1025,8 @@ export default class Path {
    * - `onlyDirectories`: false
    * - `dot`: false (filepaths with basenames starting with a dot are ignored)
    * @returns Depends on the `asIterator` parameter:
-   * - if true, returns an AsyncIterator of Path instances
-   * - if false, returns an Array of Path instances
+   * - if true, returns an `AsyncIterator` of `Path` instances
+   * - if false, returns an `Array` of `Path` instances
    */
   async getPathsNLevelsAway(
     depth: number,
@@ -700,9 +1038,7 @@ export default class Path {
     // Sanity check; child globbing only makes sense if the underlying filepath is a directory
     if (depth > 1 && !(await this.isDirectory()))
       throw new Error(`Cannot retrieve downstream filepaths for non-directory filepaths`);
-    if (!options) {
-      options = { onlyFiles: false, onlyDirectories: false, dot: false };
-    }
+    options = Object.assign({ onlyFiles: false, onlyDirectories: false, dot: false }, options);
 
     // Child globbing
     if (depth > 0) {
@@ -755,7 +1091,7 @@ export default class Path {
    * Asynchronously traverses the tree structure of the directory system, starting from the current instances as the root
    * and returns a nested Object representation of the tree structure. Each branching of the tree is comprised of an object
    * with two properties: "filepath", which is the Path instance of the filepath at that location, and "children" which is
-   * either null in the case of a non-directory or an array of more branch objects.
+   * either `null` in the case of a non-directory or an `Array` of more branch objects.
    * @param asString Whether to convert the "filepath" property automatically to a string representation of the path instead.
    * @returns A representation of the filepath tree structure.
    */
@@ -811,7 +1147,7 @@ export default class Path {
    * Synchronously traverses the tree structure of the directory system, starting from the current instances as the root
    * and returns a nested Object representation of the tree structure. Each branching of the tree is comprised of an object
    * with two properties: "filepath", which is the Path instance of the filepath at that location, and "children" which is
-   * either null in the case of a non-directory or an array of more branch objects.
+   * either `null` in the case of a non-directory or an `Array` of more branch objects.
    * @param asString Whether to convert the "filepath" property automatically to a string representation of the path instead.
    * @returns A representation of the filepath tree structure.
    */
@@ -864,36 +1200,74 @@ export default class Path {
 
   /**
    * Asynchronously creates a new directory, including intermediate parental components.
-   * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511) representation of the new filepath permissions to impart on the created directory.
+   * @param mode An octal number (ex. 0o511) representing of the new filepath permissions to impart.
+   * Defaults to 0o777.
+   * @param throwErrOnFail Whether to rethrow any generated error. Defaults to `false`.
+   * @return Returns `false` if `throwErrOnFail` is `false` and an error is encountered while making the directory path.
+   * Otherwise, returns the `Path` instance that called this method.
    */
-  async makeDir(mode = 0o777) {
+  async makeDir(mode = 0o777, throwErrOnFail = false) {
     if (this.suffixes.length) throw new Error("Cannot use makeDir on a file-like type");
-    fse.ensureDir(this.path, mode);
+    try {
+      await fse.ensureDir(this.path, mode);
+    } catch (error) {
+      if (throwErrOnFail) throw error;
+      return false;
+    }
+    return this;
   }
 
   /**
    * Synchronously creates a new directory, including intermediate parental components.
-   * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511) representation of the new filepath permissions to impart on the created directory.
+   * @param mode An octal number (ex. 0o511) representing of the new filepath permissions to impart.
+   * Defaults to 0o777.
+   * @param throwErrOnFail Whether to rethrow any generated error. Defaults to `false`.
+   * @return Returns `false` if `throwErrOnFail` is `false` and an error is encountered while making the directory path.
+   * Otherwise, returns the `Path` instance that called this method.
    */
-  makeDirSync(mode = 0o777) {
+  makeDirSync(mode = 0o777, throwErrOnFail = false) {
     if (this.suffixes.length) throw new Error("Cannot use makeDir on a file-like type");
-    fse.ensureDirSync(this.path, mode);
+    try {
+      fse.ensureDirSync(this.path, mode);
+    } catch (error) {
+      if (throwErrOnFail) throw error;
+      return false;
+    }
+    return this;
   }
 
   /**
    * Asynchronously creates a new file, including intermediate parental components.
+   * @param throwErrOnFail Whether to rethrow any generated error. Defaults to `false`.
+   * @return Returns `false` if `throwErrOnFail` is `false` and an error is encountered while making the file path.
+   * Otherwise, returns the `Path` instance that called this method.
    */
-  async makeFile() {
+  async makeFile(throwErrOnFail = false) {
     if (this.suffixes.length === 0) throw new Error("Cannot use makeDir on a directory-like type");
-    fse.ensureFile(this.path);
+    try {
+      await fse.ensureFile(this.path);
+    } catch (error) {
+      if (throwErrOnFail) throw error;
+      return false;
+    }
+    return this;
   }
 
   /**
    * Synchronously creates a new file, including intermediate parental components.
+   * @param throwErrOnFail Whether to rethrow any generated error. Defaults to `false`.
+   * @return Returns `false` if `throwErrOnFail` is `false` and an error is encountered while making the file path.
+   * Otherwise, returns the `Path` instance that called this method.
    */
-  makeFileSync() {
+  makeFileSync(throwErrOnFail = false) {
     if (this.suffixes.length === 0) throw new Error("Cannot use makeDir on a directory-like type");
-    fse.ensureFileSync(this.path);
+    try {
+      fse.ensureFileSync(this.path);
+    } catch (error) {
+      if (throwErrOnFail) throw error;
+      return false;
+    }
+    return this;
   }
 
   private _interpPossibleRelativePath(target: string | Path, interpRelativeSource?: "cwd" | "path") {
@@ -915,13 +1289,16 @@ export default class Path {
   }
 
   /**
-   * Asynchronously creates a symlink. Either links the underlying filepath to a created symlink or has a target filepath be linking by the underlying symlink.
+   * Asynchronously creates a symlink. Either:
+   * - links the underlying filepath to a target symlink that is created (default)
+   * OR
+   * - has a the underlying filepath interpreted as the symlink to be created when linking to some target path.
    * @param target The corresponding target filepath that a symlink should be made to OR that is a symlink linking to the underlying filepath.
-   * @param targetIsLink Whether the filepath indicate in "target" should be treated as a symlink.
-   * - If `true`, then the target is treated as the link and the underlying filepath must be an existing file or directory.
-   * - If `false`, then the target must be an existing file or directory and the underlying filepath is the symlink.
-   * @param type On Windows only, a value of either "file" or "dir" denoting the type of symlink to create.
-   * Defaults to undefined, where an inference will be made based on the filepath being linked.
+   * @param options {@link SymlinkOptions} controlling the operation of this function. By default:
+   * - `targetIsLink` is `true` (the path in the `target` parameter is assumed to be the symlink to be made)
+   * - `type` is `undefined`(on Windows, the type of symlink to make will be inferred)
+   * - `interpRelativeSource` is `"cwd"`, meaning that a relative `target` string will be resolved relative to
+   * the current working directory.
    * @returns The filepath outlined in `target` as a `Path` instance.
    */
   async makeSymlink(target: string | Path, options?: SymlinkOptions) {
@@ -963,13 +1340,16 @@ export default class Path {
   }
 
   /**
-   * Synchronously creates a symlink. Either links the underlying filepath to a created symlink or has a target filepath be linking by the underlying symlink.
+   * Synchronously creates a symlink. Either:
+   * - links the underlying filepath to a target symlink that is created (default)
+   * OR
+   * - has a the underlying filepath interpreted as the symlink to be created when linking to some target path.
    * @param target The corresponding target filepath that a symlink should be made to OR that is a symlink linking to the underlying filepath.
-   * @param targetIsLink Whether the filepath indicate in "target" should be treated as a symlink.
-   * - If `true`, then the target is treated as the link and the underlying filepath must be an existing file or directory.
-   * - If `false`, then the target must be an existing file or directory and the underlying filepath is the symlink.
-   * @param type On Windows only, a value of either "file" or "dir" denoting the type of symlink to create.
-   * Defaults to undefined, where an inference will be made based on the filepath being linked.
+   * @param options  {@link SymlinkOptions} controlling the operation of this function. By default:
+   * - `targetIsLink` is `true` (the path in the `target` parameter is assumed to be the symlink to be made)
+   * - `type` is `undefined`(on Windows, the type of symlink to make will be inferred)
+   * - `interpRelativeSource` is `"cwd"`, meaning that a relative `target` string will be resolved relative to
+   * the current working directory.
    * @returns The filepath outlined in `target` as a `Path` instance.
    */
   makeSymlinkSync(target: string | Path, options?: SymlinkOptions) {
@@ -1012,8 +1392,11 @@ export default class Path {
 
   /**
    * Asynchronously tests a user's permissions for the underling filepath.
-   * @param mode the permissions to check for. Use fs.constants variables as input, NOT octal numbers. Defaults to `undefined`, resulting in checking for read, write, and execute permissions.
-   * @returns If mode was specified, a `boolean` reflecting the permissions. Otherwise, returns an `Object` with keys "canRead", "canWrite", "canExecute" and values as a boolean of whether permissions for that operation are available.
+   * @param mode the permissions to check for. Use fs.constants variables as input, NOT octal numbers.
+   * Defaults to `undefined`, resulting in checking for read, write, and execute permissions.
+   * @returns If mode was specified, a `boolean` reflecting the permissions.
+   * Otherwise, returns an `Object` with keys "canRead", "canWrite", "canExecute" and values as a boolean of whether
+   * permissions for that operation are available.
    */
   async access(mode: number): Promise<boolean>;
   async access(mode?: undefined): Promise<AccessResult>;
@@ -1046,8 +1429,11 @@ export default class Path {
 
   /**
    * Synchronously tests a user's permissions for the underling filepath.
-   * @param mode the permissions to check for. Use fs.constants variables as input, NOT octal numbers. Defaults to `undefined`, resulting in checking for read, write, and execute permissions.
-   * @returns If mode was specified, a `boolean` reflecting the permissions. Otherwise, returns an `Object` with keys "canRead", "canWrite", "canExecute" and values as a boolean of whether permissions for that operation are available.
+   * @param mode the permissions to check for. Use fs.constants variables as input, NOT octal numbers.
+   * Defaults to `undefined`, resulting in checking for read, write, and execute permissions.
+   * @returns If mode was specified, a `boolean` reflecting the permissions.
+   * Otherwise, returns an `Object` with keys "canRead", "canWrite", "canExecute" and values as a boolean of whether
+   * permissions for that operation are available.
    */
   accessSync(mode?: number): boolean;
   accessSync(mode?: undefined): AccessResult;
@@ -1083,9 +1469,11 @@ export default class Path {
    * * Caveats: on Windows only the write permission can be changed, and the distinction
    * among the permissions of group, owner or others is not implemented.
    * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511) representation of the new filepath permissions.
+   * @returns Returns the `Path` instance that called this method.
    */
   async chmod(mode: string | number) {
     await fse.chmod(this.path, mode);
+    return this;
   }
 
   /**
@@ -1093,38 +1481,44 @@ export default class Path {
    * * Caveats: on Windows only the write permission can be changed, and the distinction
    * among the permissions of group, owner or others is not implemented.
    * @param mode A string (i.e. fs.constants) or octal number (ex. 0o511) representation of the new filepath permissions.
+   * @returns Returns the `Path` instance that called this method.
    */
   chmodSync(mode: string | number) {
     fse.chmodSync(this.path, mode);
+    return this;
   }
 
   /**
    * Asynchronously changes the ownership of the underlying filepath.
    * @param uid User id.
    * @param gid Group id.
+   * @returns Returns the `Path` instance that called this method.
    */
   async chown(uid: number, gid: number) {
-    fse.chown(this.path, uid, gid);
+    await fse.chown(this.path, uid, gid);
+    return this;
   }
 
   /**
    * Synchronously changes the ownership of the underlying filepath.
    * @param uid User id.
    * @param gid Group id.
+   * @returns Returns the `Path` instance that called this method.
    */
   chownSync(uid: number, gid: number) {
     fse.chownSync(this.path, uid, gid);
+    return this;
   }
 
   /**
    * Asynchronously moves the underlying filepath to the indicated destination.
    * @param dst The filepath destination to where the underlying path should be moved.
-   * - If the instance is a directory, the children of the directory will be moved to this location.
-   * - If the instance is a file, it itself will be moved to the new location.
-   * @param options.overwrite Whether to overwrite existing filepaths. Defaults to `false`.
-   * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
-   * - `"cwd"` **(default)** interprets them to be relative to the current working directory.
-   * - `"path"` interprets them to be relative to the path calling this method.
+   * - If the instance is a **directory**, the children of the directory will be moved to this location.
+   * - If the instance is a **file**, it itself will be moved to the new location.
+   * @param options {@link MoveOptions} By default:
+   * - `overwrite` is set to `true`
+   * - `interRelativeSource` is set to `undefined` (relative paths will be resolved relative to the current working directory)
+   * @returns Returns the destination filepath as a `Path` instance.
    */
   async move(dst: string | Path, options?: MoveOptions) {
     const dest = this._interpPossibleRelativePath(dst, options?.interpRelativeSource);
@@ -1135,12 +1529,12 @@ export default class Path {
   /**
    * Synchronously moves the underlying filepath to the indicated destination.
    * @param dst The filepath destination to where the underlying path should be moved.
-   * - If the instance is a directory, the children of the directory will be moved to this location.
-   * - If the instance is a file, it itself will be moved to the new location.
-   * @param options.overwrite Whether to overwrite existing filepaths. Defaults to `false`.
-   * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
-   * - `"cwd"` **(default)** interprets them to be relative to the current working directory.
-   * - `"path"` interprets them to be relative to the path calling this method.
+   * - If the instance is a **directory**, the children of the directory will be moved to this location.
+   * - If the instance is a **file**, it itself will be moved to the new location.
+   * @param options {@link MoveOptions} By default:
+   * - `overwrite` is set to `true`
+   * - `interRelativeSource` is set to `undefined` (relative paths will be resolved relative to the current working directory)
+   * @returns Returns the destination filepath as a `Path` instance.
    */
   moveSync(dst: string | Path, options?: MoveOptions) {
     const dest = this._interpPossibleRelativePath(dst, options?.interpRelativeSource);
@@ -1151,16 +1545,14 @@ export default class Path {
   /**
    * Asynchronously copies the underlying filepath to the indicated destination.
    * @param dst The filepath destination to where the underlying path should be copied.
-   * If the instance is a directory, the children of the directory will be copied to this location.
-   * If the instance is a file, it itself will be copied to the new location.
-   * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
-   * - `"cwd"` **(default)** interprets them to be relative to the current working directory.
-   * - `"path"` interprets them to be relative to the path calling this method.
-   * @param options.overwrite Whether to overwrite existing filepath during the operation. Defaults to `true`.
-   * @param options.errorOnExist Whether to throw an error if the destination already exists. Defaults to `false`.
-   * @param options.dereference Whether to dereference symlinks during the operation. Defaults to `false`.
-   * @param options.preserveTimestamps Whether to keep the same timestamps that existed in the source files. Defaults to `false`.
-   * @param options.filter A function to filter which filepaths should be copied. Should return true to copy the item, otherwise false.
+   * - If the instance is a **directory**, the children of the directory will be copied to this location.
+   * - If the instance is a **file**, it itself will be copied to the new location.
+   * @param options {@link CopyOptions} By default:
+   * - `overwrite` is set to `true`
+   * - `errorOnExist` is set to `false`
+   * - `dereference` is set to `false
+   * - `preserveTimestamps` is set to `false`
+   * - `interRelativeSource` is set to `undefined` (relative paths will be resolved relative to the current working directory)
    */
   async copy(dst: string | Path, options?: CopyOptions) {
     const dest = this._interpPossibleRelativePath(dst, options?.interpRelativeSource);
@@ -1171,16 +1563,14 @@ export default class Path {
   /**
    * Synchronously copies the underlying filepath to the indicated destination.
    * @param dst The filepath destination to where the underlying path should be copied.
-   * If the instance is a directory, the children of the directory will be copied to this location.
-   * If the instance is a file, it itself will be copied to the new location.
-   * @param options.interpSource A string controlling how relative paths are interpreted if `dst` is relative.
-   * - `"cwd"` **(default)** interprets them to be relative to the current working directory.
-   * - `"path"` interprets them to be relative to the path calling this method.
-   * @param options.overwrite Whether to overwrite existing filepath during the operation. Defaults to `true`.
-   * @param options.errorOnExist Whether to throw an error if the destination already exists. Defaults to `false`.
-   * @param options.dereference Whether to dereference symlinks during the operation. Defaults to `false`.
-   * @param options.preserveTimestamps Whether to keep the same timestamps that existed in the source files. Defaults to `false`.
-   * @param options.filter A function to filter which filepaths should be copied. Should return true to copy the item, otherwise false.
+   * - If the instance is a **directory**, the children of the directory will be copied to this location.
+   * - If the instance is a **file**, it itself will be copied to the new location.
+   * @param options {@link CopyOptions} By default:
+   * - `overwrite` is set to `true`
+   * - `errorOnExist` is set to `false`
+   * - `dereference` is set to `false
+   * - `preserveTimestamps` is set to `false`
+   * - `interRelativeSource` is set to `undefined` (relative paths will be resolved relative to the current working directory)
    */
   copySync(dst: string | Path, options?: CopyOptionsSync) {
     const dest = this._interpPossibleRelativePath(dst, options?.interpRelativeSource);
@@ -1192,21 +1582,21 @@ export default class Path {
    * Asynchronously deletes the underlying filepath.
    */
   async remove() {
-    fse.remove(this.path);
+    await fse.remove(this.path);
   }
 
   /**
    * Alias for `remove()`. Asynchronously deletes the underlying filepath.
    */
   async unlink() {
-    fse.remove(this.path);
+    await fse.remove(this.path);
   }
 
   /**
    * Alias for `remove()`. Asynchronously deletes the underlying filepath.
    */
   async delete() {
-    fse.remove(this.path);
+    await fse.remove(this.path);
   }
 
   /**
@@ -1242,17 +1632,8 @@ export default class Path {
   async open(openOptions: OpenFileOptions) {
     if (this.descriptor != null) throw new Error("Detected that this filepath is already open.");
     // Ensure that the file exists
-    if (openOptions.ensureExists && this.suffixes.length && !(await this.isFile())) {
-      await this.makeFile();
-      let trigger = true;
-      setTimeout(async () => {
-        if (!(await this.exists()) && trigger) throw new Error("Timed out in ensuring that the file is made to exist.");
-      }, openOptions.timeout ?? 1000);
-      while (!(await this.exists())) {
-        await sleep(5);
-      }
-      trigger = false;
-    }
+    if (openOptions.ensureExists && this.suffixes.length && !(await this.isFile())) await this.makeFile();
+    // Open the file and re-assign the descriptor to the Path instance
     this.descriptor = await fse.open(this.path, openOptions.flags, openOptions.mode);
     return this.descriptor;
   }
@@ -1268,19 +1649,9 @@ export default class Path {
    */
   openSync(openOptions: OpenFileOptions) {
     if (this.descriptor != null) throw new Error("Detected that this filepath is already open.");
-
     // Ensure that the file exists
-    if (openOptions.ensureExists && this.suffixes.length && !this.isFileSync()) {
-      this.makeFileSync();
-      let trigger = true;
-      setTimeout(() => {
-        if (!this.existsSync() && trigger) throw new Error("Timed out in ensuring that the file is made to exist.");
-      }, openOptions.timeout ?? 1000);
-      while (!this.existsSync()) {
-        sleepSync(5);
-      }
-      trigger = false;
-    }
+    if (openOptions.ensureExists && this.suffixes.length && !this.isFileSync()) this.makeFileSync();
+    // Open the file and re-assign the descriptor to the Path instance
     this.descriptor = fse.openSync(this.path, openOptions.flags, openOptions.mode);
     return this.descriptor;
   }
@@ -1455,9 +1826,11 @@ export default class Path {
    * @param options.encoding. The encoding to use in the write operation. Defaults to `"utf8"`.
    * @param options.mode. The permissions of the created file. Defaults to `0o666`.
    * @param options.flag. The string denoting the mode in which the file is opened.
+   * @returns Returns the Path instance that called this method
    */
   async writeFile(data: string | Buffer | Uint8Array, options?: fse.WriteFileOptions) {
     await fse.outputFile(this.path, data, options);
+    return this;
   }
 
   /**
@@ -1466,9 +1839,11 @@ export default class Path {
    * @param options.encoding. The encoding to use in the write operation. Defaults to `"utf8"`.
    * @param options.mode. The permissions of the created file. Defaults to `0o666`.
    * @param options.flag. The string denoting the mode in which the file is opened.
+   * @returns Returns the Path instance that called this method
    */
   writeFileSync(data: string | Buffer | Uint8Array, options?: fse.WriteFileOptions) {
     fse.outputFileSync(this.path, data, options);
+    return this;
   }
 
   /**
@@ -1478,9 +1853,8 @@ export default class Path {
    * @returns A JSON object.
    */
   async readJSON(options?: string | fse.ReadOptions): Promise<JSONObject> {
-    if (!(await this.isFile()) || this.ext !== ".json") {
+    if (!(await this.isFile()) || this.ext !== ".json")
       throw new Error("Cannot read JSON from a non-JSON filepath or a non-existent filepath");
-    }
     return await fse.readJSON(this.path, options);
   }
 
@@ -1491,9 +1865,8 @@ export default class Path {
    * @returns A JSON object.
    */
   readJSONSync(options?: string | fse.ReadOptions) {
-    if (!this.isFileSync() || this.ext !== ".json") {
+    if (!this.isFileSync() || this.ext !== ".json")
       throw new Error("Cannot read JSON from a non-JSON filepath or a non-existent filepath");
-    }
     return fse.readJSONSync(this.path, options);
   }
 
@@ -1507,12 +1880,12 @@ export default class Path {
    * @param options.mode. The permissions of the created file. Defaults to `0o666`.
    * @param options.flag. The string denoting the mode in which the file is opened. `"w"` for write and `"a"` for append. Defaults to `"w"`.
    * @param options.signal. An `AbortSignal` object that allows the termination of the operation midway.
+   * @returns Returns the Path instance which called this method.
    */
   async writeJSON(data: JSONObject, options?: fse.WriteOptions) {
-    if (this.suffixes.slice(-1)[0] !== "json") {
-      throw new Error("Cannot write a JSON object to a non-JSON filepath");
-    }
+    if (this.ext !== ".json") throw new Error("Cannot write a JSON object to a non-JSON filepath");
     await fse.outputJson(this.path, data, options);
+    return this;
   }
 
   /**
@@ -1525,12 +1898,12 @@ export default class Path {
    * @param options.mode. The permissions of the created file. Defaults to `0o666`.
    * @param options.flag. The string denoting the mode in which the file is opened. `"w"` for write and `"a"` for append. Defaults to `"w"`.
    * @param options.signal. An `AbortSignal` object that allows the termination of the operation midway.
+   * @returns Returns the Path instance which called this method.
    */
   writeJSONSync(data: JSONObject, options?: fse.WriteOptions) {
-    if (this.suffixes.slice(-1)[0] !== "json") {
-      throw new Error("Cannot write a JSON object to a non-JSON filepath");
-    }
+    if (this.ext !== ".json") throw new Error("Cannot write a JSON object to a non-JSON filepath");
     fse.outputJsonSync(this.path, data, options);
+    return this;
   }
 
   /**

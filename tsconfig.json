@@ -101,7 +101,7 @@
   "typedocOptions": {
     "entryPoints": ["src/index.ts"],
     "out": "docs",
-    "exclude": ["node_modules", "tests", "LocalTesting"],
+    "exclude": ["node_modules", "tests", "LocalTesting", ".vscode"],
     "excludeExternals": true,
     "excludePrivate": true,
     "cleanOutputDir": false,
