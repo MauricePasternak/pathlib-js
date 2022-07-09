@@ -10,7 +10,8 @@
 <div class="col-8 col-content">
 <div class="tsd-page-title">
 <h2>pathlib-js</h2></div>
-<div class="tsd-panel tsd-typography"><p align="center">
+<div class="tsd-panel tsd-typography"><div id="top"></div>
+<p align="center">
   <a href="" rel="noopener">
  <img width=50% src="./media/logo.png" alt="Project logo"></a>
 </p>
@@ -28,33 +29,54 @@
 </div>
 
 
-<a href="#📝-table-of-contents" id="📝-table-of-contents" style="color: inherit; text-decoration: none;">
-  <h2>📝 Table of Contents</h2>
+<a href="#📝-table-of-contents-" id="📝-table-of-contents-" style="color: inherit; text-decoration: none;">
+  <h1>📝 Table of Contents <a id = "tableofcontents"></a></h1>
 </a>
 <ul>
-<li><a href = "#whypathlib">Why pathlib-js</a></li>
-<li><a href = "#usage">Usage &amp; API Links</a></li>
-<li><a href = "#wrappers">The Wonderful Libraries that this wraps around</a></li>
-<li><a href = "#testing">Testing</a></li>
-<li><a href = "#authors">Authors</a></li>
-<li><a href = "#acknowledgements">Acknowledgments</a></li>
+  <li><a href = "#documentationlink">Documentation</a></li>
+  <li><a href = "#whypathlib">Why pathlib-js</a></li>
+  <li><a href = "#prerequisites">Prerequisites</a></li>
+  <li><a href = "#installation">Installation</a></li>
+  <li>
+    <a href = "#usage-examples">Usage Examples</a>
+    <ul>
+      <li><a href = "#defining-a-path">Defining a Path</a></li>
+      <li><a href = "#ease-of-manipulating-filepath-parts">Ease of manipulating filepath parts</a></li>
+      <li><a href = "#getting-parent-sibling-and-child-filepaths">Getting parent, sibling, and child filepaths</a></li>
+      <li><a href = "#globbing">Globbing</a></li>
+      <li><a href = "#getting-a-tree-structure">Getting a tree structure</a></li>
+      <li><a href = "#creating-moving-copying-and-filetype-checking">Creating, Moving, Copying, and Filetype Checking</a></li>
+    </ul>
+  </li>
+  <li><a href = "#wrappers">The Wonderful Libraries that this wraps around</a></li>
+  <li><a href = "#testing">Testing</a></li>
+  <li><a href = "#authors">Authors</a></li>
+  <li><a href = "#acknowledgements">Acknowledgments</a></li>
 </ul>
 
+
+<a href="#documentation-" id="documentation-" style="color: inherit; text-decoration: none;">
+  <h1>Documentation <a id = "documentationlink"></a></h1>
+</a>
+<p>Full documentation for the Path class is now available at: <a href="https://mauricepasternak.github.io/pathlib-js/">the github pages section of this repository.</a></p>
+
 <a href="#🤔-why-pathlib-js-" id="🤔-why-pathlib-js-" style="color: inherit; text-decoration: none;">
-  <h2>🤔 Why pathlib-js? <a id = "whypathlib"></a></h2>
+  <h1>🤔 Why pathlib-js? <a id = "whypathlib"></a></h1>
 </a>
 <p>If you&#39;re coming from Python, think of it this way: this library is to NodeJS&#39;s <code>fs</code> and <code>path</code> modules as Python&#39;s <code>pathlib</code> is to its own <code>os</code> module.</p>
 <p>Avoids the hassle of string preprocessing, filepath normalization, and passing filepaths between the multitude of functions found in nodeJS <code>filesystem</code> and <code>path</code> modules.</p>
 <p>A single class <code>Path</code> wraps around a filepath and exposes an API for accessing its components, globbing, watching, reading, writing, traversing a tree structure, etc.</p>
 <p>This is not the first package to take an OOP approach to filepaths in Javascript, but hopes to be more feature-rich than others from 5-6 years ago.</p>
+<p align="right"><a href="#tableofcontents">(Back to Table of Contents)</a></p>
+
 
 <a href="#prerequisites" id="prerequisites" style="color: inherit; text-decoration: none;">
-  <h3>Prerequisites</h3>
+  <h1>Prerequisites</h1>
 </a>
 <p>NodeJS v12 or greater</p>
 
-<a href="#installing" id="installing" style="color: inherit; text-decoration: none;">
-  <h3>Installing</h3>
+<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+  <h1>Installation</h1>
 </a>
 <p>You know the drill</p>
 <pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">i</span><span class="hl-1"> </span><span class="hl-0">pathlib</span><span class="hl-1">-</span><span class="hl-0">js</span>
@@ -63,56 +85,77 @@
 <pre><code><span class="hl-0">yarn</span><span class="hl-1"> </span><span class="hl-0">add</span><span class="hl-1"> </span><span class="hl-0">pathlib</span><span class="hl-1">-</span><span class="hl-0">js</span>
 </code></pre>
 
-<a href="#🛠️-usage-amp-api-links-" id="🛠️-usage-amp-api-links-" style="color: inherit; text-decoration: none;">
-  <h2>🛠️ Usage &amp; API Links <a id = "usage"></a></h2>
+<a href="#usage-examples" id="usage-examples" style="color: inherit; text-decoration: none;">
+  <h1>Usage Examples</h1>
 </a>
-
-<a href="#understanding-parts-of-a-path" id="understanding-parts-of-a-path" style="color: inherit; text-decoration: none;">
-  <h3>Understanding parts of a Path</h3>
-</a>
-<p><code>Path</code> instances carry properties that tie in with the typically-used components of a filepath.</p>
-<p>For example, if a particular Path instance was located in a variable <code>example</code> and you wished to retrieve the basename of the underlying filepath, you can simply access it by <code>example.basename</code>.</p>
-<p align="center">
-  <a href="" rel="noopener">
- <img width=80% src="./media/WindowsPathComponents.png" alt="File Components of a Windows system"></a>
-</p>
-<p align="center">
-  <a href="" rel="noopener">
- <img width=80% src="./media/UnixPathComponents.png" alt="File Components of a Unix system"></a>
-</p>
-
+<p>ℹ️ For demonstration purposes, the asynchronous versions of methods are used in the examples below. Keep in mind that
+almost all of them have synchronous alternatives with a &quot;Sync&quot; suffix (i.e. <code>copy</code> --&gt; <code>copySync</code>) ℹ️</p>
+<p>For a complete API, please see the <a href="#documentationlink">Documentation</a> section.</p>
 
 <a href="#defining-a-path" id="defining-a-path" style="color: inherit; text-decoration: none;">
-  <h3>Defining a path</h3>
+  <h2>Defining a path</h2>
 </a>
-<p>Paths can be defined from a single string or multiple strings which are resolved into a single path.</p>
-<pre><code><span class="hl-2">import</span><span class="hl-1"> </span><span class="hl-0">Path</span><span class="hl-1"> </span><span class="hl-2">from</span><span class="hl-1"> </span><span class="hl-3">&quot;pathlib-js&quot;</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp1</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/Documents/Yougetthepoint.json&quot;</span><span class="hl-1">);</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp2</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/&quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;home/watch_this_disappear&quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;../Documents/Yougetthepoint.json&quot;</span><span class="hl-1">);</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp1</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1"> === </span><span class="hl-0">fp2</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><br/><span class="hl-1">&gt; </span><span class="hl-4">true</span>
+<p>Paths can be defined from a single string or multiple strings which are <strong>auto-resolved</strong> and <strong>auto-normalized</strong> into a single path.</p>
+<pre><code class="language-js"><span class="hl-2">import</span><span class="hl-1"> </span><span class="hl-0">Path</span><span class="hl-1"> </span><span class="hl-2">from</span><span class="hl-1"> </span><span class="hl-3">&quot;pathlib-js&quot;</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp1</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/Documents/Foobar.json&quot;</span><span class="hl-1">);</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp2</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/&quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;home/watch_this_disappear&quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;../Documents/Foobar.json&quot;</span><span class="hl-1">);</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp1</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1"> === </span><span class="hl-0">fp2</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-4">true</span>
 </code></pre>
+<p align="right"><a href="#tableofcontents">(Back to Table of Contents)</a></p>
 
-<a href="#more-concrete-usages-amp-api" id="more-concrete-usages-amp-api" style="color: inherit; text-decoration: none;">
-  <h3>More concrete usages &amp; API</h3>
+
+<a href="#ease-of-manipulating-filepath-parts" id="ease-of-manipulating-filepath-parts" style="color: inherit; text-decoration: none;">
+  <h2>Ease of manipulating filepath parts</h2>
 </a>
-<ul>
-<li><a href="https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Filepath_String_Manipulation.md">Manipulating filepath strings</a></li>
-<li><a href="https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Filepath_Integrity-Stats-Type.md">Determinine filepath type, stats, existence.</a></li>
-<li><a href="https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Traversing_Directories.md">File Structure Traversal - Individual Directories</a></li>
-<li><a href="https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Traversing_Trees.md">File Structure Traversal - Tree Structures</a></li>
-<li><a href="https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Filepath-Parent-Type-Stats-Permissions.md">Copying, moving, deleting, and changing permissions</a></li>
-<li><a href="https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Generating-Filepaths.md">Filepath Creation - Directories, Files, and Symlinks</a></li>
-<li><a href="https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Read-Write-Glob-Watch.md">Reading, Writing, Globbing, and Watching</a></li>
-</ul>
+<pre><code class="language-js"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">origFP</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/foobar.tar.gz&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-7">// Change the entire basename</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">origFP</span><span class="hl-1">.</span><span class="hl-6">withBasename</span><span class="hl-1">(</span><span class="hl-3">&quot;bazqui.json&quot;</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/jsmith/bazqui.json&quot;</span><br/><br/><span class="hl-7">// Change the entire set of extensions</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">origFP</span><span class="hl-1">.</span><span class="hl-6">withSuffix</span><span class="hl-1">(</span><span class="hl-3">&quot;.txt&quot;</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/jsmith/foobar.txt&quot;</span><br/><br/><span class="hl-7">// Change only the last extension</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">origFP</span><span class="hl-1">.</span><span class="hl-6">withExtension</span><span class="hl-1">(</span><span class="hl-3">&quot;.newfinalext&quot;</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/jsmith/foobar.tar.newfinalext&quot;</span><br/><br/><span class="hl-7">// Change the stem, keeping the extensions as they are</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">origFP</span><span class="hl-1">.</span><span class="hl-6">withStem</span><span class="hl-1">(</span><span class="hl-3">&quot;newStem&quot;</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/jsmith/newStem.tar.gz&quot;</span>
+</code></pre>
+<p align="right"><a href="#tableofcontents">(Back to Table of Contents)</a></p>
+
+
+<a href="#getting-parent-sibling-and-child-filepaths" id="getting-parent-sibling-and-child-filepaths" style="color: inherit; text-decoration: none;">
+  <h2>Getting parent, sibling, and child filepaths</h2>
+</a>
+<p>Additional complexity (i.e. async iterator return, only directories, only files, etc.) is possible with additional options.</p>
+<pre><code class="language-js"><span class="hl-7">/**</span><br/><span class="hl-7">* /home/jsmith/Foo/</span><br/><span class="hl-7">                  |-&gt; FolderA/</span><br/><span class="hl-7">                  |     |-&gt; FileA1.txt</span><br/><span class="hl-7">                  |     |-&gt; FileA2.txt</span><br/><span class="hl-7">                  |</span><br/><span class="hl-7">                  |-&gt; FolderB/</span><br/><span class="hl-7">                        |-&gt; FileB1.json</span><br/><span class="hl-7">                        |-&gt; FileB2.json</span><br/><span class="hl-7">*/</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fpDirA</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Foo/FolderA&quot;</span><span class="hl-1">)</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">((</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">fpDirA</span><span class="hl-1">.</span><span class="hl-6">getPathsNLevelsAway</span><span class="hl-1">(</span><span class="hl-8">0</span><span class="hl-1">, </span><span class="hl-4">false</span><span class="hl-1">)).</span><span class="hl-6">map</span><span class="hl-1">(</span><span class="hl-0">p</span><span class="hl-1"> </span><span class="hl-4">=&gt;</span><span class="hl-1"> </span><span class="hl-0">p</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">));</span><br/><span class="hl-1">&gt;&gt;&gt; [</span><br/><span class="hl-1">  </span><span class="hl-3">&#39;/home/jsmith/Foo/FolderA&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-3">&#39;/home/jsmith/Foo/FolderB&#39;</span><br/><span class="hl-1">]</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">((</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">fpDirA</span><span class="hl-1">.</span><span class="hl-6">getPathsNLevelsAway</span><span class="hl-1">(</span><span class="hl-8">1</span><span class="hl-1">, </span><span class="hl-4">false</span><span class="hl-1">)).</span><span class="hl-6">map</span><span class="hl-1">(</span><span class="hl-0">p</span><span class="hl-1"> </span><span class="hl-4">=&gt;</span><span class="hl-1"> </span><span class="hl-0">p</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">));</span><br/><span class="hl-1">&gt;&gt;&gt; [</span><br/><span class="hl-1">  </span><span class="hl-3">&#39;/home/jsmith/Foo/FolderA/FileA1.txt&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-3">&#39;/home/jsmith/Foo/FolderA/FileA2.txt&#39;</span><br/><span class="hl-1">]</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">((</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">fpDirA</span><span class="hl-1">.</span><span class="hl-6">getPathsNLevelsAway</span><span class="hl-1">(-</span><span class="hl-8">1</span><span class="hl-1">, </span><span class="hl-4">false</span><span class="hl-1">)).</span><span class="hl-6">map</span><span class="hl-1">(</span><span class="hl-0">p</span><span class="hl-1"> </span><span class="hl-4">=&gt;</span><span class="hl-1"> </span><span class="hl-0">p</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">));</span><br/><span class="hl-1">&gt;&gt;&gt; [</span><br/><span class="hl-1">  </span><span class="hl-3">&#39;/home/jsmith/Foo&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">]</span>
+</code></pre>
+<p align="right"><a href="#tableofcontents">(Back to Table of Contents)</a></p>
+
+
+<a href="#globbing" id="globbing" style="color: inherit; text-decoration: none;">
+  <h2>Globbing</h2>
+</a>
+<pre><code class="language-js"><span class="hl-7">/**</span><br/><span class="hl-7">* /home/jsmith/Foo/</span><br/><span class="hl-7">                  |-&gt; FolderA/</span><br/><span class="hl-7">                  |     |-&gt; FileA1.txt</span><br/><span class="hl-7">                  |     |-&gt; FileA2.txt</span><br/><span class="hl-7">                  |</span><br/><span class="hl-7">                  |-&gt; FolderB/</span><br/><span class="hl-7">                        |-&gt; FileB1.json</span><br/><span class="hl-7">                        |-&gt; FileB2.json</span><br/><span class="hl-7">*/</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">rootDir</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Foo&quot;</span><span class="hl-1">)</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">((</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">rootDir</span><span class="hl-1">.</span><span class="hl-6">glob</span><span class="hl-1">(</span><span class="hl-3">&quot;**/File*1*&quot;</span><span class="hl-1">)).</span><span class="hl-6">map</span><span class="hl-1">(</span><span class="hl-0">p</span><span class="hl-1"> </span><span class="hl-4">=&gt;</span><span class="hl-1"> </span><span class="hl-0">p</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">));</span><br/><span class="hl-1">&gt;&gt;&gt; [</span><br/><span class="hl-1">  </span><span class="hl-3">&#39;/home/jsmith/Foo/FolderA/FileA1.txt&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-3">&#39;/home/jsmith/Foo/FolderB/FileB1.json&#39;</span><br/><span class="hl-1">]</span><br/><br/><span class="hl-2">for</span><span class="hl-1"> </span><span class="hl-2">await</span><span class="hl-1"> (</span><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">p</span><span class="hl-1"> </span><span class="hl-4">of</span><span class="hl-1"> </span><span class="hl-0">rootDir</span><span class="hl-1">.</span><span class="hl-6">globIter</span><span class="hl-1">(</span><span class="hl-3">&quot;FolderA/*&quot;</span><span class="hl-1">)) {</span><br/><span class="hl-1">  </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">p</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">}</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/jsmith/Foo/FolderA/FileA1.txt&quot;</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/jsmith/Foo/FolderA/FileA2.txt&quot;</span>
+</code></pre>
+<p align="right"><a href="#tableofcontents">(Back to Table of Contents)</a></p>
+
+
+<a href="#getting-a-tree-structure" id="getting-a-tree-structure" style="color: inherit; text-decoration: none;">
+  <h2>Getting a tree structure</h2>
+</a>
+<p>Particularly useful for other programs which may desire representing filepath structure (i.e. MaterialUI Treeview)</p>
+<pre><code class="language-js"><span class="hl-7">/**</span><br/><span class="hl-7">* /home/jsmith/Foo/</span><br/><span class="hl-7">                  |-&gt; FolderA/</span><br/><span class="hl-7">                  |     |-&gt; FileA1.txt</span><br/><span class="hl-7">                  |     |-&gt; FileA2.txt</span><br/><span class="hl-7">                  |</span><br/><span class="hl-7">                  |-&gt; FolderB/</span><br/><span class="hl-7">                        |-&gt; FileB1.json</span><br/><span class="hl-7">                        |-&gt; FileB2.json</span><br/><span class="hl-7">*/</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">treeRoot</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Foo&quot;</span><span class="hl-1">)</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">treeRoot</span><span class="hl-1">.</span><span class="hl-6">tree</span><span class="hl-1">(</span><span class="hl-4">true</span><span class="hl-1">));</span><br/><span class="hl-1">&gt;&gt;&gt; {</span><br/><span class="hl-1">  </span><span class="hl-0">filepath:</span><span class="hl-1"> </span><span class="hl-3">&#39;/home/jsmith/Foo&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-0">depth:</span><span class="hl-1"> </span><span class="hl-8">0</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-0">children:</span><span class="hl-1"> [</span><br/><span class="hl-1">    {</span><br/><span class="hl-1">      </span><span class="hl-0">filepath:</span><span class="hl-1"> </span><span class="hl-3">&#39;/home/jsmith/Foo/FolderB&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-0">depth:</span><span class="hl-1"> </span><span class="hl-8">1</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-0">children:</span><span class="hl-1"> [</span><span class="hl-9">Array</span><span class="hl-1">]</span><br/><span class="hl-1">    },</span><br/><span class="hl-1">    {</span><br/><span class="hl-1">      </span><span class="hl-0">filepath:</span><span class="hl-1"> </span><span class="hl-3">&#39;/home/jsmith/Foo/FolderA&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-0">depth:</span><span class="hl-1"> </span><span class="hl-8">1</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-0">children:</span><span class="hl-1"> [</span><span class="hl-9">Array</span><span class="hl-1">]</span><br/><span class="hl-1">    }</span><br/><span class="hl-1">  ]</span><br/><span class="hl-1">}</span>
+</code></pre>
+<p align="right"><a href="#tableofcontents">(Back to Table of Contents)</a></p>
+
+
+<a href="#creating-moving-copying-and-filetype-checking" id="creating-moving-copying-and-filetype-checking" style="color: inherit; text-decoration: none;">
+  <h2>Creating, Moving, Copying, and Filetype Checking</h2>
+</a>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-7">// Existence checking</span><br/><span class="hl-1">  </span><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">startFP</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Foo/FolderA&quot;</span><span class="hl-1">);</span><br/><span class="hl-1">  </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">startFP</span><span class="hl-1">.</span><span class="hl-6">exists</span><span class="hl-1">());</span><br/><span class="hl-1">  &gt;&gt;&gt; </span><span class="hl-4">false</span><br/><br/><span class="hl-1">  </span><span class="hl-7">// Creation</span><br/><span class="hl-1">  </span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">startFP</span><span class="hl-1">.</span><span class="hl-6">makeDir</span><span class="hl-1">(); </span><span class="hl-7">// &quot;home/jsmith/Foo/FolderA&quot; will now be created</span><br/><span class="hl-1">  </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">startFP</span><span class="hl-1">.</span><span class="hl-6">exists</span><span class="hl-1">());</span><br/><span class="hl-1">  </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">startFP</span><span class="hl-1">.</span><span class="hl-6">isDirectory</span><span class="hl-1">());</span><br/><span class="hl-1">  </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">startFP</span><span class="hl-1">.</span><span class="hl-6">isFile</span><span class="hl-1">());</span><br/><span class="hl-1">  &gt;&gt;&gt; </span><span class="hl-4">true</span><br/><span class="hl-1">  &gt;&gt;&gt; </span><span class="hl-4">true</span><br/><span class="hl-1">  &gt;&gt;&gt; </span><span class="hl-4">false</span><br/><br/><span class="hl-1">  </span><span class="hl-7">// Copying</span><br/><span class="hl-1">  </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">startFP</span><span class="hl-1">.</span><span class="hl-6">withBasename</span><span class="hl-1">(</span><span class="hl-3">&quot;FolderA_copy&quot;</span><span class="hl-1">).</span><span class="hl-6">exists</span><span class="hl-1">()); </span><span class="hl-7">// Sanity check</span><br/><span class="hl-1">  &gt;&gt;&gt; </span><span class="hl-4">false</span><br/><br/><span class="hl-1">  </span><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">copyFP</span><span class="hl-1"> = </span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">startFP</span><span class="hl-1">.</span><span class="hl-6">copy</span><span class="hl-1">(</span><span class="hl-0">startFP</span><span class="hl-1">.</span><span class="hl-6">withBasename</span><span class="hl-1">(</span><span class="hl-3">&quot;FolderA_copy&quot;</span><span class="hl-1">));</span><br/><span class="hl-1">  </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">copyFP</span><span class="hl-1">.</span><span class="hl-6">exists</span><span class="hl-1">());</span><br/><span class="hl-1">  </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">startFP</span><span class="hl-1">.</span><span class="hl-6">exists</span><span class="hl-1">()); </span><span class="hl-7">// Still exists b/c it was a copy operation</span><br/><span class="hl-1">  &gt;&gt;&gt; </span><span class="hl-4">true</span><br/><span class="hl-1">  &gt;&gt;&gt; </span><span class="hl-4">true</span><br/><br/><span class="hl-1">  </span><span class="hl-7">// Moving/Renaming</span><br/><span class="hl-1">  </span><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">moveFP</span><span class="hl-1"> = </span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">copyFP</span><span class="hl-1">.</span><span class="hl-6">move</span><span class="hl-1">(</span><span class="hl-0">copyFP</span><span class="hl-1">.</span><span class="hl-6">withBasename</span><span class="hl-1">(</span><span class="hl-3">&quot;FolderA_moved&quot;</span><span class="hl-1">));</span><br/><span class="hl-1">  </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">copyFP</span><span class="hl-1">.</span><span class="hl-6">exists</span><span class="hl-1">()); </span><span class="hl-7">// Will no longer exist b/c of move/rename</span><br/><span class="hl-1">  </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">moveFP</span><span class="hl-1">.</span><span class="hl-6">exists</span><span class="hl-1">());</span><br/><span class="hl-1">  &gt;&gt;&gt; </span><span class="hl-4">false</span><br/><span class="hl-1">  &gt;&gt;&gt; </span><span class="hl-4">true</span><br/><br/><span class="hl-1">  </span><span class="hl-7">// Deletion</span><br/><span class="hl-1">  </span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">startFP</span><span class="hl-1">.</span><span class="hl-6">delete</span><span class="hl-1">();</span><br/><span class="hl-1">  </span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">moveFP</span><span class="hl-1">.</span><span class="hl-6">delete</span><span class="hl-1">();</span><br/><span class="hl-1">  </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">startFP</span><span class="hl-1">.</span><span class="hl-6">exists</span><span class="hl-1">());</span><br/><span class="hl-1">  </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">moveFP</span><span class="hl-1">.</span><span class="hl-6">exists</span><span class="hl-1">());</span><br/><span class="hl-1">  &gt;&gt;&gt; </span><span class="hl-4">false</span><br/><span class="hl-1">  &gt;&gt;&gt; </span><span class="hl-4">false</span>
+</code></pre>
+<p align="right"><a href="#tableofcontents">(Back to Table of Contents)</a></p>
+
 
 <a href="#🧪-testing-" id="🧪-testing-" style="color: inherit; text-decoration: none;">
-  <h2>🧪 Testing <a id = "testing"></a></h2>
+  <h1>🧪 Testing <a id = "testing"></a></h1>
 </a>
 <p>This library is regularly updating its test suite with additional case scenarios.</p>
-<p>At the current time, please anticipate the following conditional test failures:</p>
+<p>⚠️ At the current time, please anticipate the following conditional test failures: ⚠️</p>
 <ul>
 <li>On Windows, <code>makeSymlink()</code> and <code>makeSymlinkSync()</code> methods will fail if the environment they are used in lacks administrator priveleges (i.e. testing in VScode without starting it up with admin priveleges). This caveat has not been seen on Unix-based systems.</li>
 </ul>
+<p align="right"><a href="#tableofcontents">(Back to Table of Contents)</a></p>
+
 
 <a href="#🥇-the-wonderful-libraries-that-this-wraps-around-" id="🥇-the-wonderful-libraries-that-this-wraps-around-" style="color: inherit; text-decoration: none;">
-  <h2>🥇 The Wonderful Libraries that this wraps around <a id = "wrappers"></a></h2>
+  <h1>🥇 The Wonderful Libraries that this wraps around <a id = "wrappers"></a></h1>
 </a>
 <p>This wouldn&#39;t be possible without these awesome libraries. Give them a star.</p>
 <ul>
@@ -121,19 +164,23 @@
 <li><a href="https://github.com/mrmlnc/fast-glob">fast-glob</a> - Robust and fast globbing potential.</li>
 <li><a href="https://nodejs.org/en/">path-normalize</a> - Workhorse function for robustly normalizing filepaths</li>
 </ul>
+<p align="right"><a href="#tableofcontents">(Back to Table of Contents)</a></p>
+
 
 <a href="#✍️-authors-" id="✍️-authors-" style="color: inherit; text-decoration: none;">
-  <h2>✍️ Authors <a id = "authors"></a></h2>
+  <h1>✍️ Authors <a id = "authors"></a></h1>
 </a>
 <ul>
 <li><a href="https://github.com/MauricePasternak">@MauricePasternak</a></li>
 </ul>
+<p align="right"><a href="#tableofcontents">(Back to Table of Contents)</a></p>
+
 
 <a href="#🎉-acknowledgements-" id="🎉-acknowledgements-" style="color: inherit; text-decoration: none;">
-  <h2>🎉 Acknowledgements <a id = "acknowledgements"></a></h2>
+  <h1>🎉 Acknowledgements <a id = "acknowledgements"></a></h1>
 </a>
 <p>A thank you to the individuals who actually read README file from start to finish.</p>
-</div></div>
+<p align="right"><a href="#tableofcontents">(Back to Table of Contents)</a></p></div></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
@@ -166,7 +213,8 @@
 <li class="tsd-kind-interface"><a href="interfaces/SymlinkOptions.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>Symlink<wbr/>Options</a></li>
 <li class="tsd-kind-interface"><a href="interfaces/SystemError.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>System<wbr/>Error</a></li>
 <li class="tsd-kind-interface"><a href="interfaces/treeBranch.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>tree<wbr/>Branch</a></li>
-<li class="tsd-kind-type-alias"><a href="types/JSONObject.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-4194304-path"></rect><path d="M11.31 16V8.224H8.91V7.24H14.79V8.224H12.39V16H11.31Z" fill="var(--color-text)" id="icon-4194304-text"></path></svg>JSONObject</a></li>
+<li class="tsd-kind-type-alias"><a href="types/GlobOptions.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-4194304-path"></rect><path d="M11.31 16V8.224H8.91V7.24H14.79V8.224H12.39V16H11.31Z" fill="var(--color-text)" id="icon-4194304-text"></path></svg>Glob<wbr/>Options</a></li>
+<li class="tsd-kind-type-alias"><a href="types/JSONObject.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>JSONObject</a></li>
 <li class="tsd-kind-type-alias"><a href="types/JsonValue.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Json<wbr/>Value</a></li></ul></nav></div></div>
 <div class="container tsd-generator">
 <p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>

@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.4.0] - 2022-07-08
+
+### Breaking
+
+- The `suffixes` property has been changed to be in line with Python's `pathlib` library. Namely, leading "." characters are now present in all elements of the Array.
+
+### Added
+
+- Methods which make filepaths (`makeDir`, `makeDirSync`, `makeFile`, `makeFileSync`) have been given an optional `throwErrOnFail` parameter which defaults to `false`. With this new behavior, if an error is encountered while making the filepath, the method will re-throw the error if this parameter is set to `true`. These functions now also return the `Path` instance that invoked the method to allow for chaining.
+
+### Changed
+
+- Docstrings have received several rewordings in multiple methods and types in order to improve the TypeDoc output on Github Pages.
+- Significant re-structuring of the README.md, now that the documentation has its own section.
+- All glob-related functions have certain enforced settings to avoid scenarios where users can break functions by asking fast-glob to return objects instead of strings.
+
+### Fixed
+
+- Several asynchronous filepath operations did not have the appropriate `await` keyword set before them. This resulted in behavior that required sleeping hacks to work around. This is no longer the case.
+
+---
+
 ## [1.3.2] - 2022-07-07
 
 ### Added
