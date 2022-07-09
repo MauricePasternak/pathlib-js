@@ -1,6 +1,6 @@
 {
   "name": "pathlib-js",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "engines": {
     "node": ">=12"
   },
@@ -50,13 +50,14 @@
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "scripts": {
-    "test": "ts-mocha ./tests/index.test.ts"
+    "test": "ts-mocha ./tests/index.test.ts",
+    "build": "tsc && yarn typedoc",
+    "build:nocomments": "tsc -p ./tsconfig.nocomments.json",
+    "prod": "yarn build && yarn build:nocomments"
   },
   "files": [
     "/src/index.d.ts",
-    "/src/index.js",
-    "/src/utils.d.ts",
-    "/src/utils.js"
+    "/src/index.js"
   ],
   "dependencies": {
     "chokidar": "^3.5.3",
@@ -71,7 +72,7 @@
     "@types/normalize-path": "^3.0.0",
     "mocha": "^10.0.0",
     "ts-mocha": "^10.0.0",
-    "typedoc": "^0.23.5",
+    "typedoc": "^0.23.6",
     "typescript": "^4.7.4"
   }
 }

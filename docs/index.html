@@ -29,9 +29,10 @@
 
 
 <a href="#📝-table-of-contents" id="📝-table-of-contents" style="color: inherit; text-decoration: none;">
-  <h2>📝 Table of Contents</h2>
+  <h1>📝 Table of Contents</h1>
 </a>
 <ul>
+<li><a href = "#documentationlink">Documentation</a></li>
 <li><a href = "#whypathlib">Why pathlib-js</a></li>
 <li><a href = "#usage">Usage &amp; API Links</a></li>
 <li><a href = "#wrappers">The Wonderful Libraries that this wraps around</a></li>
@@ -39,6 +40,11 @@
 <li><a href = "#authors">Authors</a></li>
 <li><a href = "#acknowledgements">Acknowledgments</a></li>
 </ul>
+
+<a href="#documentation-" id="documentation-" style="color: inherit; text-decoration: none;">
+  <h1>Documentation <a id = "documentationlink"></a></h1>
+</a>
+<p>Documentation for the Path class is now available at: <a href="https://mauricepasternak.github.io/pathlib-js/">the github pages section of this repository</a></p>
 
 <a href="#🤔-why-pathlib-js-" id="🤔-why-pathlib-js-" style="color: inherit; text-decoration: none;">
   <h2>🤔 Why pathlib-js? <a id = "whypathlib"></a></h2>
@@ -63,10 +69,6 @@
 <pre><code><span class="hl-0">yarn</span><span class="hl-1"> </span><span class="hl-0">add</span><span class="hl-1"> </span><span class="hl-0">pathlib</span><span class="hl-1">-</span><span class="hl-0">js</span>
 </code></pre>
 
-<a href="#🛠️-usage-amp-api-links-" id="🛠️-usage-amp-api-links-" style="color: inherit; text-decoration: none;">
-  <h2>🛠️ Usage &amp; API Links <a id = "usage"></a></h2>
-</a>
-
 <a href="#understanding-parts-of-a-path" id="understanding-parts-of-a-path" style="color: inherit; text-decoration: none;">
   <h3>Understanding parts of a Path</h3>
 </a>
@@ -89,24 +91,11 @@
 <pre><code><span class="hl-2">import</span><span class="hl-1"> </span><span class="hl-0">Path</span><span class="hl-1"> </span><span class="hl-2">from</span><span class="hl-1"> </span><span class="hl-3">&quot;pathlib-js&quot;</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp1</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/Documents/Yougetthepoint.json&quot;</span><span class="hl-1">);</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp2</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/&quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;home/watch_this_disappear&quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;../Documents/Yougetthepoint.json&quot;</span><span class="hl-1">);</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp1</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1"> === </span><span class="hl-0">fp2</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><br/><span class="hl-1">&gt; </span><span class="hl-4">true</span>
 </code></pre>
 
-<a href="#more-concrete-usages-amp-api" id="more-concrete-usages-amp-api" style="color: inherit; text-decoration: none;">
-  <h3>More concrete usages &amp; API</h3>
-</a>
-<ul>
-<li><a href="https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Filepath_String_Manipulation.md">Manipulating filepath strings</a></li>
-<li><a href="https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Filepath_Integrity-Stats-Type.md">Determinine filepath type, stats, existence.</a></li>
-<li><a href="https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Traversing_Directories.md">File Structure Traversal - Individual Directories</a></li>
-<li><a href="https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Traversing_Trees.md">File Structure Traversal - Tree Structures</a></li>
-<li><a href="https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Filepath-Parent-Type-Stats-Permissions.md">Copying, moving, deleting, and changing permissions</a></li>
-<li><a href="https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Generating-Filepaths.md">Filepath Creation - Directories, Files, and Symlinks</a></li>
-<li><a href="https://github.com/MauricePasternak/pathlib-js/blob/master/docs/Read-Write-Glob-Watch.md">Reading, Writing, Globbing, and Watching</a></li>
-</ul>
-
 <a href="#🧪-testing-" id="🧪-testing-" style="color: inherit; text-decoration: none;">
   <h2>🧪 Testing <a id = "testing"></a></h2>
 </a>
 <p>This library is regularly updating its test suite with additional case scenarios.</p>
-<p>At the current time, please anticipate the following conditional test failures:</p>
+<p>⚠️ At the current time, please anticipate the following conditional test failures: ⚠️</p>
 <ul>
 <li>On Windows, <code>makeSymlink()</code> and <code>makeSymlinkSync()</code> methods will fail if the environment they are used in lacks administrator priveleges (i.e. testing in VScode without starting it up with admin priveleges). This caveat has not been seen on Unix-based systems.</li>
 </ul>
