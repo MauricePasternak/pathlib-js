@@ -17,7 +17,7 @@
 <div class="tsd-comment tsd-typography"><p>A wrapper class representing a filepath on which operations can be performed.</p>
 
 <h3>Example</h3><p>Here are a few examples of how the Path class instantiates:</p>
-<pre><code class="language-js"><span class="hl-7">// Assume that the current working directory is &quot;/home/jsmith/Documents/Work&quot; on Unix and &quot;C:\\Users\\JSmith\\Documents\\Work&quot; for a windows user.</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp1</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;~&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp2</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;.&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp3</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;..&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp4_unix</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/users/hsimpson/Documents&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp4_win</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;C:</span><span class="hl-8">\\</span><span class="hl-3">Users</span><span class="hl-8">\\</span><span class="hl-3">HSimpson</span><span class="hl-8">\\</span><span class="hl-3">Documents&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp5</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;./foo&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp6</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;../bar&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp7</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/&quot;</span><span class="hl-1">)</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">([</span><span class="hl-0">fp1</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">, </span><span class="hl-0">fp2</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">, </span><span class="hl-0">fp3</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">, </span><span class="hl-0">fp4_unix</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">, </span><span class="hl-0">fp4_win</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">,</span><br/><span class="hl-1">             </span><span class="hl-0">fp5</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">, </span><span class="hl-0">fp6</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">, </span><span class="hl-0">fp7</span><span class="hl-1">.</span><span class="hl-0">path</span><br/><span class="hl-1">             ].</span><span class="hl-6">join</span><span class="hl-1">(</span><span class="hl-3">&quot;</span><span class="hl-8">\n</span><span class="hl-3">&quot;</span><span class="hl-1">));</span><br/><br/><span class="hl-7">// For a Unix user:</span><br/><span class="hl-1">&gt;&gt;&gt;</span><br/><span class="hl-1">/</span><span class="hl-0">home</span><span class="hl-1">/</span><span class="hl-0">jsmith</span><br/><span class="hl-1">/</span><span class="hl-0">home</span><span class="hl-1">/</span><span class="hl-0">jsmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><span class="hl-1">/</span><span class="hl-0">Work</span><br/><span class="hl-1">/</span><span class="hl-0">home</span><span class="hl-1">/</span><span class="hl-0">jsmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><br/><span class="hl-1">/</span><span class="hl-0">users</span><span class="hl-1">/</span><span class="hl-0">hsimpson</span><span class="hl-1">/</span><span class="hl-0">Documents</span><br/><span class="hl-7">// Windows example has been omitted</span><br/><span class="hl-1">/</span><span class="hl-0">home</span><span class="hl-1">/</span><span class="hl-0">jsmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><span class="hl-1">/</span><span class="hl-0">Work</span><span class="hl-1">/</span><span class="hl-0">foo</span><br/><span class="hl-1">/</span><span class="hl-0">home</span><span class="hl-1">/</span><span class="hl-0">jsmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><span class="hl-1">/</span><span class="hl-0">bar</span><br/><span class="hl-1">/</span><br/><br/><span class="hl-7">// For a Windows user:</span><br/><span class="hl-1">&gt;&gt;&gt;</span><br/><span class="hl-9">C</span><span class="hl-1">:\</span><span class="hl-0">Users</span><span class="hl-1">\</span><span class="hl-0">JSmith</span><br/><span class="hl-9">C</span><span class="hl-1">:\</span><span class="hl-0">Users</span><span class="hl-1">\</span><span class="hl-0">JSmith</span><span class="hl-1">\</span><span class="hl-0">Documents</span><span class="hl-1">\</span><span class="hl-0">Work</span><br/><span class="hl-9">C</span><span class="hl-1">:\</span><span class="hl-0">Users</span><span class="hl-1">\</span><span class="hl-0">JSmith</span><span class="hl-1">\</span><span class="hl-0">Documents</span><br/><span class="hl-7">// Unix example has been omitted</span><br/><span class="hl-9">C</span><span class="hl-1">:\</span><span class="hl-0">Users</span><span class="hl-1">\</span><span class="hl-0">HSimpson</span><span class="hl-1">\</span><span class="hl-0">Documents</span><br/><span class="hl-9">C</span><span class="hl-1">:\</span><span class="hl-0">Users</span><span class="hl-1">\</span><span class="hl-0">JSmith</span><span class="hl-1">\</span><span class="hl-0">Documents</span><span class="hl-1">\</span><span class="hl-0">Work</span><span class="hl-1">\</span><span class="hl-0">foo</span><br/><span class="hl-9">C</span><span class="hl-1">:\</span><span class="hl-0">Users</span><span class="hl-1">\</span><span class="hl-0">JSmith</span><span class="hl-1">\</span><span class="hl-0">Documents</span><span class="hl-1">\</span><span class="hl-0">bar</span>
+<pre><code class="language-js"><span class="hl-7">// Assume that the current working directory is:</span><br/><span class="hl-3">&quot;/home/jsmith/Documents/Work&quot;</span><span class="hl-1"> </span><span class="hl-0">on</span><span class="hl-1"> </span><span class="hl-0">Unix</span><span class="hl-1"> </span><span class="hl-0">and</span><br/><span class="hl-3">&quot;C:</span><span class="hl-10">\\</span><span class="hl-3">Users</span><span class="hl-10">\\</span><span class="hl-3">JSmith</span><span class="hl-10">\\</span><span class="hl-3">Documents</span><span class="hl-10">\\</span><span class="hl-3">Work&quot;</span><span class="hl-1"> </span><span class="hl-0">on</span><span class="hl-1"> </span><span class="hl-0">Windows</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp1</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;~&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp2</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;.&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp3</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;..&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp4_unix</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/users/hsimpson/Documents&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp4_win</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;C:</span><span class="hl-10">\\</span><span class="hl-3">Users</span><span class="hl-10">\\</span><span class="hl-3">HSimpson</span><span class="hl-10">\\</span><span class="hl-3">Documents&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp5</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;./foo&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp6</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;../bar&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp7</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/&quot;</span><span class="hl-1">)</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">([</span><span class="hl-0">fp1</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">, </span><span class="hl-0">fp2</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">, </span><span class="hl-0">fp3</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">, </span><span class="hl-0">fp4_unix</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">, </span><span class="hl-0">fp4_win</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">,</span><br/><span class="hl-1">             </span><span class="hl-0">fp5</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">, </span><span class="hl-0">fp6</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">, </span><span class="hl-0">fp7</span><span class="hl-1">.</span><span class="hl-0">path</span><br/><span class="hl-1">             ].</span><span class="hl-6">join</span><span class="hl-1">(</span><span class="hl-3">&quot;</span><span class="hl-10">\n</span><span class="hl-3">&quot;</span><span class="hl-1">));</span><br/><br/><span class="hl-7">// For a Unix user:</span><br/><span class="hl-1">&gt;&gt;&gt;</span><br/><span class="hl-1">/</span><span class="hl-0">home</span><span class="hl-1">/</span><span class="hl-0">jsmith</span><br/><span class="hl-1">/</span><span class="hl-0">home</span><span class="hl-1">/</span><span class="hl-0">jsmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><span class="hl-1">/</span><span class="hl-0">Work</span><br/><span class="hl-1">/</span><span class="hl-0">home</span><span class="hl-1">/</span><span class="hl-0">jsmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><br/><span class="hl-1">/</span><span class="hl-0">users</span><span class="hl-1">/</span><span class="hl-0">hsimpson</span><span class="hl-1">/</span><span class="hl-0">Documents</span><br/><span class="hl-7">// Windows example has been omitted</span><br/><span class="hl-1">/</span><span class="hl-0">home</span><span class="hl-1">/</span><span class="hl-0">jsmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><span class="hl-1">/</span><span class="hl-0">Work</span><span class="hl-1">/</span><span class="hl-0">foo</span><br/><span class="hl-1">/</span><span class="hl-0">home</span><span class="hl-1">/</span><span class="hl-0">jsmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><span class="hl-1">/</span><span class="hl-0">bar</span><br/><span class="hl-1">/</span><br/><br/><span class="hl-7">// For a Windows user:</span><br/><span class="hl-1">&gt;&gt;&gt;</span><br/><span class="hl-11">C</span><span class="hl-1">:/</span><span class="hl-0">Users</span><span class="hl-1">/</span><span class="hl-0">JSmith</span><br/><span class="hl-11">C</span><span class="hl-1">:/</span><span class="hl-0">Users</span><span class="hl-1">/</span><span class="hl-0">JSmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><span class="hl-1">/</span><span class="hl-0">Work</span><br/><span class="hl-11">C</span><span class="hl-1">:/</span><span class="hl-0">Users</span><span class="hl-1">/</span><span class="hl-0">JSmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><br/><span class="hl-7">// Unix example has been omitted</span><br/><span class="hl-11">C</span><span class="hl-1">:/</span><span class="hl-0">Users</span><span class="hl-1">/</span><span class="hl-0">HSimpson</span><span class="hl-1">/</span><span class="hl-0">Documents</span><br/><span class="hl-11">C</span><span class="hl-1">:/</span><span class="hl-0">Users</span><span class="hl-1">/</span><span class="hl-0">JSmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><span class="hl-1">/</span><span class="hl-0">Work</span><span class="hl-1">/</span><span class="hl-0">foo</span><br/><span class="hl-11">C</span><span class="hl-1">:/</span><span class="hl-0">Users</span><span class="hl-1">/</span><span class="hl-0">JSmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><span class="hl-1">/</span><span class="hl-0">bar</span><br/><span class="hl-11">C</span><span class="hl-1">:/</span>
 </code></pre>
 </div></section>
 <section class="tsd-panel tsd-hierarchy">
@@ -143,73 +143,106 @@
 <li class="tsd-signature" id="constructor.new_default">new default<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>paths<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography">
-<h3>Property</h3><p>The normalized underlying filepath.</p>
-
-<h3>Property</h3><p>The root directory of the underlying filepath.</p>
-
-<h3>Property</h3><p>The basename of the underlying filepath.</p>
-
-<h3>Property</h3><p>An alias for the filepath of the parent directory.</p>
-
-<h3>Property</h3><p>The basename without any extensions.</p>
-
-<h3>Property</h3><p>The last extension found in the basename. Includes period.</p>
-
-<h3>Property</h3><p>An array of the individualized extentions, without periods.</p>
-
-<h3>Property</h3><p>The filepath descriptor if the underlying filepath is opened. <code>null</code> when the filepath is in a closed state.</p>
-</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><code class="tsd-tag ts-flagRest">Rest</code> <span class="tsd-signature-symbol">...</span>paths: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
-<div class="tsd-comment tsd-typography"><p>A collection of strings which will be <strong>resolved and normalized</strong> into a filepath.</p>
-</div></li></ul></div>
+<h5><code class="tsd-tag ts-flagRest">Rest</code> <span class="tsd-signature-symbol">...</span>paths: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h4></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="basename" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>basename</span><a href="#basename" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
-<div class="tsd-signature">basename<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
+<div class="tsd-signature">basename<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>The basename of a filepath.</p>
+
+<h3>Example</h3><ul>
+<li>For a filepath of <code>/foo/bar/baz.txt</code>, the basename is <code>baz.txt</code>.</li>
+<li>For a filepath of <code>/foo/bar</code>, the basename is <code>bar</code>.</li>
+</ul>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MauricePasternak/pathlib-js/blob/ae01560/src/index.ts#L108">index.ts:108</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/MauricePasternak/pathlib-js/blob/352f246/src/index.ts#L235">index.ts:235</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="descriptor" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>descriptor</span><a href="#descriptor" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
-<div class="tsd-signature">descriptor<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div><aside class="tsd-sources">
+<div class="tsd-signature">descriptor<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>The number that uniquely identifies a filepath in the operating system it resides.
+This is <code>null</code> while the filepath is closed and a <code>number</code> when the filepath is in an open state.</p>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MauricePasternak/pathlib-js/blob/ae01560/src/index.ts#L112">index.ts:112</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/MauricePasternak/pathlib-js/blob/352f246/src/index.ts#L279">index.ts:279</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="dirname" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>dirname</span><a href="#dirname" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
-<div class="tsd-signature">dirname<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
+<div class="tsd-signature">dirname<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>The portion of the filepath other than the basename.</p>
+
+<h3>Example</h3><ul>
+<li>For a filepath of <code>/home/jsmith/Documents/Work/foo.txt</code>, the <code>dirname</code> is <code>/home/jsmith/Documents/Work</code>.</li>
+<li>For a filepath of <code>C:\\Users\\JSmith\\Documents</code>, the <code>dirname</code> is <code>C:\\Users\\JSmith</code>.</li>
+</ul>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MauricePasternak/pathlib-js/blob/ae01560/src/index.ts#L107">index.ts:107</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/MauricePasternak/pathlib-js/blob/352f246/src/index.ts#L227">index.ts:227</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="ext" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>ext</span><a href="#ext" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
-<div class="tsd-signature">ext<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
+<div class="tsd-signature">ext<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>The final extension in the filepath.</p>
+<p><strong>⚠️ In this library, the leading dot is included as part of the extension. ⚠️</strong></p>
+
+<h3>Example</h3><ul>
+<li>For a filepath of <code>/foo/bar/baz.txt</code>, the extension is <code>.txt</code>.</li>
+<li>For a filepath of <code>/foo/bar/baz</code>, the extension is an empty string.</li>
+<li>For a filepath of <code>/foo/bar/baz.tar.gz</code>, the extension is <code>.gz</code>.</li>
+</ul>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MauricePasternak/pathlib-js/blob/ae01560/src/index.ts#L110">index.ts:110</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/MauricePasternak/pathlib-js/blob/352f246/src/index.ts#L254">index.ts:254</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="path" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>path</span><a href="#path" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
-<div class="tsd-signature">path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
+<div class="tsd-signature">path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>The full filepath represented by this Path instance.</p>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MauricePasternak/pathlib-js/blob/ae01560/src/index.ts#L106">index.ts:106</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/MauricePasternak/pathlib-js/blob/352f246/src/index.ts#L219">index.ts:219</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="root" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>root</span><a href="#root" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
-<div class="tsd-signature">root<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
+<div class="tsd-signature">root<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>The root directory of the filepath.</p>
+
+<h3>Remarks</h3><p><strong>⚠️ In this library, the normalization process of the filepath results in the root being always
+expressed with forward slashes. (i.e. <code>C:/</code> instead of <code>C:\</code>).
+Windows users may find this more difficult to work with. ⚠️</strong></p>
+<p>@examples</p>
 <ul>
-<li>Defined in <a href="https://github.com/MauricePasternak/pathlib-js/blob/ae01560/src/index.ts#L105">index.ts:105</a></li></ul></aside></section>
+<li>For a Unix filepath of <code>/foo/bar/baz</code>, the root directory is <code>/</code>.</li>
+<li>For a Windows filepath of <code>C:\foo\bar\baz</code>, the root directory is <code>C:</code> (expressed as <code>C:/</code> in this library).</li>
+</ul>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/MauricePasternak/pathlib-js/blob/352f246/src/index.ts#L214">index.ts:214</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="stem" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>stem</span><a href="#stem" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
-<div class="tsd-signature">stem<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
+<div class="tsd-signature">stem<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>The portion of the basename without the extension.</p>
+
+<h3>Example</h3><ul>
+<li>For a filepath of <code>/foo/bar/baz.txt</code>, the stem is <code>baz</code>.</li>
+<li>For a filepath of <code>/foo/bar/baz</code>, the stem is <code>baz</code>.</li>
+</ul>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MauricePasternak/pathlib-js/blob/ae01560/src/index.ts#L109">index.ts:109</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/MauricePasternak/pathlib-js/blob/352f246/src/index.ts#L243">index.ts:243</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="suffixes" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>suffixes</span><a href="#suffixes" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
-<div class="tsd-signature">suffixes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
+<div class="tsd-signature">suffixes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+<div class="tsd-comment tsd-typography"><p>An array of strings representing the individual extensions found at the end of the filepath.</p>
+<p><strong>⚠️In this library, the leading dot is included for each extension in the array.⚠️</strong></p>
+
+<h3>Example</h3><pre><code class="language-js"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp1</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Documents/foo.txt&quot;</span><span class="hl-1">);</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp2</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Documents/bar.tar.gz&quot;</span><span class="hl-1">);</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp3</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Documents/baz&quot;</span><span class="hl-1">);</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp1</span><span class="hl-1">.</span><span class="hl-0">suffixes</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; [ </span><span class="hl-3">&#39;.txt&#39;</span><span class="hl-1"> ]</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp2</span><span class="hl-1">.</span><span class="hl-0">suffixes</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; [ </span><span class="hl-3">&#39;.tar&#39;</span><span class="hl-1">, </span><span class="hl-3">&#39;.gz&#39;</span><span class="hl-1"> ]</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp3</span><span class="hl-1">.</span><span class="hl-0">suffixes</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; []</span>
+</code></pre>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/MauricePasternak/pathlib-js/blob/ae01560/src/index.ts#L111">index.ts:111</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/MauricePasternak/pathlib-js/blob/352f246/src/index.ts#L273">index.ts:273</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="access" class="tsd-anchor"></a>
@@ -221,14 +254,17 @@
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Asynchronously tests a user&#39;s permissions for the underling filepath.</p>
 
-<h3>Returns</h3><p>If mode was specified, a <code>boolean</code> reflecting the permissions. Otherwise, returns an <code>Object</code> with keys &quot;canRead&quot;, &quot;canWrite&quot;, &quot;canExecute&quot; and values as a boolean of whether permissions for that operation are available.</p>
+<h3>Returns</h3><p>If mode was specified, a <code>boolean</code> reflecting the permissions.
+Otherwise, returns an <code>Object</code> with keys &quot;canRead&quot;, &quot;canWrite&quot;, &quot;canExecute&quot; and values as a boolean of whether
+permissions for that operation are available.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
 <h5>mode: <span class="tsd-signature-type">number</span></h5>
-<div class="tsd-comment tsd-typography"><p>the permissions to check for. Use fs.constants variables as input, NOT octal numbers. Defaults to <code>undefined</code>, resulting in checking for read, write, and execute permissions.</p>
+<div class="tsd-comment tsd-typography"><p>the permissions to check for. Use fs.constants variables as input, NOT octal numbers.
+Defaults to <code>undefined</code>, resulting in checking for read, write, and execute permissions.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4></li>
 <li class="tsd-description">
@@ -247,14 +283,17 @@
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Synchronously tests a user&#39;s permissions for the underling filepath.</p>
 
-<h3>Returns</h3><p>If mode was specified, a <code>boolean</code> reflecting the permissions. Otherwise, returns an <code>Object</code> with keys &quot;canRead&quot;, &quot;canWrite&quot;, &quot;canExecute&quot; and values as a boolean of whether permissions for that operation are available.</p>
+<h3>Returns</h3><p>If mode was specified, a <code>boolean</code> reflecting the permissions.
+Otherwise, returns an <code>Object</code> with keys &quot;canRead&quot;, &quot;canWrite&quot;, &quot;canExecute&quot; and values as a boolean of whether
+permissions for that operation are available.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> mode: <span class="tsd-signature-type">number</span></h5>
-<div class="tsd-comment tsd-typography"><p>the permissions to check for. Use fs.constants variables as input, NOT octal numbers. Defaults to <code>undefined</code>, resulting in checking for read, write, and execute permissions.</p>
+<div class="tsd-comment tsd-typography"><p>the permissions to check for. Use fs.constants variables as input, NOT octal numbers.
+Defaults to <code>undefined</code>, resulting in checking for read, write, and execute permissions.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4></li>
 <li class="tsd-description">
@@ -270,8 +309,9 @@
 <li class="tsd-signature" id="append.append-1">append<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>segments<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Alias of the <code>join()</code> method. Appends strings to the end of the underlying filepath, creating a new <code>Path</code> instance. Note that &quot;..&quot; and &quot;.&quot; are treated
-literally and will not be resolved. For appending file segments with resolving behavior use the <code>resolve()</code> method.</p>
+<div class="tsd-comment tsd-typography"><p>Alias of the <code>join()</code> method. Appends strings to the end of the underlying filepath, creating a new <code>Path</code> instance.</p>
+<p>⚠️ Note that &quot;..&quot; and &quot;.&quot; are treated <strong>literally</strong> and will not be resolved.
+For appending file segments with resolving behavior use the <code>resolve()</code> method. ⚠️</p>
 
 <h3>Returns</h3><p>A new <code>Path</code> instance with the strings appended.</p>
 </div>
@@ -286,7 +326,7 @@ literally and will not be resolved. For appending file segments with resolving b
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="chmod" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>chmod</span><a href="#chmod" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="chmod.chmod-1">chmod<span class="tsd-signature-symbol">(</span>mode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li></ul>
+<li class="tsd-signature" id="chmod.chmod-1">chmod<span class="tsd-signature-symbol">(</span>mode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Asynchronously changes the permissions of the underlying filepath.</p>
@@ -294,6 +334,8 @@ literally and will not be resolved. For appending file segments with resolving b
 <li>Caveats: on Windows only the write permission can be changed, and the distinction
 among the permissions of group, owner or others is not implemented.</li>
 </ul>
+
+<h3>Returns</h3><p>Returns the <code>Path</code> instance that called this method.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -302,11 +344,11 @@ among the permissions of group, owner or others is not implemented.</li>
 <h5>mode: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
 <div class="tsd-comment tsd-typography"><p>A string (i.e. fs.constants) or octal number (ex. 0o511) representation of the new filepath permissions.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="chmodSync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>chmod<wbr/>Sync</span><a href="#chmodSync" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="chmodSync.chmodSync-1">chmod<wbr/>Sync<span class="tsd-signature-symbol">(</span>mode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li></ul>
+<li class="tsd-signature" id="chmodSync.chmodSync-1">chmod<wbr/>Sync<span class="tsd-signature-symbol">(</span>mode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Synchronously changes the permissions of the underlying filepath.</p>
@@ -314,6 +356,8 @@ among the permissions of group, owner or others is not implemented.</li>
 <li>Caveats: on Windows only the write permission can be changed, and the distinction
 among the permissions of group, owner or others is not implemented.</li>
 </ul>
+
+<h3>Returns</h3><p>Returns the <code>Path</code> instance that called this method.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -322,14 +366,16 @@ among the permissions of group, owner or others is not implemented.</li>
 <h5>mode: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
 <div class="tsd-comment tsd-typography"><p>A string (i.e. fs.constants) or octal number (ex. 0o511) representation of the new filepath permissions.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></section>
+<h4 class="tsd-returns-title">Returns <a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="chown" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>chown</span><a href="#chown" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="chown.chown-1">chown<span class="tsd-signature-symbol">(</span>uid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, gid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li></ul>
+<li class="tsd-signature" id="chown.chown-1">chown<span class="tsd-signature-symbol">(</span>uid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, gid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Asynchronously changes the ownership of the underlying filepath.</p>
+
+<h3>Returns</h3><p>Returns the <code>Path</code> instance that called this method.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -342,14 +388,16 @@ among the permissions of group, owner or others is not implemented.</li>
 <h5>gid: <span class="tsd-signature-type">number</span></h5>
 <div class="tsd-comment tsd-typography"><p>Group id.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="chownSync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>chown<wbr/>Sync</span><a href="#chownSync" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="chownSync.chownSync-1">chown<wbr/>Sync<span class="tsd-signature-symbol">(</span>uid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, gid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li></ul>
+<li class="tsd-signature" id="chownSync.chownSync-1">chown<wbr/>Sync<span class="tsd-signature-symbol">(</span>uid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, gid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Synchronously changes the ownership of the underlying filepath.</p>
+
+<h3>Returns</h3><p>Returns the <code>Path</code> instance that called this method.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -362,7 +410,7 @@ among the permissions of group, owner or others is not implemented.</li>
 <h5>gid: <span class="tsd-signature-type">number</span></h5>
 <div class="tsd-comment tsd-typography"><p>Group id.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></section>
+<h4 class="tsd-returns-title">Returns <a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="close" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>close</span><a href="#close" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -386,13 +434,21 @@ among the permissions of group, owner or others is not implemented.</li>
 <div class="tsd-comment tsd-typography"><p>Asynchronously determines whether a directory contains a given child filepath or basename.</p>
 
 <h3>Returns</h3><p>The located child as a <code>Path</code> instance or <code>false</code> if no child path could be found.</p>
+
+<h3>Example</h3><pre><code class="language-js"><span class="hl-7">// In fp there exists a file called &quot;foo.txt&quot;</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Documents&quot;</span><span class="hl-1">);</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">usingBasename</span><span class="hl-1"> = </span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">containsImmediateChild</span><span class="hl-1">(</span><span class="hl-3">&quot;foo.txt&quot;</span><span class="hl-1">);</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">usingFullPath</span><span class="hl-1"> = </span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">containsImmediateChild</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Documents/foo.txt&quot;</span><span class="hl-1">);</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">usingPathInst</span><span class="hl-1"> = </span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">containsImmediateChild</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">join</span><span class="hl-1">(</span><span class="hl-3">&quot;foo.txt&quot;</span><span class="hl-1">));</span><br/><span class="hl-0">usingBasename</span><span class="hl-1"> &amp;&amp; </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">usingBasename</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; /</span><span class="hl-0">home</span><span class="hl-1">/</span><span class="hl-0">jsmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><span class="hl-1">/</span><span class="hl-0">foo</span><span class="hl-1">.</span><span class="hl-0">txt</span><br/><span class="hl-0">usingFullPath</span><span class="hl-1"> &amp;&amp; </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">usingFullPath</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; /</span><span class="hl-0">home</span><span class="hl-1">/</span><span class="hl-0">jsmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><span class="hl-1">/</span><span class="hl-0">foo</span><span class="hl-1">.</span><span class="hl-0">txt</span><br/><span class="hl-0">usingPathInst</span><span class="hl-1"> &amp;&amp; </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">usingPathInst</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; /</span><span class="hl-0">home</span><span class="hl-1">/</span><span class="hl-0">jsmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><span class="hl-1">/</span><span class="hl-0">foo</span><span class="hl-1">.</span><span class="hl-0">txt</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">containsImmediateChild</span><span class="hl-1">(</span><span class="hl-3">&quot;bar.json&quot;</span><span class="hl-1">));</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-4">false</span>
+</code></pre>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
 <h5>child: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h5>
-<div class="tsd-comment tsd-typography"><p>Either a string representing a basename to search for or another Path instance to be located as a child of this instance.</p>
+<div class="tsd-comment tsd-typography"><p>The child filepath to look for within the underlying filepath. The following are accepted:</p>
+<ul>
+<li>The basename of the child filepath as a string</li>
+<li>The fullpath of the child filepath as a string</li>
+<li>A Path instance of the child filepath</li>
+</ul>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="containsImmediateChildSync" class="tsd-anchor"></a>
@@ -404,13 +460,21 @@ among the permissions of group, owner or others is not implemented.</li>
 <div class="tsd-comment tsd-typography"><p>Synchronously determines whether a directory contains a given child filepath or basename.</p>
 
 <h3>Returns</h3><p>The located child as a <code>Path</code> instance or <code>false</code> if no child path could be found.</p>
+
+<h3>Example</h3><pre><code class="language-js"><span class="hl-7">// In fp there exists a file called &quot;foo.txt&quot;</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Documents&quot;</span><span class="hl-1">);</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">usingBasename</span><span class="hl-1"> = </span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">containsImmediateChildSync</span><span class="hl-1">(</span><span class="hl-3">&quot;foo.txt&quot;</span><span class="hl-1">);</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">usingFullPath</span><span class="hl-1"> = </span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">containsImmediateChildSync</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Documents/foo.txt&quot;</span><span class="hl-1">);</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">usingPathInst</span><span class="hl-1"> = </span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">containsImmediateChildSync</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">join</span><span class="hl-1">(</span><span class="hl-3">&quot;foo.txt&quot;</span><span class="hl-1">));</span><br/><span class="hl-0">usingBasename</span><span class="hl-1"> &amp;&amp; </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">usingBasename</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; /</span><span class="hl-0">home</span><span class="hl-1">/</span><span class="hl-0">jsmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><span class="hl-1">/</span><span class="hl-0">foo</span><span class="hl-1">.</span><span class="hl-0">txt</span><br/><span class="hl-0">usingFullPath</span><span class="hl-1"> &amp;&amp; </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">usingFullPath</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; /</span><span class="hl-0">home</span><span class="hl-1">/</span><span class="hl-0">jsmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><span class="hl-1">/</span><span class="hl-0">foo</span><span class="hl-1">.</span><span class="hl-0">txt</span><br/><span class="hl-0">usingPathInst</span><span class="hl-1"> &amp;&amp; </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">usingPathInst</span><span class="hl-1">.</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; /</span><span class="hl-0">home</span><span class="hl-1">/</span><span class="hl-0">jsmith</span><span class="hl-1">/</span><span class="hl-0">Documents</span><span class="hl-1">/</span><span class="hl-0">foo</span><span class="hl-1">.</span><span class="hl-0">txt</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">containsImmediateChildSync</span><span class="hl-1">(</span><span class="hl-3">&quot;bar.json&quot;</span><span class="hl-1">));</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-4">false</span>
+</code></pre>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
 <h5>child: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h5>
-<div class="tsd-comment tsd-typography"><p>Either a string representing a basename to search for or another Path instance to be located as a child of this instance.</p>
+<div class="tsd-comment tsd-typography"><p>The child filepath to look for within the underlying filepath. The following are accepted:</p>
+<ul>
+<li>The basename of the child filepath as a string</li>
+<li>The fullpath of the child filepath as a string</li>
+<li>A Path instance of the child filepath</li>
+</ul>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="copy" class="tsd-anchor"></a>
@@ -426,12 +490,23 @@ among the permissions of group, owner or others is not implemented.</li>
 <ul class="tsd-parameter-list">
 <li>
 <h5>dst: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h5>
-<div class="tsd-comment tsd-typography"><p>The filepath destination to where the underlying path should be copied.
-If the instance is a directory, the children of the directory will be copied to this location.
-If the instance is a file, it itself will be copied to the new location.</p>
+<div class="tsd-comment tsd-typography"><p>The filepath destination to where the underlying path should be copied.</p>
+<ul>
+<li>If the instance is a <strong>directory</strong>, the children of the directory will be copied to this location.</li>
+<li>If the instance is a <strong>file</strong>, it itself will be copied to the new location.</li>
+</ul>
 </div></li>
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <a href="../interfaces/CopyOptions.html" class="tsd-signature-type" data-tsd-kind="Interface">CopyOptions</a></h5></li></ul></div>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <a href="../interfaces/CopyOptions.html" class="tsd-signature-type" data-tsd-kind="Interface">CopyOptions</a></h5>
+<div class="tsd-comment tsd-typography"><p><a href="../interfaces/CopyOptions.html">CopyOptions</a> By default:</p>
+<ul>
+<li><code>overwrite</code> is set to <code>true</code></li>
+<li><code>errorOnExist</code> is set to <code>false</code></li>
+<li><code>dereference</code> is set to `false</li>
+<li><code>preserveTimestamps</code> is set to <code>false</code></li>
+<li><code>interRelativeSource</code> is set to <code>undefined</code> (relative paths will be resolved relative to the current working directory)</li>
+</ul>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="copySync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>copy<wbr/>Sync</span><a href="#copySync" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
@@ -446,12 +521,23 @@ If the instance is a file, it itself will be copied to the new location.</p>
 <ul class="tsd-parameter-list">
 <li>
 <h5>dst: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h5>
-<div class="tsd-comment tsd-typography"><p>The filepath destination to where the underlying path should be copied.
-If the instance is a directory, the children of the directory will be copied to this location.
-If the instance is a file, it itself will be copied to the new location.</p>
+<div class="tsd-comment tsd-typography"><p>The filepath destination to where the underlying path should be copied.</p>
+<ul>
+<li>If the instance is a <strong>directory</strong>, the children of the directory will be copied to this location.</li>
+<li>If the instance is a <strong>file</strong>, it itself will be copied to the new location.</li>
+</ul>
 </div></li>
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <a href="../interfaces/CopyOptionsSync.html" class="tsd-signature-type" data-tsd-kind="Interface">CopyOptionsSync</a></h5></li></ul></div>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <a href="../interfaces/CopyOptionsSync.html" class="tsd-signature-type" data-tsd-kind="Interface">CopyOptionsSync</a></h5>
+<div class="tsd-comment tsd-typography"><p><a href="../interfaces/CopyOptions.html">CopyOptions</a> By default:</p>
+<ul>
+<li><code>overwrite</code> is set to <code>true</code></li>
+<li><code>errorOnExist</code> is set to <code>false</code></li>
+<li><code>dereference</code> is set to `false</li>
+<li><code>preserveTimestamps</code> is set to <code>false</code></li>
+<li><code>interRelativeSource</code> is set to <code>undefined</code> (relative paths will be resolved relative to the current working directory)</li>
+</ul>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="delete" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>delete</span><a href="#delete" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
@@ -496,8 +582,8 @@ If the instance is a file, it itself will be copied to the new location.</p>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getPathsNLevelsAway" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>PathsNLevels<wbr/>Away</span><a href="#getPathsNLevelsAway" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="getPathsNLevelsAway.getPathsNLevelsAway-1">get<wbr/>PathsNLevels<wbr/>Away<span class="tsd-signature-symbol">(</span>depth<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, asIterator<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">true</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Options</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AsyncGenerator</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
-<li class="tsd-signature" id="getPathsNLevelsAway.getPathsNLevelsAway-2">get<wbr/>PathsNLevels<wbr/>Away<span class="tsd-signature-symbol">(</span>depth<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, asIterator<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">false</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Options</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li></ul>
+<li class="tsd-signature" id="getPathsNLevelsAway.getPathsNLevelsAway-1">get<wbr/>PathsNLevels<wbr/>Away<span class="tsd-signature-symbol">(</span>depth<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, asIterator<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">true</span>, options<span class="tsd-signature-symbol">?: </span><a href="../types/GlobOptions.html" class="tsd-signature-type" data-tsd-kind="Type alias">GlobOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AsyncGenerator</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+<li class="tsd-signature" id="getPathsNLevelsAway.getPathsNLevelsAway-2">get<wbr/>PathsNLevels<wbr/>Away<span class="tsd-signature-symbol">(</span>depth<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, asIterator<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">false</span>, options<span class="tsd-signature-symbol">?: </span><a href="../types/GlobOptions.html" class="tsd-signature-type" data-tsd-kind="Type alias">GlobOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Retrieves filepaths located exactly N levels away from the underlying filepath.
@@ -505,8 +591,8 @@ Utilizes globbing under the hood, thereby requiring glob options.</p>
 
 <h3>Returns</h3><p>Depends on the <code>asIterator</code> parameter:</p>
 <ul>
-<li>if true, returns an AsyncIterator of Path instances</li>
-<li>if false, returns an Array of Path instances</li>
+<li>if true, returns an <code>AsyncIterator</code> of <code>Path</code> instances</li>
+<li>if false, returns an <code>Array</code> of <code>Path</code> instances</li>
 </ul>
 </div>
 <div class="tsd-parameters">
@@ -523,11 +609,11 @@ Utilizes globbing under the hood, thereby requiring glob options.</p>
 </div></li>
 <li>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> asIterator: <span class="tsd-signature-type">true</span></h5>
-<div class="tsd-comment tsd-typography"><p>Whether the result should be an AsyncIterator of Path instances instead of an array of them.
-Defaults to false.</p>
+<div class="tsd-comment tsd-typography"><p>Whether the result should be an <code>AsyncIterator</code> of <code>Path</code> instances instead of an <code>Array</code> of them.
+Defaults to <code>false</code>.</p>
 </div></li>
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <span class="tsd-signature-type">Options</span></h5>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <a href="../types/GlobOptions.html" class="tsd-signature-type" data-tsd-kind="Type alias">GlobOptions</a></h5>
 <div class="tsd-comment tsd-typography"><p>Options governing the underlying globbing behavior that is used to retrieve the filepaths.
 Is based off <a href="https://www.npmjs.com/package/fast-glob">fast-glob&#39;s options</a>.
 By default, the following options are set if no options are provided:</p>
@@ -547,17 +633,17 @@ By default, the following options are set if no options are provided:</p>
 <li>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> asIterator: <span class="tsd-signature-type">false</span></h5></li>
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <span class="tsd-signature-type">Options</span></h5></li></ul></div>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <a href="../types/GlobOptions.html" class="tsd-signature-type" data-tsd-kind="Type alias">GlobOptions</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="glob" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>glob</span><a href="#glob" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="glob.glob-1">glob<span class="tsd-signature-symbol">(</span>patterns<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Options</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li></ul>
+<li class="tsd-signature" id="glob.glob-1">glob<span class="tsd-signature-symbol">(</span>patterns<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><a href="../types/GlobOptions.html" class="tsd-signature-type" data-tsd-kind="Type alias">GlobOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Asynchronously globs for filepaths stemming from the Path instance.</p>
 
-<h3>Returns</h3><p>An <code>array</code> of globbed <code>Path</code> instances.</p>
+<h3>Returns</h3><p>An <code>Array</code> of globbed <code>Path</code> instances.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -567,14 +653,21 @@ By default, the following options are set if no options are provided:</p>
 <div class="tsd-comment tsd-typography"><p>A string or collection of strings representing glob patterns to search.</p>
 </div></li>
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <span class="tsd-signature-type">Options</span></h5>
-<div class="tsd-comment tsd-typography"><p><a href="https://www.npmjs.com/package/fast-glob#api">fast-glob options</a>, including whether to restrict the globbing to files, directories, etc.</p>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <a href="../types/GlobOptions.html" class="tsd-signature-type" data-tsd-kind="Type alias">GlobOptions</a></h5>
+<div class="tsd-comment tsd-typography"><p><a href="https://www.npmjs.com/package/fast-glob#api">fast-glob options</a>. By default:</p>
+<ul>
+<li><code>objectMode</code> is set to <code>false</code> and enforced</li>
+<li><code>stats</code> is set to <code>false</code> and enforced</li>
+<li><code>onlyDirectories</code> is set to <code>false</code></li>
+<li><code>onlyFiles</code> is set to <code>false</code></li>
+<li><code>dot</code> is set to <code>false</code></li>
+</ul>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="globIter" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>glob<wbr/>Iter</span><a href="#globIter" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="globIter.globIter-1">glob<wbr/>Iter<span class="tsd-signature-symbol">(</span>patterns<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Options</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">AsyncGenerator</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></li></ul>
+<li class="tsd-signature" id="globIter.globIter-1">glob<wbr/>Iter<span class="tsd-signature-symbol">(</span>patterns<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><a href="../types/GlobOptions.html" class="tsd-signature-type" data-tsd-kind="Type alias">GlobOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">AsyncGenerator</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Asynchronously glob for filepaths stemming from the Path instance while yielding them instead of returning
@@ -590,19 +683,26 @@ an immediate array.</p>
 <div class="tsd-comment tsd-typography"><p>A string or collection of strings representing glob patterns to search.</p>
 </div></li>
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <span class="tsd-signature-type">Options</span></h5>
-<div class="tsd-comment tsd-typography"><p><a href="https://www.npmjs.com/package/fast-glob#api">fast-glob options</a>, including whether to restrict the globbing to files, directories, etc.</p>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <a href="../types/GlobOptions.html" class="tsd-signature-type" data-tsd-kind="Type alias">GlobOptions</a></h5>
+<div class="tsd-comment tsd-typography"><p><a href="https://www.npmjs.com/package/fast-glob#api">fast-glob options</a>. By default:</p>
+<ul>
+<li><code>objectMode</code> is set to <code>false</code> and enforced</li>
+<li><code>stats</code> is set to <code>false</code> and enforced</li>
+<li><code>onlyDirectories</code> is set to <code>false</code></li>
+<li><code>onlyFiles</code> is set to <code>false</code></li>
+<li><code>dot</code> is set to <code>false</code></li>
+</ul>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">AsyncGenerator</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="globSync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>glob<wbr/>Sync</span><a href="#globSync" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="globSync.globSync-1">glob<wbr/>Sync<span class="tsd-signature-symbol">(</span>patterns<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Options</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">[]</span></li></ul>
+<li class="tsd-signature" id="globSync.globSync-1">glob<wbr/>Sync<span class="tsd-signature-symbol">(</span>patterns<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><a href="../types/GlobOptions.html" class="tsd-signature-type" data-tsd-kind="Type alias">GlobOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">[]</span></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Synchronously globs for filepaths stemming from the Path instance.</p>
 
-<h3>Returns</h3><p>An <code>array</code> of globbed <code>Path</code> instances.</p>
+<h3>Returns</h3><p>An <code>Array</code> of globbed <code>Path</code> instances.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -612,8 +712,15 @@ an immediate array.</p>
 <div class="tsd-comment tsd-typography"><p>A string or collection of strings representing glob patterns to search.</p>
 </div></li>
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <span class="tsd-signature-type">Options</span></h5>
-<div class="tsd-comment tsd-typography"><p><a href="https://www.npmjs.com/package/fast-glob#api">fast-glob options</a>, including whether to restrict the globbing to files, directories, etc.</p>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <a href="../types/GlobOptions.html" class="tsd-signature-type" data-tsd-kind="Type alias">GlobOptions</a></h5>
+<div class="tsd-comment tsd-typography"><p><a href="https://www.npmjs.com/package/fast-glob#api">fast-glob options</a>. By default:</p>
+<ul>
+<li><code>objectMode</code> is set to <code>false</code> and enforced</li>
+<li><code>stats</code> is set to <code>false</code> and enforced</li>
+<li><code>onlyDirectories</code> is set to <code>false</code></li>
+<li><code>onlyFiles</code> is set to <code>false</code></li>
+<li><code>dot</code> is set to <code>false</code></li>
+</ul>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">[]</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="isDirectory" class="tsd-anchor"></a>
@@ -732,10 +839,14 @@ an immediate array.</p>
 <li class="tsd-signature" id="join.join-1">join<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>segments<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Appends strings to the end of the underlying filepath, creating a new <code>Path</code> instance. Note that &quot;..&quot; and &quot;.&quot; are treated
-literally and will not be resolved. For appending file segments with resolving behavior use the <code>resolve()</code> method.</p>
+<div class="tsd-comment tsd-typography"><p>Appends strings to the end of the underlying filepath, creating a new <code>Path</code> instance.</p>
+<p>⚠️ Note that &quot;..&quot; and &quot;.&quot; are treated <strong>literally</strong> and will not be resolved.
+For appending file segments with resolving behavior use the <code>resolve()</code> method. ⚠️</p>
 
 <h3>Returns</h3><p>A new <code>Path</code> instance with the strings appended.</p>
+
+<h3>Example</h3><pre><code class="language-js"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Documents&quot;</span><span class="hl-1">);</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">join</span><span class="hl-1">(</span><span class="hl-3">&quot;foo&quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;bar&quot;</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">join</span><span class="hl-1">(</span><span class="hl-3">&quot;..&quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;baz&quot;</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/jsmith/Documents/foo/bar&quot;</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/jsmith/Documents/../baz&quot;</span>
+</code></pre>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -748,60 +859,101 @@ literally and will not be resolved. For appending file segments with resolving b
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="makeDir" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>make<wbr/>Dir</span><a href="#makeDir" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="makeDir.makeDir-1">make<wbr/>Dir<span class="tsd-signature-symbol">(</span>mode<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li></ul>
+<li class="tsd-signature" id="makeDir.makeDir-1">make<wbr/>Dir<span class="tsd-signature-symbol">(</span>mode<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span>, throwErrOnFail<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Asynchronously creates a new directory, including intermediate parental components.</p>
+
+<h3>Returns</h3><p>Returns <code>false</code> if <code>throwErrOnFail</code> is <code>false</code> and an error is encountered while making the directory path.
+Otherwise, returns the <code>Path</code> instance that called this method.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
 <h5>mode: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0o777</span></h5>
-<div class="tsd-comment tsd-typography"><p>A string (i.e. fs.constants) or octal number (ex. 0o511) representation of the new filepath permissions to impart on the created directory.</p>
+<div class="tsd-comment tsd-typography"><p>An octal number (ex. 0o511) representing of the new filepath permissions to impart.
+Defaults to 0o777.</p>
+</div></li>
+<li>
+<h5>throwErrOnFail: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+<div class="tsd-comment tsd-typography"><p>Whether to rethrow any generated error. Defaults to <code>false</code>.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="makeDirSync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>make<wbr/>Dir<wbr/>Sync</span><a href="#makeDirSync" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="makeDirSync.makeDirSync-1">make<wbr/>Dir<wbr/>Sync<span class="tsd-signature-symbol">(</span>mode<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li></ul>
+<li class="tsd-signature" id="makeDirSync.makeDirSync-1">make<wbr/>Dir<wbr/>Sync<span class="tsd-signature-symbol">(</span>mode<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span>, throwErrOnFail<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Synchronously creates a new directory, including intermediate parental components.</p>
+
+<h3>Returns</h3><p>Returns <code>false</code> if <code>throwErrOnFail</code> is <code>false</code> and an error is encountered while making the directory path.
+Otherwise, returns the <code>Path</code> instance that called this method.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
 <h5>mode: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0o777</span></h5>
-<div class="tsd-comment tsd-typography"><p>A string (i.e. fs.constants) or octal number (ex. 0o511) representation of the new filepath permissions to impart on the created directory.</p>
+<div class="tsd-comment tsd-typography"><p>An octal number (ex. 0o511) representing of the new filepath permissions to impart.
+Defaults to 0o777.</p>
+</div></li>
+<li>
+<h5>throwErrOnFail: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+<div class="tsd-comment tsd-typography"><p>Whether to rethrow any generated error. Defaults to <code>false</code>.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></section>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="makeFile" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>make<wbr/>File</span><a href="#makeFile" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="makeFile.makeFile-1">make<wbr/>File<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li></ul>
+<li class="tsd-signature" id="makeFile.makeFile-1">make<wbr/>File<span class="tsd-signature-symbol">(</span>throwErrOnFail<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Asynchronously creates a new file, including intermediate parental components.</p>
+
+<h3>Returns</h3><p>Returns <code>false</code> if <code>throwErrOnFail</code> is <code>false</code> and an error is encountered while making the file path.
+Otherwise, returns the <code>Path</code> instance that called this method.</p>
 </div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>throwErrOnFail: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+<div class="tsd-comment tsd-typography"><p>Whether to rethrow any generated error. Defaults to <code>false</code>.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="makeFileSync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>make<wbr/>File<wbr/>Sync</span><a href="#makeFileSync" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="makeFileSync.makeFileSync-1">make<wbr/>File<wbr/>Sync<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li></ul>
+<li class="tsd-signature" id="makeFileSync.makeFileSync-1">make<wbr/>File<wbr/>Sync<span class="tsd-signature-symbol">(</span>throwErrOnFail<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Synchronously creates a new file, including intermediate parental components.</p>
+
+<h3>Returns</h3><p>Returns <code>false</code> if <code>throwErrOnFail</code> is <code>false</code> and an error is encountered while making the file path.
+Otherwise, returns the <code>Path</code> instance that called this method.</p>
 </div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></section>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>throwErrOnFail: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+<div class="tsd-comment tsd-typography"><p>Whether to rethrow any generated error. Defaults to <code>false</code>.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="makeSymlink" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>make<wbr/>Symlink</span><a href="#makeSymlink" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature" id="makeSymlink.makeSymlink-1">make<wbr/>Symlink<span class="tsd-signature-symbol">(</span>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/SymlinkOptions.html" class="tsd-signature-type" data-tsd-kind="Interface">SymlinkOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Asynchronously creates a symlink. Either links the underlying filepath to a created symlink or has a target filepath be linking by the underlying symlink.</p>
+<div class="tsd-comment tsd-typography"><p>Asynchronously creates a symlink. Either:</p>
+<ul>
+<li>links the underlying filepath to a target symlink that is created (default)
+OR</li>
+<li>has a the underlying filepath interpreted as the symlink to be created when linking to some target path.</li>
+</ul>
 
 <h3>Returns</h3><p>The filepath outlined in <code>target</code> as a <code>Path</code> instance.</p>
 </div>
@@ -813,7 +965,15 @@ literally and will not be resolved. For appending file segments with resolving b
 <div class="tsd-comment tsd-typography"><p>The corresponding target filepath that a symlink should be made to OR that is a symlink linking to the underlying filepath.</p>
 </div></li>
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <a href="../interfaces/SymlinkOptions.html" class="tsd-signature-type" data-tsd-kind="Interface">SymlinkOptions</a></h5></li></ul></div>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <a href="../interfaces/SymlinkOptions.html" class="tsd-signature-type" data-tsd-kind="Interface">SymlinkOptions</a></h5>
+<div class="tsd-comment tsd-typography"><p><a href="../interfaces/SymlinkOptions.html">SymlinkOptions</a> controlling the operation of this function. By default:</p>
+<ul>
+<li><code>targetIsLink</code> is <code>true</code> (the path in the <code>target</code> parameter is assumed to be the symlink to be made)</li>
+<li><code>type</code> is <code>undefined</code>(on Windows, the type of symlink to make will be inferred)</li>
+<li><code>interpRelativeSource</code> is <code>&quot;cwd&quot;</code>, meaning that a relative <code>target</code> string will be resolved relative to
+the current working directory.</li>
+</ul>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="makeSymlinkSync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>make<wbr/>Symlink<wbr/>Sync</span><a href="#makeSymlinkSync" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
@@ -821,7 +981,12 @@ literally and will not be resolved. For appending file segments with resolving b
 <li class="tsd-signature" id="makeSymlinkSync.makeSymlinkSync-1">make<wbr/>Symlink<wbr/>Sync<span class="tsd-signature-symbol">(</span>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/SymlinkOptions.html" class="tsd-signature-type" data-tsd-kind="Interface">SymlinkOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Synchronously creates a symlink. Either links the underlying filepath to a created symlink or has a target filepath be linking by the underlying symlink.</p>
+<div class="tsd-comment tsd-typography"><p>Synchronously creates a symlink. Either:</p>
+<ul>
+<li>links the underlying filepath to a target symlink that is created (default)
+OR</li>
+<li>has a the underlying filepath interpreted as the symlink to be created when linking to some target path.</li>
+</ul>
 
 <h3>Returns</h3><p>The filepath outlined in <code>target</code> as a <code>Path</code> instance.</p>
 </div>
@@ -833,7 +998,15 @@ literally and will not be resolved. For appending file segments with resolving b
 <div class="tsd-comment tsd-typography"><p>The corresponding target filepath that a symlink should be made to OR that is a symlink linking to the underlying filepath.</p>
 </div></li>
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <a href="../interfaces/SymlinkOptions.html" class="tsd-signature-type" data-tsd-kind="Interface">SymlinkOptions</a></h5></li></ul></div>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <a href="../interfaces/SymlinkOptions.html" class="tsd-signature-type" data-tsd-kind="Interface">SymlinkOptions</a></h5>
+<div class="tsd-comment tsd-typography"><p><a href="../interfaces/SymlinkOptions.html">SymlinkOptions</a> controlling the operation of this function. By default:</p>
+<ul>
+<li><code>targetIsLink</code> is <code>true</code> (the path in the <code>target</code> parameter is assumed to be the symlink to be made)</li>
+<li><code>type</code> is <code>undefined</code>(on Windows, the type of symlink to make will be inferred)</li>
+<li><code>interpRelativeSource</code> is <code>&quot;cwd&quot;</code>, meaning that a relative <code>target</code> string will be resolved relative to
+the current working directory.</li>
+</ul>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="move" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>move</span><a href="#move" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
@@ -842,6 +1015,8 @@ literally and will not be resolved. For appending file segments with resolving b
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Asynchronously moves the underlying filepath to the indicated destination.</p>
+
+<h3>Returns</h3><p>Returns the destination filepath as a <code>Path</code> instance.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -850,12 +1025,18 @@ literally and will not be resolved. For appending file segments with resolving b
 <h5>dst: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h5>
 <div class="tsd-comment tsd-typography"><p>The filepath destination to where the underlying path should be moved.</p>
 <ul>
-<li>If the instance is a directory, the children of the directory will be moved to this location.</li>
-<li>If the instance is a file, it itself will be moved to the new location.</li>
+<li>If the instance is a <strong>directory</strong>, the children of the directory will be moved to this location.</li>
+<li>If the instance is a <strong>file</strong>, it itself will be moved to the new location.</li>
 </ul>
 </div></li>
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <a href="../interfaces/MoveOptions.html" class="tsd-signature-type" data-tsd-kind="Interface">MoveOptions</a></h5></li></ul></div>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <a href="../interfaces/MoveOptions.html" class="tsd-signature-type" data-tsd-kind="Interface">MoveOptions</a></h5>
+<div class="tsd-comment tsd-typography"><p><a href="../interfaces/MoveOptions.html">MoveOptions</a> By default:</p>
+<ul>
+<li><code>overwrite</code> is set to <code>true</code></li>
+<li><code>interRelativeSource</code> is set to <code>undefined</code> (relative paths will be resolved relative to the current working directory)</li>
+</ul>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="moveSync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>move<wbr/>Sync</span><a href="#moveSync" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
@@ -864,6 +1045,8 @@ literally and will not be resolved. For appending file segments with resolving b
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Synchronously moves the underlying filepath to the indicated destination.</p>
+
+<h3>Returns</h3><p>Returns the destination filepath as a <code>Path</code> instance.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -872,12 +1055,18 @@ literally and will not be resolved. For appending file segments with resolving b
 <h5>dst: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h5>
 <div class="tsd-comment tsd-typography"><p>The filepath destination to where the underlying path should be moved.</p>
 <ul>
-<li>If the instance is a directory, the children of the directory will be moved to this location.</li>
-<li>If the instance is a file, it itself will be moved to the new location.</li>
+<li>If the instance is a <strong>directory</strong>, the children of the directory will be moved to this location.</li>
+<li>If the instance is a <strong>file</strong>, it itself will be moved to the new location.</li>
 </ul>
 </div></li>
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <a href="../interfaces/MoveOptions.html" class="tsd-signature-type" data-tsd-kind="Interface">MoveOptions</a></h5></li></ul></div>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <a href="../interfaces/MoveOptions.html" class="tsd-signature-type" data-tsd-kind="Interface">MoveOptions</a></h5>
+<div class="tsd-comment tsd-typography"><p><a href="../interfaces/MoveOptions.html">MoveOptions</a> By default:</p>
+<ul>
+<li><code>overwrite</code> is set to <code>true</code></li>
+<li><code>interRelativeSource</code> is set to <code>undefined</code> (relative paths will be resolved relative to the current working directory)</li>
+</ul>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="open" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>open</span><a href="#open" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
@@ -920,15 +1109,21 @@ literally and will not be resolved. For appending file segments with resolving b
 <div class="tsd-comment tsd-typography"><p>Retrieves the parent directory or an earlier ancestor filepath.</p>
 
 <h3>Returns</h3><p>The parent or higher ancestor (i.e grandparent) directory of this filepath as a <code>Path</code> instance.</p>
+
+<h3>Example</h3><pre><code><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Documents/foo.txt&quot;</span><span class="hl-1">);</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">parent</span><span class="hl-1">(</span><span class="hl-8">0</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">); </span><span class="hl-7">// Returns the same path</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/jsmith/Documents/foo.txt&quot;</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">parent</span><span class="hl-1">(</span><span class="hl-8">1</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">); </span><span class="hl-7">// Returns the immediate parent</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/jsmith/Documents&quot;</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">parent</span><span class="hl-1">(</span><span class="hl-8">2</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">); </span><span class="hl-7">// Returns the grandparent</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/jsmith&quot;</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">parent</span><span class="hl-1">(</span><span class="hl-8">3</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home&quot;</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">parent</span><span class="hl-1">(</span><span class="hl-8">4</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/&quot;</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">parent</span><span class="hl-1">(</span><span class="hl-8">5</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/&quot;</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">parent</span><span class="hl-1">(</span><span class="hl-8">9001</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">); </span><span class="hl-7">// Exceeding root, the root is returned</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/&quot;</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">parent</span><span class="hl-1">(-</span><span class="hl-8">9001</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">); </span><span class="hl-7">// Negative numbers return the same path</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/jsmith/Documents/foo.txt&quot;</span>
+</code></pre>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> numIncrements: <span class="tsd-signature-type">number</span></h5>
-<div class="tsd-comment tsd-typography"><p>The number of directory levels to ascend. If this number exceeds number of ascentions required to reach the root directory,
-then the root directory itself is returned. If this number is 0 or less, it will return a copy of the current Path.
-Defaults to <code>undefined</code>, meaning that the immediate parent directory is returned.</p>
+<div class="tsd-comment tsd-typography"><p>The number of directory levels to ascend.</p>
+<ul>
+<li>If this number exceeds number of ascentions required to reach the root directory, then the root directory itself is returned.</li>
+<li>If this number is equal to or less than 0, it will return a copy of the current Path.</li>
+</ul>
+<p>Defaults to <code>undefined</code>, meaning that the immediate parent directory is returned.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="parts" class="tsd-anchor"></a>
@@ -939,7 +1134,10 @@ Defaults to <code>undefined</code>, meaning that the immediate parent directory 
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Splits the underlying filepath into its individual components.</p>
 
-<h3>Returns</h3><p>An array of the strings comprising the <code>Path</code> instance.</p>
+<h3>Returns</h3><p>An <code>Array</code> of the strings comprising the <code>Path</code> instance.</p>
+
+<h3>Example</h3><pre><code class="language-js"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Documents&quot;</span><span class="hl-1">)</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">parts</span><span class="hl-1">())</span><br/><span class="hl-1">&gt;&gt;&gt; [ </span><span class="hl-3">&#39;/&#39;</span><span class="hl-1">, </span><span class="hl-3">&#39;home&#39;</span><span class="hl-1">, </span><span class="hl-3">&#39;jsmith&#39;</span><span class="hl-1">, </span><span class="hl-3">&#39;Documents&#39;</span><span class="hl-1"> ]</span>
+</code></pre>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="read" class="tsd-anchor"></a>
@@ -989,7 +1187,7 @@ If position is an integer, the file position will be unchanged.</p>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Asynchronously collects the children of a directory path.</p>
 
-<h3>Returns</h3><p>An <code>array</code> of <code>Path</code> instances that are children of the current instance.</p>
+<h3>Returns</h3><p>An <code>Array</code> of <code>Path</code> instances that are children of the current instance.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="readDirIter" class="tsd-anchor"></a>
@@ -1022,7 +1220,7 @@ If position is an integer, the file position will be unchanged.</p>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Synchronously collects the children of a directory path.</p>
 
-<h3>Returns</h3><p>An <code>array</code> of <code>Path</code> instances that are children of the current instance.</p>
+<h3>Returns</h3><p>An <code>Array</code> of <code>Path</code> instances that are children of the current instance.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">[]</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="readFile" class="tsd-anchor"></a>
@@ -1130,6 +1328,9 @@ If position is an integer, the file position will be unchanged.</p>
 <div class="tsd-comment tsd-typography"><p>Asynchronously retrieves the filepath that the underlying symlink is pointing to.</p>
 
 <h3>Returns</h3><p>A <code>Path</code> instance of the target.</p>
+
+<h3>Example</h3><pre><code class="language-js"><span class="hl-7">// symFP points to /home/jsmith/Documents</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">sympFP</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/ExampleSymlink.symlink&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">origPath</span><span class="hl-1"> = (</span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">symFP</span><span class="hl-1">.</span><span class="hl-6">readLink</span><span class="hl-1">()).</span><span class="hl-0">path</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">origPath</span><span class="hl-1">)</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/jsmith/Documents&quot;</span>
+</code></pre>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="readLinkSync" class="tsd-anchor"></a>
@@ -1141,6 +1342,9 @@ If position is an integer, the file position will be unchanged.</p>
 <div class="tsd-comment tsd-typography"><p>Synchronously retrieves the filepath that the underlying symlink is pointing to.</p>
 
 <h3>Returns</h3><p>A <code>Path</code> instance of the target.</p>
+
+<h3>Example</h3><pre><code class="language-js"><span class="hl-7">// symFP points to /home/jsmith/Documents</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">sympFP</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/ExampleSymlink.symlink&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">origPath</span><span class="hl-1"> = </span><span class="hl-0">symFP</span><span class="hl-1">.</span><span class="hl-6">readLinkSync</span><span class="hl-1">().</span><span class="hl-0">path</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">origPath</span><span class="hl-1">)</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/jsmith/Documents&quot;</span>
+</code></pre>
 </div>
 <h4 class="tsd-returns-title">Returns <a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="readSync" class="tsd-anchor"></a>
@@ -1195,6 +1399,9 @@ If position is an integer, the file position will be unchanged.</p>
 <div class="tsd-comment tsd-typography"><p>Depicts the relative path from the Path instance to another filepath.</p>
 
 <h3>Returns</h3><p>A <code>string</code> representation of the relative path.</p>
+
+<h3>Example</h3><pre><code class="language-js"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Documents&quot;</span><span class="hl-1">)</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">relative</span><span class="hl-1">(</span><span class="hl-3">&quot;/home&quot;</span><span class="hl-1">))</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;../..&quot;</span>
+</code></pre>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -1205,7 +1412,8 @@ If position is an integer, the file position will be unchanged.</p>
 </div></li>
 <li>
 <h5>useSystemPathDelimiter: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
-<div class="tsd-comment tsd-typography"><p>Whether to present the final string in accordance with the operating system&#39;s filepath delimiter.</p>
+<div class="tsd-comment tsd-typography"><p>Whether to present the final string in accordance with the operating
+system&#39;s filepath delimiter. Default is <code>false</code>.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="remove" class="tsd-anchor"></a>
@@ -1232,18 +1440,22 @@ If position is an integer, the file position will be unchanged.</p>
 <li class="tsd-signature" id="resolve.resolve-1">resolve<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>segments<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Resolves a sequence of path segments into a new absolute Path. Respects &quot;..&quot; and will increment directories accordingly.
-Note that strings beginning with a single &quot;.&quot; will be treated as if the dot character does not exist. Use the <code>join()</code> method
-as an alternative for treating &quot;..&quot; and &quot;.&quot; as literal.</p>
+<div class="tsd-comment tsd-typography"><p>Resolves a sequence of path segments into a new absolute Path from the underlying path.
+Respects &quot;..&quot; and will increment directories accordingly.</p>
+<p>⚠️ Note that strings beginning with a single &quot;.&quot; will be treated as if the dot character does not exist.
+Use the <code>join()</code> method as an alternative for treating &quot;..&quot; and &quot;.&quot; as literal. ⚠️</p>
 
 <h3>Returns</h3><p>The resolved <code>Path</code> instance.</p>
+
+<h3>Example</h3><pre><code class="language-js"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Documents&quot;</span><span class="hl-1">)</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">resolve</span><span class="hl-1">(</span><span class="hl-3">&quot;../Downloads&quot;</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">)</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/jsmith/Downloads&quot;</span>
+</code></pre>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
 <h5><code class="tsd-tag ts-flagRest">Rest</code> <span class="tsd-signature-symbol">...</span>segments: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
-<div class="tsd-comment tsd-typography"><p>An array of strings respresenting path segments to append and resolve to the underlying path.</p>
+<div class="tsd-comment tsd-typography"><p>An <code>Array</code> of strings respresenting path segments to append and resolve to the underlying path.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="split" class="tsd-anchor"></a>
@@ -1252,9 +1464,9 @@ as an alternative for treating &quot;..&quot; and &quot;.&quot; as literal.</p>
 <li class="tsd-signature" id="split.split-1">split<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Alias for this.parts(). Splits the underlying filepath into its individual components.</p>
+<div class="tsd-comment tsd-typography"><p>Alias for <code>this.parts()</code>. Splits the underlying filepath into its individual components.</p>
 
-<h3>Returns</h3><p>An array of the strings comprising the <code>Path</code> instance.</p>
+<h3>Returns</h3><p>An <code>Array</code> of the strings comprising the <code>Path</code> instance.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="stat" class="tsd-anchor"></a>
@@ -1282,12 +1494,12 @@ as an alternative for treating &quot;..&quot; and &quot;.&quot; as literal.</p>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="toJSON" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>toJSON</span><a href="#toJSON" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="toJSON.toJSON-1">toJSON<span class="tsd-signature-symbol">(</span>useSystemPathDelimiter<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>basename<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>ext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>root<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>stem<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>suffixes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span></li></ul>
+<li class="tsd-signature" id="toJSON.toJSON-1">toJSON<span class="tsd-signature-symbol">(</span>useSystemPathDelimiter<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/PathJSON.html" class="tsd-signature-type" data-tsd-kind="Interface">PathJSON</a></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Depicts an Object version of the Path instance.</p>
 
-<h3>Returns</h3><p>An <code>Object</code> representation of the underlying filepath.</p>
+<h3>Returns</h3><p>An <code>Object</code> representation of the underlying filepath; <a href="../interfaces/PathJSON.html">PathJSON</a>.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -1296,20 +1508,7 @@ as an alternative for treating &quot;..&quot; and &quot;.&quot; as literal.</p>
 <h5>useSystemPathDelimiter: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
 <div class="tsd-comment tsd-typography"><p>Whether to respect the system-specific filepath delimiter. Defaults to <code>false</code>.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>basename<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>ext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>root<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>stem<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>suffixes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span></h4>
-<ul class="tsd-parameters">
-<li class="tsd-parameter">
-<h5>basename<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5></li>
-<li class="tsd-parameter">
-<h5>ext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5></li>
-<li class="tsd-parameter">
-<h5>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5></li>
-<li class="tsd-parameter">
-<h5>root<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5></li>
-<li class="tsd-parameter">
-<h5>stem<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5></li>
-<li class="tsd-parameter">
-<h5>suffixes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5></li></ul></li></ul></section>
+<h4 class="tsd-returns-title">Returns <a href="../interfaces/PathJSON.html" class="tsd-signature-type" data-tsd-kind="Interface">PathJSON</a></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="toString" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>to<wbr/>String</span><a href="#toString" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -1338,7 +1537,7 @@ as an alternative for treating &quot;..&quot; and &quot;.&quot; as literal.</p>
 <div class="tsd-comment tsd-typography"><p>Asynchronously traverses the tree structure of the directory system, starting from the current instances as the root
 and returns a nested Object representation of the tree structure. Each branching of the tree is comprised of an object
 with two properties: &quot;filepath&quot;, which is the Path instance of the filepath at that location, and &quot;children&quot; which is
-either null in the case of a non-directory or an array of more branch objects.</p>
+either <code>null</code> in the case of a non-directory or an <code>Array</code> of more branch objects.</p>
 
 <h3>Returns</h3><p>A representation of the filepath tree structure.</p>
 </div>
@@ -1371,7 +1570,7 @@ either null in the case of a non-directory or an array of more branch objects.</
 <div class="tsd-comment tsd-typography"><p>Synchronously traverses the tree structure of the directory system, starting from the current instances as the root
 and returns a nested Object representation of the tree structure. Each branching of the tree is comprised of an object
 with two properties: &quot;filepath&quot;, which is the Path instance of the filepath at that location, and &quot;children&quot; which is
-either null in the case of a non-directory or an array of more branch objects.</p>
+either <code>null</code> in the case of a non-directory or an <code>Array</code> of more branch objects.</p>
 
 <h3>Returns</h3><p>A representation of the filepath tree structure.</p>
 </div>
@@ -1497,6 +1696,9 @@ either null in the case of a non-directory or an array of more branch objects.</
 <div class="tsd-comment tsd-typography"><p>Creates a new Path instance with a replaced basename.</p>
 
 <h3>Returns</h3><p>A new <code>Path</code> instance featuring the replacement basename.</p>
+
+<h3>Example</h3><pre><code><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Documents/foo.txt&quot;</span><span class="hl-1">)</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">withBasename</span><span class="hl-1">(</span><span class="hl-3">&quot;bar.json&quot;</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">)</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/jsmith/Documents/bar.json&quot;</span>
+</code></pre>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -1512,9 +1714,14 @@ either null in the case of a non-directory or an array of more branch objects.</
 <li class="tsd-signature" id="withExtension.withExtension-1">with<wbr/>Extension<span class="tsd-signature-symbol">(</span>ext<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Creates a new Path instance with a replaced last extension.</p>
+<div class="tsd-comment tsd-typography"><p>Creates a new Path instance with a replaced <strong>last extension</strong>.</p>
+<p>⚠️ If a suffix contains multiple components (i.e. .tar.gz) and the entirety of the suffix is desired to be replaced,
+use <code>this.withSuffix()</code>. ⚠️</p>
 
 <h3>Returns</h3><p>A new <code>Path</code> instance featuring the replacement last extension.</p>
+
+<h3>Example</h3><pre><code class="language-js"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp1</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/mpasternak/Documents/foo.tar.gz&quot;</span><span class="hl-1">);</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp1</span><span class="hl-1">.</span><span class="hl-6">withExtension</span><span class="hl-1">(</span><span class="hl-3">&quot;qui&quot;</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp1</span><span class="hl-1">.</span><span class="hl-6">withExtension</span><span class="hl-1">(</span><span class="hl-3">&quot;&quot;</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/mpasternak/Documents/foo.tar.qui&quot;</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/mpasternak/Documents/foo.tar&quot;</span><br/><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp2</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/mpasternak/Documents/bar.txt&quot;</span><span class="hl-1">);</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp2</span><span class="hl-1">.</span><span class="hl-6">withExtension</span><span class="hl-1">(</span><span class="hl-3">&quot;.json&quot;</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp2</span><span class="hl-1">.</span><span class="hl-6">withExtension</span><span class="hl-1">(</span><span class="hl-3">&quot;&quot;</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/mpasternak/Documents/bar.json&quot;</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/mpasternak/Documents/bar&quot;</span>
+</code></pre>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -1533,6 +1740,8 @@ either null in the case of a non-directory or an array of more branch objects.</
 <div class="tsd-comment tsd-typography"><p>Creates a new Path instance with a replaced stem.</p>
 
 <h3>Returns</h3><p>A new <code>Path</code> instance featuring the replacement stem.</p>
+<pre><code><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/jsmith/Documents/foo.txt&quot;</span><span class="hl-1">)</span><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">withStem</span><span class="hl-1">(</span><span class="hl-3">&quot;bar&quot;</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">)</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/jsmith/Documents/bar.txt&quot;</span>
+</code></pre>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -1551,16 +1760,21 @@ either null in the case of a non-directory or an array of more branch objects.</
 <div class="tsd-comment tsd-typography"><p>Creates a new Path instance with a replaced set of suffix extensions.</p>
 
 <h3>Returns</h3><p>A new <code>Path</code> instance featuring the replaced suffix(es).</p>
+
+<h3>Example</h3><pre><code class="language-js"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">fp</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Path</span><span class="hl-1">(</span><span class="hl-3">&quot;/home/mpasternak/Documents/foo.tar.gz&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">withSuffix</span><span class="hl-1">([</span><span class="hl-3">&quot;bar&quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;baz&quot;</span><span class="hl-1">]).</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/mpasternak/Documents/foo.bar.baz&quot;</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">withSuffix</span><span class="hl-1">(</span><span class="hl-3">&quot;qui&quot;</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/mpasternak/Documents/foo.qui&quot;</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">fp</span><span class="hl-1">.</span><span class="hl-6">withSuffix</span><span class="hl-1">(</span><span class="hl-3">&quot;&quot;</span><span class="hl-1">).</span><span class="hl-0">path</span><span class="hl-1">);</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-3">&quot;/home/mpasternak/Documents/foo&quot;</span>
+</code></pre>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
 <h5>suffix: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
-<div class="tsd-comment tsd-typography"><p>The new suffix to replace the existing one.
-If provided an array of strings, it will concatenate with with a &quot;.&quot; character before appending to the existing stem.
-If provided a non-blank string, it will overwite anything after the first &quot;.&quot; in the current basename.
-If a blank string is provided, then all extensions will be removed.</p>
+<div class="tsd-comment tsd-typography"><p>The new suffix to replace the existing one. Behavior patterns are as follows:</p>
+<ul>
+<li>If provided an <code>Array</code> of strings, it will concatenate each with a &quot;.&quot; character before appending to the existing stem.</li>
+<li>If provided a non-blank string, it will overwite everything after the first &quot;.&quot; in the current basename.</li>
+<li>If a blank string is provided, then all extensions will be removed.</li>
+</ul>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="write" class="tsd-anchor"></a>
@@ -1605,10 +1819,12 @@ If a blank string is provided, then all extensions will be removed.</p>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="writeFile" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>write<wbr/>File</span><a href="#writeFile" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="writeFile.writeFile-1">write<wbr/>File<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Uint8Array</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">WriteFileOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li></ul>
+<li class="tsd-signature" id="writeFile.writeFile-1">write<wbr/>File<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Uint8Array</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">WriteFileOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Asynchronously writes data to the underlying filepath.</p>
+
+<h3>Returns</h3><p>Returns the Path instance that called this method</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -1619,14 +1835,16 @@ If a blank string is provided, then all extensions will be removed.</p>
 </div></li>
 <li>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <span class="tsd-signature-type">WriteFileOptions</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="writeFileSync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>write<wbr/>File<wbr/>Sync</span><a href="#writeFileSync" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="writeFileSync.writeFileSync-1">write<wbr/>File<wbr/>Sync<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Uint8Array</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">WriteFileOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li></ul>
+<li class="tsd-signature" id="writeFileSync.writeFileSync-1">write<wbr/>File<wbr/>Sync<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Uint8Array</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">WriteFileOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Synchronously writes data to the underlying filepath.</p>
+
+<h3>Returns</h3><p>Returns the Path instance that called this method</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -1637,14 +1855,16 @@ If a blank string is provided, then all extensions will be removed.</p>
 </div></li>
 <li>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <span class="tsd-signature-type">WriteFileOptions</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></section>
+<h4 class="tsd-returns-title">Returns <a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="writeJSON" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>writeJSON</span><a href="#writeJSON" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="writeJSON.writeJSON-1">writeJSON<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><a href="../types/JSONObject.html" class="tsd-signature-type" data-tsd-kind="Type alias">JSONObject</a>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">WriteOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li></ul>
+<li class="tsd-signature" id="writeJSON.writeJSON-1">writeJSON<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><a href="../types/JSONObject.html" class="tsd-signature-type" data-tsd-kind="Type alias">JSONObject</a>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">WriteOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Asynchronously write a JSON-compatible object to a .json file.</p>
+
+<h3>Returns</h3><p>Returns the Path instance which called this method.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -1655,14 +1875,16 @@ If a blank string is provided, then all extensions will be removed.</p>
 </div></li>
 <li>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <span class="tsd-signature-type">WriteOptions</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="writeJSONSync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>writeJSONSync</span><a href="#writeJSONSync" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="writeJSONSync.writeJSONSync-1">writeJSONSync<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><a href="../types/JSONObject.html" class="tsd-signature-type" data-tsd-kind="Type alias">JSONObject</a>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">WriteOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li></ul>
+<li class="tsd-signature" id="writeJSONSync.writeJSONSync-1">writeJSONSync<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><a href="../types/JSONObject.html" class="tsd-signature-type" data-tsd-kind="Type alias">JSONObject</a>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">WriteOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Synchronously write a JSON-compatible object to a .json file.</p>
+
+<h3>Returns</h3><p>Returns the Path instance which called this method.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -1673,7 +1895,7 @@ If a blank string is provided, then all extensions will be removed.</p>
 </div></li>
 <li>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> options: <span class="tsd-signature-type">WriteOptions</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></section>
+<h4 class="tsd-returns-title">Returns <a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="writeSync" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>write<wbr/>Sync</span><a href="#writeSync" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -1724,7 +1946,7 @@ If a blank string is provided, then all extensions will be removed.</p>
 <li class="tsd-signature" id="cwd.cwd-1">cwd<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Get a <code>Path</code> representation of the current working directory.</p>
+<div class="tsd-comment tsd-typography"><p>Alias for <code>pwd</code>. Get a <code>Path</code> representation of the current working directory.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getPATHAsPaths" class="tsd-anchor"></a>
@@ -1733,7 +1955,7 @@ If a blank string is provided, then all extensions will be removed.</p>
 <li class="tsd-signature" id="getPATHAsPaths.getPATHAsPaths-1">getPATHAs<wbr/>Paths<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a><span class="tsd-signature-symbol">[]</span></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Converts the PATH variable into an array of <code>Path</code> instances.</p>
+<div class="tsd-comment tsd-typography"><p>Converts the PATH variable into an <code>Array</code> of <code>Path</code> instances.</p>
 
 <h3>Returns</h3><p>An <code>Array</code> of <code>Path</code> instances of the filepaths recorded in PATH.</p>
 </div>
@@ -1756,6 +1978,9 @@ If a blank string is provided, then all extensions will be removed.</p>
 <div class="tsd-comment tsd-typography"><p>Parses the mode of a filepath into a more understandable octal-like representation (i.e. 777 for full-permissions)</p>
 
 <h3>Returns</h3><p>A 3-digit representation of the permissions indicated by the provided <code>mode</code>.</p>
+
+<h3>Example</h3><pre><code class="language-js"><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-6">log</span><span class="hl-1">(</span><span class="hl-0">Path</span><span class="hl-1">.</span><span class="hl-6">parseModeIntoOctal</span><span class="hl-1">(</span><span class="hl-8">16877</span><span class="hl-1">))</span><br/><span class="hl-1">&gt;&gt;&gt; </span><span class="hl-8">755</span>
+</code></pre>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -1771,7 +1996,7 @@ If a blank string is provided, then all extensions will be removed.</p>
 <li class="tsd-signature" id="pwd.pwd-1">pwd<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></li></ul>
 <ul class="tsd-descriptions">
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Get a Path representation of the current working directory.</p>
+<div class="tsd-comment tsd-typography"><p>Get a <code>Path</code> representation of the current working directory.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <a href="default.html" class="tsd-signature-type" data-tsd-kind="Class">default</a></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="toSystemDelimitedSingleString" class="tsd-anchor"></a>

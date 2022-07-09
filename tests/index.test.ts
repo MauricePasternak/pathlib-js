@@ -2,10 +2,6 @@ import Path from "../src";
 import assert from "assert";
 import { platform, homedir } from "os";
 
-function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 describe("Path properties", () => {
   const fp = new Path(__filename);
   it("Should have a correct basename", () => {
@@ -18,10 +14,10 @@ describe("Path properties", () => {
     assert(fp.stem === "index");
   });
   it("Should have a correct set of suffixes", () => {
-    assert(fp.suffixes.length === 2 && fp.suffixes[0] === "test" && fp.suffixes[1] === "ts");
+    assert(fp.suffixes.length === 2 && fp.suffixes[0] === ".test" && fp.suffixes[1] === ".ts");
   });
   it("Should have a correct root", () => {
-    platform() === "win32" ? assert(/\w:/gm.test(fp.root)) : assert(fp.root === "/");
+    platform() === "win32" ? assert(/\w:\//gm.test(fp.root)) : assert(fp.root === "/");
   });
   it("Should have a correct parent filepath", () => {
     assert(fp.parent().path === new Path(__dirname).path);
@@ -69,7 +65,7 @@ describe("Relative strings", () => {
 
 describe("New Path creation from previous", () => {
   const fpDir = new Path(__dirname);
-  const testfile = new Path(__filename + "/Test.tar.gz");
+  const testfile = new Path(__dirname + "/Test.tar.gz");
   it("Should generate an appropriate Path using withBasename", () => {
     assert("TEST" === fpDir.withBasename("TEST").basename);
   });
@@ -80,10 +76,10 @@ describe("New Path creation from previous", () => {
     assert(".bar" === testfile.withExtension("bar").ext);
   });
   it("Should generate an appropriate Path using withSuffix argument as a String, even if user adds '.' to the start of a string and/or elements of an array argument", () => {
-    const newFileByArray = testfile.withSuffix(["json", ".gz"]);
+    const newFileByArray = testfile.withSuffix([".json", ".gz"]);
     const newFileByString = testfile.withSuffix(".json.gz");
     assert(newFileByArray.basename === newFileByString.basename);
-    assert(newFileByArray.suffixes.join(".") === "json.gz");
+    assert(newFileByArray.suffixes.join("") === ".json.gz");
     assert(newFileByArray.ext === ".gz");
   });
   it("Should resolve '..' correctly into a new filepath using the resolve() method", () => {
@@ -172,7 +168,6 @@ describe("Walking and Traversing Trees", () => {
   });
   it("Should be able to create an appropriate tree structure", async () => {
     await nestedPath.makeFile();
-    await sleep(20); // Hack
     const treeStruct = await nestedPath.parent(2).tree(false);
     assert(treeStruct.children != null);
     const firstBranch = treeStruct.children[0];
@@ -288,14 +283,12 @@ describe("Making and removing filepaths", () => {
     try {
       await candidateFile.makeFile();
     } catch (error) {}
-    await sleep(20);
     assert(await candidateFile.exists());
   });
   it("Should successfully make a directory with makeDir, creating parent directories as needed", async () => {
     try {
       await candidateDir.makeDir();
     } catch (error) {}
-    await sleep(20);
     assert(await candidateDir.exists());
   });
   setTimeout(() => fpRootForTest.deleteSync(), 200);
@@ -319,22 +312,18 @@ describe("Making and Reading Symlinks", () => {
 
   it("Should be able to make a valid link between a source file and a target symlink file", async () => {
     await exampleSourceFile.makeSymlink(symlinkFromSourceFile);
-    await sleep(10);
     assert((await symlinkFromSourceFile.readLink()).path === exampleSourceFile.path);
   });
   it("Should be able to make a valid link between a source directory and a target symlink", async () => {
     await exampleSourceDirectory.makeSymlink(symlinkFromSourceDirectory);
-    await sleep(10); // Hack
     assert((await symlinkFromSourceDirectory.readLink()).path === exampleSourceDirectory.path);
   });
   it("Should be able to make a valid link between a source symlink and a target file", async () => {
     await symlinkToTargetFile.makeSymlink(exampleTargetFile, { targetIsLink: false });
-    await sleep(10); // Hack
     assert((await symlinkToTargetFile.readLink()).path === exampleTargetFile.path);
   });
   it("Should be able to make a valid link between a source symlink and a target directory", async () => {
     await symlinkToTargetDirectory.makeSymlink(exampleTargetDirectory, { targetIsLink: false });
-    await sleep(10); // Hack
     assert((await symlinkToTargetDirectory.readLink()).path === exampleTargetDirectory.path);
   });
   setTimeout(() => fpRootForTest.deleteSync(), 400);
@@ -402,9 +391,7 @@ describe("Moving, Copying, and Deleting filepaths", () => {
     const dst = await copySrcPath.copy(copyDstPath);
     assert(dst.path === copyDstPath.path);
     assert(await copyDstPath.exists());
-    await sleep(20); // Hack
     await fpRootForTest.resolve("FolderX").remove();
-    await sleep(20); // Hack
     assert(!(await copyDstPath.exists()));
     assert(!(await copySrcPath.exists()));
   });
@@ -414,21 +401,17 @@ describe("Moving, Copying, and Deleting filepaths", () => {
     const copyDstRelative = copySrcRelative.resolve(relString);
     assert(!(await copyDstRelative.exists()));
     await copySrcRelative.makeFile();
-    await sleep(20); // Hack
     const dst = await copySrcRelative.copy(relString, { interpRelativeSource: "path", overwrite: true });
-    await sleep(20); // Hack
     assert(dst.path === copyDstRelative.path);
     assert(await copyDstRelative.exists());
   });
   it("Should be able to move a filepath into another location, making parent directories as necessary. Following this, it should also be able to remove them.", async () => {
     assert(!(await moveDstPath.exists()));
     const locMoved = await moveSrcPath.move(moveDstPath);
-    await sleep(20); // Hack
     assert(locMoved.path === moveDstPath.path);
     assert(await moveDstPath.exists());
     assert(!(await moveSrcPath.exists()));
     await fpRootForTest.resolve("FolderY").remove();
-    await sleep(20); // Hack
     assert(!(await moveDstPath.exists()));
     assert(!(await moveSrcPath.exists()));
   });
@@ -437,9 +420,7 @@ describe("Moving, Copying, and Deleting filepaths", () => {
     const moveSrcRelative = fpRootForTest.resolve("FolderRelativeMove/Source.txt");
     const moveDstRelative = moveSrcRelative.resolve(relString);
     await moveSrcRelative.makeFile();
-    await sleep(20); // Hack
     const dst = await moveSrcRelative.move(relString, { interpRelativeSource: "path", overwrite: true });
-    await sleep(20); // Hack
     assert(dst.path === moveDstRelative.path);
     assert(await moveDstRelative.exists());
   });
