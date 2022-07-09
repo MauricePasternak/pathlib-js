@@ -2,6 +2,7 @@ LocalTesting/
 node_modules/
 tests/index.test.d.ts
 tests/index.test.js
+src/index.js
 yarn.lock
 yarn-error.log
 .vscode/
