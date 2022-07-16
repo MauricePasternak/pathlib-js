@@ -1042,7 +1042,7 @@ export default class Path {
 
     // Child globbing
     if (depth > 0) {
-      const globStar = [...Array(depth).keys()].reduce(acc => acc + "*", "");
+      const globStar = [...Array(depth).keys()].map(() => "*", "").join("/");
       return asIterator ? this.globIter(globStar, options) : await this.glob(globStar, options);
     }
     // Parent globbing
