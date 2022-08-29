@@ -54,8 +54,9 @@
     "build:withcomments": "tsc && yarn typedoc",
     "build:nocomments": "tsc -p ./tsconfig.nocomments.json && uglifyjs ./src/index.js -o ./src/index.min.js",
     "build": "yarn build:withcomments && yarn build:nocomments",
+    "login": "npm-cli-login",
     "proddry": "npm publish --dry-run",
-    "prod": "npm publish"
+    "prod": "yarn login && npm publish"
   },
   "files": [
     "/src/index.d.ts",
@@ -75,6 +76,7 @@
     "@types/sinon": "^10.0.13",
     "cross-env": "^7.0.3",
     "mocha": "^10.0.0",
+    "npm-cli-login": "^1.0.0",
     "sinon": "^14.0.0",
     "ts-mocha": "^10.0.0",
     "typedoc": "^0.23.11",
