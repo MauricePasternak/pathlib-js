@@ -1,6 +1,18 @@
-import Path from "../src";
 import assert from "assert";
-import { platform, homedir } from "os";
+import { homedir, platform } from "os";
+import sinon from "sinon";
+import Path from "../src";
+
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function sleepSync(ms: number) {
+  let start = new Date().getTime(),
+    expire = start + ms;
+  while (new Date().getTime() < expire) {}
+  return;
+}
 
 describe("Path properties", () => {
   const fp = new Path(__filename);
@@ -294,40 +306,42 @@ describe("Making and removing filepaths", () => {
   setTimeout(() => fpRootForTest.deleteSync(), 200);
 });
 
-describe("Making and Reading Symlinks", () => {
-  const fpRootForTest = new Path(__dirname, "SymlinkTests");
-  const exampleSourceFile = fpRootForTest.resolve("SourceFoo.txt");
-  const exampleTargetFile = fpRootForTest.resolve("TargetFoo.txt");
-  const exampleSourceDirectory = fpRootForTest.resolve("SourceDirectory");
-  const exampleTargetDirectory = fpRootForTest.resolve("TargetDirectory");
-  exampleSourceFile.makeFileSync();
-  exampleSourceDirectory.makeDirSync();
-  exampleTargetFile.makeFileSync();
-  exampleTargetDirectory.makeDirSync();
+// This requires admin privileges to run on Windows without error; on Unix it works fine.
+process.platform !== "win32" &&
+  describe("Making and Reading Symlinks", () => {
+    const fpRootForTest = new Path(__dirname, "SymlinkTests");
+    const exampleSourceFile = fpRootForTest.resolve("SourceFoo.txt");
+    const exampleTargetFile = fpRootForTest.resolve("TargetFoo.txt");
+    const exampleSourceDirectory = fpRootForTest.resolve("SourceDirectory");
+    const exampleTargetDirectory = fpRootForTest.resolve("TargetDirectory");
+    exampleSourceFile.makeFileSync();
+    exampleSourceDirectory.makeDirSync();
+    exampleTargetFile.makeFileSync();
+    exampleTargetDirectory.makeDirSync();
 
-  const symlinkFromSourceFile = fpRootForTest.resolve("SymlinkFromSourceFoo.symlink");
-  const symlinkFromSourceDirectory = fpRootForTest.resolve("SymlinkFromSourceBar.symlink");
-  const symlinkToTargetFile = fpRootForTest.resolve("SymlinkToTargetFoo.symlink");
-  const symlinkToTargetDirectory = fpRootForTest.resolve("SymlinkToTargetBar.symlink");
+    const symlinkFromSourceFile = fpRootForTest.resolve("SymlinkFromSourceFoo.symlink");
+    const symlinkFromSourceDirectory = fpRootForTest.resolve("SymlinkFromSourceBar.symlink");
+    const symlinkToTargetFile = fpRootForTest.resolve("SymlinkToTargetFoo.symlink");
+    const symlinkToTargetDirectory = fpRootForTest.resolve("SymlinkToTargetBar.symlink");
 
-  it("Should be able to make a valid link between a source file and a target symlink file", async () => {
-    await exampleSourceFile.makeSymlink(symlinkFromSourceFile);
-    assert((await symlinkFromSourceFile.readLink()).path === exampleSourceFile.path);
+    it("Should be able to make a valid link between a source file and a target symlink file", async () => {
+      await exampleSourceFile.makeSymlink(symlinkFromSourceFile);
+      assert((await symlinkFromSourceFile.readLink()).path === exampleSourceFile.path);
+    });
+    it("Should be able to make a valid link between a source directory and a target symlink", async () => {
+      await exampleSourceDirectory.makeSymlink(symlinkFromSourceDirectory);
+      assert((await symlinkFromSourceDirectory.readLink()).path === exampleSourceDirectory.path);
+    });
+    it("Should be able to make a valid link between a source symlink and a target file", async () => {
+      await symlinkToTargetFile.makeSymlink(exampleTargetFile, { targetIsLink: false });
+      assert((await symlinkToTargetFile.readLink()).path === exampleTargetFile.path);
+    });
+    it("Should be able to make a valid link between a source symlink and a target directory", async () => {
+      await symlinkToTargetDirectory.makeSymlink(exampleTargetDirectory, { targetIsLink: false });
+      assert((await symlinkToTargetDirectory.readLink()).path === exampleTargetDirectory.path);
+    });
+    setTimeout(() => fpRootForTest.deleteSync(), 400);
   });
-  it("Should be able to make a valid link between a source directory and a target symlink", async () => {
-    await exampleSourceDirectory.makeSymlink(symlinkFromSourceDirectory);
-    assert((await symlinkFromSourceDirectory.readLink()).path === exampleSourceDirectory.path);
-  });
-  it("Should be able to make a valid link between a source symlink and a target file", async () => {
-    await symlinkToTargetFile.makeSymlink(exampleTargetFile, { targetIsLink: false });
-    assert((await symlinkToTargetFile.readLink()).path === exampleTargetFile.path);
-  });
-  it("Should be able to make a valid link between a source symlink and a target directory", async () => {
-    await symlinkToTargetDirectory.makeSymlink(exampleTargetDirectory, { targetIsLink: false });
-    assert((await symlinkToTargetDirectory.readLink()).path === exampleTargetDirectory.path);
-  });
-  setTimeout(() => fpRootForTest.deleteSync(), 400);
-});
 
 describe("Reading and Writing JSON files", () => {
   const jsonReadFile = new Path(__dirname, "FolderB", "File_B1.json");
@@ -425,6 +439,70 @@ describe("Moving, Copying, and Deleting filepaths", () => {
     assert(await moveDstRelative.exists());
   });
   setTimeout(() => fpRootForTest.deleteSync(), 700);
+});
+
+describe("PathWatcher Operations", () => {
+  const fpRootForTest = new Path(__dirname, "PathWatcherTests");
+  const spyAddFile = sinon.spy();
+  const spyRemoveFile = sinon.spy();
+  const spyAddDir = sinon.spy();
+  const spyRemoveDir = sinon.spy();
+
+  it("Should be able to spawn and react to a file being added and removed", async () => {
+    const fileWatcher = await fpRootForTest.watch({ ignoreInitial: true }, true);
+    fileWatcher.on("add", path => {
+      // console.log("add file event", path);
+      spyAddFile(path);
+    });
+    fileWatcher.on("unlink", path => {
+      // console.log("remove file event", path);
+      spyRemoveFile(path);
+    });
+
+    await sleep(200);
+    // console.log("Adding file");
+    const createdFile = await fpRootForTest.resolve("TestFile.txt").makeFile();
+    assert(createdFile);
+    await createdFile.delete();
+    // console.log(fileWatcher);
+
+    await sleep(200);
+    await fileWatcher.close();
+
+    // console.log(spyAddFile.args);
+    // console.log(spyRemoveFile.args);
+    assert(spyAddFile.calledOnce);
+    assert(spyRemoveFile.calledOnce);
+    assert(spyAddFile.calledWith(createdFile));
+    assert(spyRemoveFile.calledWith(createdFile));
+  });
+
+  it("Should be able to spawn and react to a directory being added and removed", async () => {
+    const dirWatcher = await fpRootForTest.watch({ ignoreInitial: true, interval: 50 }, true);
+    dirWatcher.on("addDir", path => {
+      // console.log("addDir", path);
+      spyAddDir(path);
+    });
+    dirWatcher.on("unlinkDir", path => {
+      // console.log("unlinkDir", path);
+      spyRemoveDir(path);
+    });
+
+    await sleep(200);
+    // console.log("Adding directory");
+    const createdDir = await fpRootForTest.resolve("TestDir").makeDir();
+    assert(createdDir);
+    await sleep(200);
+    (await createdDir.exists()) && (await createdDir.delete());
+    await sleep(200);
+    await dirWatcher.close();
+    // console.log(spyAddDir.args);
+    // console.log(spyRemoveDir.args);
+    assert(spyAddDir.calledOnce);
+    assert(spyRemoveDir.calledOnce);
+    assert(spyAddDir.calledWith(createdDir));
+    assert(spyRemoveDir.calledWith(createdDir));
+  });
 });
 
 describe("Static methods work as intended", () => {

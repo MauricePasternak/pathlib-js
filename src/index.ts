@@ -6,12 +6,12 @@
  * filepath libraries within a single Path class.
  * @packageDocumentation
  */
-import normalize from "normalize-path";
+import chokidar from "chokidar";
 import fg, { Options } from "fast-glob";
 import * as fse from "fs-extra";
+import normalize from "normalize-path";
+import { homedir, platform } from "os";
 import path from "path";
-import chokidar from "chokidar";
-import { platform, homedir } from "os";
 
 export interface SystemError {
   address: string;
@@ -26,11 +26,11 @@ export interface SystemError {
 }
 
 /**
- * Property-only version of a Path instance.
+ * Property-only version of a {@link Path} instance.
  */
 export interface PathJSON {
-  path: Path | string;
-  root: Path | string;
+  path: string;
+  root: string;
   basename: string;
   stem: string;
   ext: string;
@@ -205,7 +205,8 @@ export default class Path {
    * @remarks
    * **⚠️ In this library, the normalization process of the filepath results in the root being always
    * expressed with forward slashes. (i.e. `C:/` instead of `C:\`).
-   * Windows users may find this more difficult to work with. ⚠️**
+   * Windows users may find this more difficult to work with; they are advised to use the class's `toString(true)`
+   * method for respecting the backslash representation. ⚠️**
    *
    * @examples
    * - For a Unix filepath of `/foo/bar/baz`, the root directory is `/`.
@@ -608,7 +609,7 @@ export default class Path {
    * @returns A `string` representation of the underlying filepath.
    */
   toString(useSystemPathDelimiter = false) {
-    return useSystemPathDelimiter ? this.parts().join(path.sep) : this.path;
+    return process.platform === "win32" && useSystemPathDelimiter ? this.path.replace(/\//g, "\\") : this.path;
   }
 
   /**
@@ -1909,8 +1910,114 @@ export default class Path {
   /**
    * Wrapper around implementing a Chokidar watcher on the underlying filepath.
    * @param options [Chokidar options](https://github.com/paulmillr/chokidar) controlling the behavior of the filepath watcher.
+   * @param waitUntilReady Whether to defer the return of the watcher until its "ready" event has been emitted. Defaults to `undefined` (will not wait for the ready event).
+   * @returns Either a {@link PathWatcher} instance (default) or a Promise that resolves to a {@link PathWatcher} instance if `waitUntilReady` is `true`.
    */
-  watch(options?: chokidar.WatchOptions) {
-    return chokidar.watch(this.path, options);
+  watch(options?: chokidar.WatchOptions, waitUntilReady?: false): PathWatcher;
+  watch(options?: chokidar.WatchOptions, waitUntilReady?: true): Promise<PathWatcher>;
+  watch(options?: chokidar.WatchOptions, waitUntilReady?: boolean) {
+    {
+      if (waitUntilReady) {
+        return new Promise(resolve => {
+          const watcher = new PathWatcher(options);
+          watcher.add(this);
+          watcher.on("ready", () => {
+            // console.log(`WATCHER for [${this.path}] Ready`);
+            resolve(watcher);
+          });
+        });
+      } else {
+        const watcher = new PathWatcher(options);
+        watcher.add(this);
+        return watcher;
+      }
+    }
+  }
+}
+
+/**
+ * Wrapper class around chokidar's `FSWatcher`. Main notable differences:
+ * - Its event listeners are expected to taken in a `Path` instance instead of `string`.
+ * - Its `add` and `unwatch` methods also accept `Path` instance(s) in addition to the typical string representations of filepaths.
+ * @param options Chokidar options controlling the behavior of the filepath watcher. Note the following differences:
+ * - `options.ignoreInitial` is changed to `true` by default.
+ * - `options.cwd` is enforced to be `null` (listeners **do not** get relative path strings) in order to be compatible with the `Path` class.
+ */
+export class PathWatcher {
+  private _watcher: chokidar.FSWatcher;
+
+  constructor(options?: chokidar.WatchOptions) {
+    this._watcher = new chokidar.FSWatcher(Object.assign({ ignoreInitial: true }, options, { cwd: null }));
+  }
+
+  private _handlePaths(paths: string | Path | ReadonlyArray<string> | ReadonlyArray<Path>) {
+    return typeof paths === "string"
+      ? paths
+      : paths instanceof Path
+      ? paths.path
+      : paths.map(p => (p instanceof Path ? p.path : p));
+  }
+
+  add(paths: string | Path | ReadonlyArray<string> | ReadonlyArray<Path>) {
+    return this._watcher.add(this._handlePaths(paths));
+  }
+
+  unwatch(paths: string | Path | ReadonlyArray<string> | ReadonlyArray<Path>) {
+    return this._watcher.unwatch(this._handlePaths(paths));
+  }
+
+  close(): Promise<void> {
+    return this._watcher.close();
+  }
+
+  getWatched() {
+    return Object.fromEntries(
+      Object.entries(this._watcher.getWatched()).map(([parent, children]) => [
+        parent,
+        children.map(child => new Path(child)),
+      ])
+    );
+  }
+
+  on(event: "ready", listener: () => void): this;
+  on(event: "add" | "addDir" | "change", listener: (path: Path, stats?: fse.Stats) => void): this;
+  on(
+    event: "all",
+    listener: (eventName: "add" | "addDir" | "change" | "unlink" | "unlinkDir", path: Path, stats?: fse.Stats) => void
+  ): this;
+  on(event: "error", listener: (error: Error) => void): this;
+  on(event: "raw", listener: (eventName: string, path: Path, details: any) => void): this;
+  on(event: "unlink" | "unlinkDir", listener: (path: Path) => void): this;
+  on(event: string, listener: (...args: any[]) => void) {
+    if (event === "ready") {
+      this._watcher.on(event, listener);
+    } else if (event === "all") {
+      this._watcher.on(
+        event,
+        (eventName: "add" | "addDir" | "change" | "unlink" | "unlinkDir", path: string, stats?: fse.Stats) =>
+          listener(eventName, new Path(path), stats)
+      );
+    } else if (["add", "addDir", "change"].includes(event)) {
+      this._watcher.on(event, (path: string, stats?: fse.Stats) => {
+        // console.log(`EVENT ${event} [${path}]`);
+        listener(new Path(path), stats);
+      });
+    } else if (event === "error") {
+      this._watcher.on(event, (error: Error) => listener(error));
+    } else if (event === "raw") {
+      this._watcher.on(event, (eventName: string, path: string, details: any) =>
+        listener(eventName, new Path(path), details)
+      );
+    } else if (event === "unlink" || event === "unlinkDir") {
+      this._watcher.on(event, (path: string) => {
+        // console.log(`EVENT ${event} [${path}]`);
+        listener(new Path(path));
+      });
+    } else {
+      throw new Error(
+        `PathWatcher only supports the following events: "ready", "add", "addDir", "change", "unlink", "unlinkDir", "error", "raw"`
+      );
+    }
+    return this;
   }
 }

@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.5.0] - 2022-08-28
+
+### Added
+
+- New class `PathWatcher` is this library's extension of `chokidar's` FSWatcher. Essentially the same, but operating around `Path` instances instead of strings when adding/removing filepaths and listening for events.
+- Added some tests for the above.
+
+### Changed
+
+- `Path.watch` now returns a `PathWatcher` instance or a `Promise` that resolves to a `PathWatcher` instance.
+- Tests associated with symlinks are now conditionally executed on Unix. On Windows, the symlink functionality requires admin priveleges, which isn't normally available during unit testing.
+
+### Fixed
+
+- Fixed a bug in the `toString` method where the forward slash would double-up on Unix. The change to backslashes is only necessary on Windows.
+- Fixed a typo in the definition of `PathJSON`. It shouldn't have had non-primitives as any of the values.
+
+---
+
 ## [1.4.0] - 2022-07-08
 
 ### Breaking

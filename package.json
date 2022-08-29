@@ -1,6 +1,6 @@
 {
   "name": "pathlib-js",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "engines": {
     "node": ">=12"
   },
@@ -51,11 +51,11 @@
   "types": "./src/index.d.ts",
   "scripts": {
     "test": "ts-mocha ./tests/index.test.ts",
-    "build": "tsc && yarn typedoc",
-    "build:nocomments": "tsc -p ./tsconfig.nocomments.json",
-    "prepprod": "yarn build && yarn build:nocomments",
-    "proddry": "yarn prepprod && npm publish --dry-run",
-    "prod": "yarn prepprod && npm publish"
+    "build:withcomments": "tsc && yarn typedoc",
+    "build:nocomments": "tsc -p ./tsconfig.nocomments.json && uglifyjs ./src/index.js -o ./src/index.min.js",
+    "build": "yarn build:withcomments && yarn build:nocomments",
+    "proddry": "npm publish --dry-run",
+    "prod": "npm publish"
   },
   "files": [
     "/src/index.d.ts",
@@ -70,11 +70,15 @@
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
     "@types/mocha": "^9.1.1",
-    "@types/node": "^18.0.3",
+    "@types/node": "^18.7.13",
     "@types/normalize-path": "^3.0.0",
+    "@types/sinon": "^10.0.13",
+    "cross-env": "^7.0.3",
     "mocha": "^10.0.0",
+    "sinon": "^14.0.0",
     "ts-mocha": "^10.0.0",
-    "typedoc": "^0.23.6",
-    "typescript": "^4.7.4"
+    "typedoc": "^0.23.11",
+    "typescript": "^4.8.2",
+    "uglify-js": "^3.17.0"
   }
 }
