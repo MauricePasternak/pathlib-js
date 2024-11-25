@@ -1,8 +1,9 @@
-LocalTesting/
 node_modules/
-tests/index.test.d.ts
-tests/index.test.js
+out/
+dist/
+coverage/
 src/index.js
+src/debug*
 tests/Folder*
 yarn.lock
 yarn-error.log

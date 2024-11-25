@@ -1,0 +1,15 @@
+{
+	"$schema": "https://typedoc.org/schema.json",
+	"entryPoints": ["./src/path.ts", "./src/types.ts", "./src/purepath.ts"],
+	"out": "docs",
+	"name": "pathlib-js",
+	"includeVersion": true,
+	"excludePrivate": true,
+	"excludeProtected": false,
+	"excludeExternals": false,
+	"readme": "README.md",
+	"plugin": ["typedoc-material-theme"],
+	"navigationLinks": {
+		"GitHub": "https://github.com/MauricePasternak/pathlib-js"
+	}
+}

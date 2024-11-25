@@ -1,6 +1,5 @@
 <div id="top"></div>
 <p align="center">
-  <a href="" rel="noopener">
  <img width=50% src="./media/logo.png" alt="Project logo"></a>
 </p>
 
@@ -15,10 +14,15 @@
 [![GitHub Issues](https://img.shields.io/github/issues/MauricePasternak/pathlib-js.svg)](https://github.com/MauricePasternak/pathlib-js/issues)
 [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/MauricePasternak/pathlib-js.svg)](https://github.com/MauricePasternak/pathlib-js/pulls)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
+[![Tests](https://github.com/MauricePasternak/pathlib-js/actions/workflows/test.yml/badge.svg)](https://github.com/MauricePasternak/pathlib-js/actions/workflows/test.yml)
+[![npm version](https://badge.fury.io/js/pathlib-js.svg)](https://badge.fury.io/js/pathlib-js)
+[![Coverage](https://codecov.io/gh/MauricePasternak/pathlib-js/branch/main/graph/badge.svg)](https://codecov.io/gh/MauricePasternak/pathlib-js)
 
 </div>
 
-# 📝 Table of Contents <a id = "tableofcontents"></a>
+<a id = "tableofcontents"></a>
+
+# 📝 Table of Contents
 
 <ul>
   <li><a href = "#documentationlink">Documentation</a></li>
@@ -42,11 +46,16 @@
   <li><a href = "#acknowledgements">Acknowledgments</a></li>
 </ul>
 
-# Documentation <a id = "documentationlink"></a>
+<a id = "documentationlink"></a>
+
+# 📚 Documentation
 
 Full documentation for the Path class is now available at: [the github pages section of this repository.](https://mauricepasternak.github.io/pathlib-js/)
 
-# 🤔 Why pathlib-js? <a id = "whypathlib"></a>
+<a id = "whypathlib"></a>
+
+# 🤔 Why pathlib-js?
+
 
 If you're coming from Python, think of it this way: this library is to NodeJS's `fs` and `path` modules as Python's `pathlib` is to its own `os` module.
 
@@ -76,7 +85,9 @@ or
 yarn add pathlib-js
 ```
 
-# Usage Examples
+<a id = "usage-examples"></a>
+
+# 💡 Usage Examples
 
 ℹ️ For demonstration purposes, the asynchronous versions of methods are used in the examples below. Keep in mind that
 almost all of them have synchronous alternatives with a "Sync" suffix (i.e. `copy` --> `copySync`) ℹ️
@@ -268,7 +279,9 @@ console.log(await treeRoot.tree(true));
 
 <p align="right"><a href="#tableofcontents">(Back to Table of Contents)</a></p>
 
-# 🧪 Testing <a id = "testing"></a>
+<a id = "testing"></a>
+
+# 🧪 Testing
 
 This library is regularly updating its test suite with additional case scenarios.
 
@@ -278,7 +291,9 @@ This library is regularly updating its test suite with additional case scenarios
 
 <p align="right"><a href="#tableofcontents">(Back to Table of Contents)</a></p>
 
-# 🥇 The Wonderful Libraries that this wraps around <a id = "wrappers"></a>
+ <a id = "wrappers"></a>
+
+# 🥇 The Wonderful Libraries that this wraps around
 
 This wouldn't be possible without these awesome libraries. Give them a star.
 
@@ -289,14 +304,20 @@ This wouldn't be possible without these awesome libraries. Give them a star.
 
 <p align="right"><a href="#tableofcontents">(Back to Table of Contents)</a></p>
 
-# ✍️ Authors <a id = "authors"></a>
+<a id = "authors"></a>
+
+# ✍️ Authors
 
 - [@MauricePasternak](https://github.com/MauricePasternak)
 
 <p align="right"><a href="#tableofcontents">(Back to Table of Contents)</a></p>
 
-# 🎉 Acknowledgements <a id = "acknowledgements"></a>
+<a id = "acknowledgements"></a>
+
+# 🎉 Acknowledgements
 
 A thank you to the individuals who actually read README file from start to finish.
 
 <p align="right"><a href="#tableofcontents">(Back to Table of Contents)</a></p>
+
+

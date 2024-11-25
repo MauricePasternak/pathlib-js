@@ -1,0 +1,11 @@
+.vscode
+.idea
+node_modules
+src
+test
+media
+CHANGELOG.md
+LICENSE
+tsconfig.json
+vitest.config*
+*.d.cts
